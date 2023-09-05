@@ -18,12 +18,9 @@ Ringer has features such as:
 # 🧱 Built With...
 Ringer is built with these languages: 
  - Javascript
- - HTML
- - CSS
 
 And these frameworks: 
- - Electron
- - React 
+ - React Native
 
 # 💾 Server Code
 Ringers server code is located in another repository: https://github.com/Lif-Platforms/New-Ringer-Server
