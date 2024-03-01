@@ -1,26 +1,25 @@
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Button, } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, } from "react-native";
 
 // Main stylesheet for login page
 const main_styles = StyleSheet.create({
     page: {
-        backgroundColor: 'black',
+        backgroundColor: '#160900',
         height: '100%'
     },
     header: {
-        color: 'orange',
+        color: 'white',
         alignSelf: 'center',
         fontSize: 50,
         fontWeight: 'bold',
-        marginTop: 40,
-        marginBottom: 40
+        marginTop: 10,
+        marginBottom: 20
     },
     input: {
         alignSelf: "center",
         color: 'white',
-        borderColor: '#A9A9A9',
-        backgroundColor: "#2C2C2C",
-        borderWidth: 3,
-        width: 300,
+        backgroundColor: "#1C1C1C",
+        borderWidth: 0,
+        width: 330,
         fontSize: 24,
         padding: 15,
         borderRadius: 16,
@@ -28,10 +27,10 @@ const main_styles = StyleSheet.create({
     },
     button: {
         backgroundColor: 'orange',
-        width: 150,
+        width: 170,
         alignSelf: 'center',
         padding: 15,
-        borderRadius: 32,
+        borderRadius: 15,
         marginTop: 20
     },
     button_text: {
@@ -52,6 +51,15 @@ const main_styles = StyleSheet.create({
 
 export function LoginScreen({ navigation }) {
 
+    // Configure styles for header bar
+    navigation.setOptions({
+        headerTitle: '',
+        headerStyle: {
+            height: 0,
+            backgroundColor: 'black',
+        },
+    });
+
     // Handle navigation to main page
     function handle_login() {
         navigation.reset({index: 0, routes: [{name: 'Main'}]});
@@ -59,6 +67,7 @@ export function LoginScreen({ navigation }) {
 
     return(
         <View style={main_styles.page}>
+            <Image source={require('../assets/login/header-image.png')} />
             <Text style={main_styles.header}>Login With Lif</Text>
             <TextInput style={main_styles.input} placeholder="Username" placeholderTextColor="#A9A9A9" />
             <TextInput style={main_styles.input} placeholder="Password" placeholderTextColor="#A9A9A9" secureTextEntry={true} />
