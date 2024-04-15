@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Linking, TextInput, Image, } from "react-native";
+import Config from 'react-native-config'
 
 // Main stylesheet for login page
 const main_styles = StyleSheet.create({
@@ -46,7 +47,7 @@ const main_styles = StyleSheet.create({
     },
     create_account_text: {
         color: 'orange'
-    }
+    },
 });
 
 export function LoginScreen({ navigation }) {
@@ -56,13 +57,17 @@ export function LoginScreen({ navigation }) {
         headerTitle: '',
         headerStyle: {
             height: 0,
-            backgroundColor: 'black',
+            backgroundColor: 'white',
         },
     });
 
     // Handle navigation to main page
     function handle_login() {
-        navigation.reset({index: 0, routes: [{name: 'Main'}]});
+        // Test env variables
+        console.log(Config.AUTH_URL);
+
+        // Un-comment later once needed \/
+        //navigation.reset({index: 0, routes: [{name: 'Main'}]});
     }
 
     return(
@@ -74,7 +79,11 @@ export function LoginScreen({ navigation }) {
             <TouchableOpacity style={main_styles.button} onPress={handle_login}>
                 <Text style={main_styles.button_text}>Login</Text>
             </TouchableOpacity>
-            <Text style={main_styles.bottom_text}>Don't have an account? <Text style={main_styles.create_account_text}>Create One!</Text></Text>
+            <TouchableOpacity onPress={() => Linking.openURL("https://my.lifplatforms.com/#/create_account")}>
+                <Text style={main_styles.bottom_text}>
+                    Don't have an account? <Text style={main_styles.create_account_text}>Create One!</Text>
+                </Text>
+            </TouchableOpacity>  
         </View>
     )
 }
