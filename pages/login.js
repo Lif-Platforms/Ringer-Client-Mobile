@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, Linking, TextInput, Image } from "react-native";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import * as SecureStore from 'expo-secure-store';
 import styles from "../styles/login/style";
 import getEnvVars from "../variables";
 
@@ -17,6 +18,10 @@ export function LoginScreen({ navigation }) {
             headerTintColor: 'white',
         });    
     }, [navigation]);
+
+    async function secureSave(key, value) {
+        await SecureStore.setItemAsync(key, value);
+    }
 
     // Handle navigation to main page
     function handle_login() {
@@ -38,12 +43,19 @@ export function LoginScreen({ navigation }) {
         })
         .then((response) => {
             if (response.ok) {
-                navigation.reset({index: 0, routes: [{name: 'Main'}]});
+                return response.json()
             } else if (response.status === 401){
                 throw new Error("Incorrect Username or Password");
             } else {
                 throw new Error("Something Went Wrong!");
             }
+        })
+        .then((data) => {
+            // Save username and token for later
+            secureSave("username", username);
+            secureSave("token", data.token);
+
+            navigation.reset({index: 0, routes: [{name: 'Main'}]});
         })
         .catch((err) => {
             console.error(err);
