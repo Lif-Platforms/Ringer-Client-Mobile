@@ -1,87 +1,87 @@
-import { View, Text, TouchableOpacity, StyleSheet, Linking, TextInput, Image, } from "react-native";
-import Config from 'react-native-config'
-
-// Main stylesheet for login page
-const main_styles = StyleSheet.create({
-    page: {
-        backgroundColor: '#160900',
-        height: '100%'
-    },
-    header: {
-        color: 'white',
-        alignSelf: 'center',
-        fontSize: 50,
-        fontWeight: 'bold',
-        marginTop: 10,
-        marginBottom: 20
-    },
-    input: {
-        alignSelf: "center",
-        color: 'white',
-        backgroundColor: "#1C1C1C",
-        borderWidth: 0,
-        width: 330,
-        fontSize: 24,
-        padding: 15,
-        borderRadius: 16,
-        marginTop: 20
-    },
-    button: {
-        backgroundColor: 'orange',
-        width: 170,
-        alignSelf: 'center',
-        padding: 15,
-        borderRadius: 15,
-        marginTop: 20
-    },
-    button_text: {
-        textAlign: 'center',
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 25
-    },
-    bottom_text: {
-        color: 'white',
-        textAlign: "center",
-        marginTop: 30
-    },
-    create_account_text: {
-        color: 'orange'
-    },
-});
+import { View, Text, TouchableOpacity, Linking, TextInput, Image } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import styles from "../styles/login/style";
+import getEnvVars from "../variables";
 
 export function LoginScreen({ navigation }) {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [loginStatus, setLoginStatus] = useState('');
+    const [editable, setEditable] = useState();
 
     // Configure styles for header bar
-    navigation.setOptions({
-        headerTitle: '',
-        headerStyle: {
-            height: 0,
-            backgroundColor: 'white',
-        },
-    });
+    useEffect(() => {
+        navigation.setOptions({
+            headerTitle: '',
+            headerShown: false,
+            headerTintColor: 'white',
+        });    
+    }, [navigation]);
 
     // Handle navigation to main page
     function handle_login() {
-        // Test env variables
-        console.log(Config.AUTH_URL);
+        // Get auth url
+        const auth_url = getEnvVars.auth_url;
 
-        // Un-comment later once needed \/
-        //navigation.reset({index: 0, routes: [{name: 'Main'}]});
+        // Disable username and password entries
+        setEditable(false);
+
+        // Create form data for request
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("password", password);
+
+        // Make request to auth server
+        fetch(`${auth_url}/auth/login`, {
+            method: "POST",
+            body: formData
+        })
+        .then((response) => {
+            if (response.ok) {
+                navigation.reset({index: 0, routes: [{name: 'Main'}]});
+            } else if (response.status === 401){
+                throw new Error("Incorrect Username or Password");
+            } else {
+                throw new Error("Something Went Wrong!");
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            setLoginStatus(err.message);
+            setEditable(true);
+        })
     }
 
     return(
-        <View style={main_styles.page}>
-            <Image source={require('../assets/login/header-image.png')} />
-            <Text style={main_styles.header}>Login With Lif</Text>
-            <TextInput style={main_styles.input} placeholder="Username" placeholderTextColor="#A9A9A9" />
-            <TextInput style={main_styles.input} placeholder="Password" placeholderTextColor="#A9A9A9" secureTextEntry={true} />
-            <TouchableOpacity style={main_styles.button} onPress={handle_login}>
-                <Text style={main_styles.button_text}>Login</Text>
+        <View style={styles.page}>
+            <Image
+                resizeMode="contain"
+                source={require('../assets/login/header_image.png')}
+                onError={(error) => console.log('Error loading image:', error)}
+            />
+            <Text style={styles.header}>Login With Lif</Text>
+            <TextInput 
+                style={styles.input} 
+                placeholder="Username" 
+                placeholderTextColor="#A9A9A9"
+                onChangeText={text => setUsername(text)}
+                editable={editable}
+            />
+            <TextInput 
+                style={styles.input} 
+                placeholder="Password" 
+                placeholderTextColor="#A9A9A9" 
+                secureTextEntry={true} 
+                onChangeText={text => setPassword(text)}
+                editable={editable}
+            />
+            <TouchableOpacity style={styles.button} onPress={handle_login}>
+                <Text style={styles.button_text}>Login</Text>
             </TouchableOpacity>
+            <Text style={styles.login_status}>{loginStatus}</Text>
             <TouchableOpacity onPress={() => Linking.openURL("https://my.lifplatforms.com/#/create_account")}>
-                <Text style={main_styles.bottom_text}>
-                    Don't have an account? <Text style={main_styles.create_account_text}>Create One!</Text>
+                <Text style={styles.bottom_text}>
+                    Don't have an account? <Text style={styles.create_account_text}>Create One!</Text>
                 </Text>
             </TouchableOpacity>  
         </View>
