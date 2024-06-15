@@ -1,21 +1,89 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, TouchableOpacity, Linking, TextInput, Image } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import styles from "../styles/login/style";
+import getEnvVars from "../variables";
 
 export function LoginScreen({ navigation }) {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [loginStatus, setLoginStatus] = useState('');
+    const [editable, setEditable] = useState();
+
+    // Configure styles for header bar
+    useEffect(() => {
+        navigation.setOptions({
+            headerTitle: '',
+            headerShown: false,
+            headerTintColor: 'white',
+        });    
+    }, [navigation]);
 
     // Handle navigation to main page
-    function handle_navigation() {
-        navigation.reset({index: 0, routes: [{name: 'Main'}]});
+    function handle_login() {
+        // Get auth url
+        const auth_url = getEnvVars.auth_url;
+
+        // Disable username and password entries
+        setEditable(false);
+
+        // Create form data for request
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("password", password);
+
+        // Make request to auth server
+        fetch(`${auth_url}/auth/login`, {
+            method: "POST",
+            body: formData
+        })
+        .then((response) => {
+            if (response.ok) {
+                navigation.reset({index: 0, routes: [{name: 'Main'}]});
+            } else if (response.status === 401){
+                throw new Error("Incorrect Username or Password");
+            } else {
+                throw new Error("Something Went Wrong!");
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            setLoginStatus(err.message);
+            setEditable(true);
+        })
     }
 
     return(
-        <View>
-            <Text>Login Screen</Text>
-            <Button
-            title="Main Page"
-            onPress={() =>
-                handle_navigation()
-            }
+        <View style={styles.page}>
+            <Image
+                resizeMode="contain"
+                source={require('../assets/login/header_image.png')}
+                onError={(error) => console.log('Error loading image:', error)}
             />
+            <Text style={styles.header}>Login With Lif</Text>
+            <TextInput 
+                style={styles.input} 
+                placeholder="Username" 
+                placeholderTextColor="#A9A9A9"
+                onChangeText={text => setUsername(text)}
+                editable={editable}
+            />
+            <TextInput 
+                style={styles.input} 
+                placeholder="Password" 
+                placeholderTextColor="#A9A9A9" 
+                secureTextEntry={true} 
+                onChangeText={text => setPassword(text)}
+                editable={editable}
+            />
+            <TouchableOpacity style={styles.button} onPress={handle_login}>
+                <Text style={styles.button_text}>Login</Text>
+            </TouchableOpacity>
+            <Text style={styles.login_status}>{loginStatus}</Text>
+            <TouchableOpacity onPress={() => Linking.openURL("https://my.lifplatforms.com/#/create_account")}>
+                <Text style={styles.bottom_text}>
+                    Don't have an account? <Text style={styles.create_account_text}>Create One!</Text>
+                </Text>
+            </TouchableOpacity>  
         </View>
     )
 }
