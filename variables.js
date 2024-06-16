@@ -2,10 +2,12 @@ import Constants from 'expo-constants';
 
 const ENV = {
   dev: {
-    auth_url: "http://localhost:8002"
+    auth_url: "http://localhost:8002",
+    ringer_url: "http://localhost:8001"
   },
   prod: {
-    auth_url: "https://api.auth.lifplatforms.com"
+    auth_url: "https://api.auth.lifplatforms.com",
+    ringer_url: "https://api.ringer.lifplatforms.com"
   }
 };
 
