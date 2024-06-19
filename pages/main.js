@@ -1,9 +1,10 @@
-import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StatusBar, Image, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import styles from "../styles/main/style";
 import BottomNavBar from "../global_components/bottom_navbar";
 import getEnvVars from "../variables";
 import * as SecureStore from 'expo-secure-store';
+import { useWebSocket } from "../scripts/websocket_handler";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -15,7 +16,7 @@ async function getValueFor(key) {
     }    
 }   
 
-function FriendsList() {
+function FriendsList({ navigation }) {
     const [friends, setFriends] = useState([]);
 
     async function get_auth_credentials() {
@@ -57,11 +58,18 @@ function FriendsList() {
         fetchFriends();
     }, []);
 
+    function handle_messages_navigate(username, conversation_id) {
+        navigation.push('Messages', {
+            username: username,
+            conversation_id: conversation_id
+        })
+    }
+
     return (
         <ScrollView contentContainerStyle={styles.friends_container}>
             {friends.length > 0 ? (
                 friends.map((friend, index) => (
-                    <TouchableOpacity key={index} style={styles.friendItem}>
+                    <TouchableOpacity key={index} style={styles.friendItem} onPress={() => handle_messages_navigate(friend.Username, friend.Id)}>
                         <Image
                             source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${friend.Username}.png` }}
                             style={styles.friendImage}
@@ -77,6 +85,8 @@ function FriendsList() {
 }
 
 export function MainScreen({ navigation }) {
+    const { connectWebSocket } = useWebSocket();
+
     // Configure styles for header bar
     useEffect(() => {
         navigation.setOptions({
@@ -90,15 +100,21 @@ export function MainScreen({ navigation }) {
         });    
     }, [navigation]);
 
+    useEffect(() => {
+        console.log("Connecting to websocket")
+        connectWebSocket(); // Connect WebSocket when HomeScreen mounts
+    }, []);
+
     return(
         <View style={styles.page}>
+            <StatusBar style="light" />
             <View style={styles.header}>
                 <Text style={styles.title}>People</Text>
                 <TouchableOpacity style={styles.add_button}>
                     <Image source={require("../assets/main/add_button.png")} />
                 </TouchableOpacity>
             </View>
-            <FriendsList />
+            <FriendsList navigation={navigation} />
             <BottomNavBar />
         </View>
     )

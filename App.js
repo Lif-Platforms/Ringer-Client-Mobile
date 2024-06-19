@@ -5,6 +5,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 // Page imports
 import { MainScreen } from './pages/main';
 import { LoginScreen } from './pages/login';
+import { MessagesPage } from "./pages/messages";
+
+// Import websocket provider
+import { WebSocketProvider } from './scripts/websocket_handler';
 
 // Create navigation stack instance
 const Stack = createStackNavigator();
@@ -13,19 +17,34 @@ const Stack = createStackNavigator();
 // Mainly responsible for structuring our routes
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
-          name="Main"
-          component={MainScreen}
-          options={{ title: 'Main Page' }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ title: 'Login Page' }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <WebSocketProvider>
+      <NavigationContainer>
+        <Stack.Navigator 
+          initialRouteName="Login"
+          screenOptions={{
+            headerMode: 'screen', // Keep the header static during transitions
+          }}
+        >
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ title: 'Login Page' }}
+          />
+          <Stack.Screen
+            name="Main"
+            component={MainScreen}
+            options={{ title: 'Main Page' }}
+          />
+          <Stack.Screen
+            name="Messages"
+            component={MessagesPage}
+            options={{ 
+              title: 'Messages Page', 
+              headerLeft: () => null,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </WebSocketProvider>
   );
 }
