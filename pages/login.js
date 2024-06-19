@@ -1,8 +1,9 @@
-import { View, Text, TouchableOpacity, Linking, TextInput, Image } from "react-native";
+import { View, Text, TouchableOpacity, StatusBar, Linking, TextInput, Image } from "react-native";
 import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 import styles from "../styles/login/style";
 import getEnvVars from "../variables";
+import { useWebSocket } from "../scripts/websocket_handler";
 
 export function LoginScreen({ navigation }) {
     const [username, setUsername] = useState('');
@@ -22,6 +23,8 @@ export function LoginScreen({ navigation }) {
     async function secureSave(key, value) {
         await SecureStore.setItemAsync(key, value);
     }
+
+    const { closeConnection, setIsLoggedIn_ } = useWebSocket();
 
     // Handle navigation to main page
     function handle_login() {
@@ -55,6 +58,9 @@ export function LoginScreen({ navigation }) {
             secureSave("username", username);
             secureSave("token", data.token);
 
+            // Set isLogged in to true for websocket
+            setIsLoggedIn_(true);
+
             navigation.reset({index: 0, routes: [{name: 'Main'}]});
         })
         .catch((err) => {
@@ -64,8 +70,14 @@ export function LoginScreen({ navigation }) {
         })
     }
 
+    useEffect(() => {
+        console.log("closing connection");
+        closeConnection();
+    }, []);
+
     return(
         <View style={styles.page}>
+            <StatusBar style="light" />
             <Image
                 resizeMode="contain"
                 source={require('../assets/login/header_image.png')}
