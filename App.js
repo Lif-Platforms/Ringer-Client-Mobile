@@ -6,7 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { MainScreen } from './pages/main';
 import { LoginScreen } from './pages/login';
 import { MessagesPage } from "./pages/messages";
-import { Notifications } from './pages/notifications';
+import { Notifications } from './pages/notifications'; 
+import { AddFriendPage } from './pages/add_friend';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
@@ -48,6 +49,11 @@ export default function App() {
             name="Notifications"
             component={Notifications}
             options={{ title: 'Notifications', animationEnabled: false }}
+          />
+          <Stack.Screen
+            name="Add Friend"
+            component={AddFriendPage}
+            options={{ title: 'Add Friend', headerLeft: () => null}}
           />
         </Stack.Navigator>
       </NavigationContainer>
