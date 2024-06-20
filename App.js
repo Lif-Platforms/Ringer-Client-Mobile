@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { MainScreen } from './pages/main';
 import { LoginScreen } from './pages/login';
 import { MessagesPage } from "./pages/messages";
+import { Notifications } from './pages/notifications';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
@@ -33,7 +34,7 @@ export default function App() {
           <Stack.Screen
             name="Main"
             component={MainScreen}
-            options={{ title: 'Main Page' }}
+            options={{ title: 'Main Page', animationEnabled: false }}
           />
           <Stack.Screen
             name="Messages"
@@ -42,6 +43,11 @@ export default function App() {
               title: 'Messages Page', 
               headerLeft: () => null,
             }}
+          />
+          <Stack.Screen
+            name="Notifications"
+            component={Notifications}
+            options={{ title: 'Notifications', animationEnabled: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>
