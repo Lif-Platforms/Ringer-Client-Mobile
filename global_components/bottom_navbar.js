@@ -1,13 +1,13 @@
-import { View,  TouchableOpacity, Image } from "react-native";
+import { View,  TouchableOpacity, Image, Animated } from "react-native";
 import styles from "../styles/components/bottom_nav/style";
 
-function BottomNavBar() {
+function BottomNavBar({ navigation }) {
     return (
         <View style={styles.navbar}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.replace("Main")}>
                 <Image source={require("../assets/bottom_nav/people_icon.png")} />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.replace("Notifications")}>
                 <Image source={require("../assets/bottom_nav/notification_icon.png")} />
             </TouchableOpacity>
             <TouchableOpacity>

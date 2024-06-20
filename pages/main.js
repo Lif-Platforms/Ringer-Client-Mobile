@@ -115,7 +115,7 @@ export function MainScreen({ navigation }) {
                 </TouchableOpacity>
             </View>
             <FriendsList navigation={navigation} />
-            <BottomNavBar />
+            <BottomNavBar navigation={navigation}/>
         </View>
     )
 }
