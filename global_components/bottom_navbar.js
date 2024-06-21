@@ -10,7 +10,7 @@ function BottomNavBar({ navigation }) {
             <TouchableOpacity onPress={() => navigation.replace("Notifications")}>
                 <Image source={require("../assets/bottom_nav/notification_icon.png")} />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.replace("Account")}>
                 <Image source={require("../assets/bottom_nav/profile_icon.png")} />
             </TouchableOpacity>
         </View>
