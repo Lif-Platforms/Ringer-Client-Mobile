@@ -8,6 +8,7 @@ import { LoginScreen } from './pages/login';
 import { MessagesPage } from "./pages/messages";
 import { Notifications } from './pages/notifications'; 
 import { AddFriendPage } from './pages/add_friend';
+import { AccountPage } from './pages/account';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
@@ -30,7 +31,7 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={LoginScreen}
-            options={{ title: 'Login Page' }}
+            options={{ title: 'Login Page', animationEnabled: false }}
           />
           <Stack.Screen
             name="Main"
@@ -54,6 +55,11 @@ export default function App() {
             name="Add Friend"
             component={AddFriendPage}
             options={{ title: 'Add Friend', headerLeft: () => null}}
+          />
+          <Stack.Screen
+            name="Account"
+            component={AccountPage}
+            options={{ title: 'Account', animationEnabled: false}}
           />
         </Stack.Navigator>
       </NavigationContainer>
