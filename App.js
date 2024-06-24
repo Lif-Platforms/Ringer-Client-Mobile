@@ -9,6 +9,7 @@ import { MessagesPage } from "./pages/messages";
 import { Notifications } from './pages/notifications'; 
 import { AddFriendPage } from './pages/add_friend';
 import { AccountPage } from './pages/account';
+import { SplashScreenComponent } from './pages/splash';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
@@ -28,6 +29,10 @@ export default function App() {
             headerMode: 'screen', // Keep the header static during transitions
           }}
         >
+          <Stack.Screen 
+            name="Splash" 
+            component={SplashScreenComponent} 
+          />
           <Stack.Screen
             name="Login"
             component={LoginScreen}
