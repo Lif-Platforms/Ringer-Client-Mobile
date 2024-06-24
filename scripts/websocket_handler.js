@@ -25,8 +25,7 @@ async function get_auth_credentials() {
 export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const webSocketRef = useRef(null);
-  const shouldReconnect = useRef(true); // Track if we should attempt to reconnect
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const shouldReconnect = useRef(false); // Track if we should attempt to reconnect
 
   useEffect(() => {
     // Attempt to connect when the component mounts
@@ -39,7 +38,7 @@ export const WebSocketProvider = ({ children }) => {
   }, []);
 
   const connectWebSocket = () => {
-    if (!webSocketRef.current & isLoggedIn) {
+    if (!webSocketRef.current) {
       webSocketRef.current = new WebSocket(`${getEnvVars.ringer_url_ws}/live_updates`);
 
       webSocketRef.current.onopen = async () => {
@@ -73,6 +72,8 @@ export const WebSocketProvider = ({ children }) => {
           });
         } else if ("ResponseType" in data & data.ResponseType === "MESSAGE_SENT") {
             eventEmitter.emit("Message_Sent");
+        } else if ("Status" in data && data.Status == "Ok") {
+          shouldReconnect.current = true;
         }
       };
 
@@ -97,12 +98,8 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
-  const setIsLoggedIn_ = (value) => {
-    setIsLoggedIn(value);
-  }
-
   return (
-    <WebSocketContext.Provider value={{ isConnected, connectWebSocket, sendMessage, closeConnection, setIsLoggedIn_ }}>
+    <WebSocketContext.Provider value={{ isConnected, connectWebSocket, sendMessage, closeConnection }}>
       {children}
     </WebSocketContext.Provider>
   );

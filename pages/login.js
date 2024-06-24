@@ -24,7 +24,7 @@ export function LoginScreen({ navigation }) {
         await SecureStore.setItemAsync(key, value);
     }
 
-    const { closeConnection, setIsLoggedIn_ } = useWebSocket();
+    const { closeConnection } = useWebSocket();
 
     // Handle navigation to main page
     function handle_login() {
@@ -58,9 +58,6 @@ export function LoginScreen({ navigation }) {
             secureSave("username", username);
             secureSave("token", data.token);
 
-            // Set isLogged in to true for websocket
-            setIsLoggedIn_(true);
-
             navigation.reset({index: 0, routes: [{name: 'Main'}]});
         })
         .catch((err) => {
@@ -69,11 +66,6 @@ export function LoginScreen({ navigation }) {
             setEditable(true);
         })
     }
-
-    useEffect(() => {
-        console.log("closing connection");
-        closeConnection();
-    }, []);
 
     return(
         <View style={styles.page}>

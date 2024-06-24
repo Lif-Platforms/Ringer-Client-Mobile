@@ -85,7 +85,7 @@ function FriendsList({ navigation }) {
 }
 
 export function MainScreen({ navigation }) {
-    const { connectWebSocket } = useWebSocket();
+    const { connectWebSocket, setIsLoggedIn_ } = useWebSocket();
 
     // Configure styles for header bar
     useEffect(() => {
