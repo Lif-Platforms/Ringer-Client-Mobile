@@ -5,8 +5,8 @@ import BottomNavBar from "../global_components/bottom_navbar";
 import getEnvVars from "../variables";
 import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
 // Get values from secure store
 async function getValueFor(key) {
