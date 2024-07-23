@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ringer-mobile",
-    "slug": "ringer-mobile",
+    "slug": "ringer-client-mobile",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
@@ -9,6 +9,12 @@
     "splash": {
       "image": "./assets/global/splash.png",
       "resizeMode": "cover"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2873c89f-ddd2-4ec5-8f5b-2406277488d5"
+      }
+    },
+    "owner": "lif_platforms"
   }
 }

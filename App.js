@@ -15,7 +15,7 @@ import { AddFriendPage } from './pages/add_friend';
 import { AccountPage } from './pages/account';
 
 // Import websocket provider
-import { WebSocketProvider, useWebSocket } from './scripts/websocket_handler';
+import { WebSocketProvider } from './scripts/websocket_handler';
 
 // Create navigation stack instance
 const Stack = createStackNavigator();
