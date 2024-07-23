@@ -4,7 +4,9 @@ import styles from "../styles/account/style";
 import BottomNavBar from "../global_components/bottom_navbar";
 import getEnvVars from "../variables";
 import * as SecureStore from 'expo-secure-store';
-import { WebSocketProvider, useWebSocket } from "../scripts/websocket_handler";
+import { useWebSocket } from "../scripts/websocket_handler";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -17,7 +19,7 @@ async function getValueFor(key) {
 }   
 
 export function AccountPage({ navigation }) {
-    const [username, setUsername] = useState("Superior125");
+    const [username, setUsername] = useState("");
     const [userPronouns, setUserPronouns] = useState();
     const [userBio, setUserBio] = useState();
 
@@ -81,6 +83,37 @@ export function AccountPage({ navigation }) {
     async function handle_logout() {
         // Close Websocket connection
         websocket.closeConnection();
+
+        // Get auth credentials
+        const credentials = await get_auth_credentials();
+
+        async function get_expo_push_token() {
+            try {
+                const push_token = (await Notifications.getExpoPushTokenAsync({
+                    projectId: Constants.expoConfig.extra.eas.projectId,
+                })).data;
+
+                return push_token;
+            } catch {
+                const push_token = "";
+                return push_token;
+            }
+        }
+        
+        // Get expo push token
+        const push_token = await get_expo_push_token();
+
+        // Unregister device for push notifications
+        await fetch(`${getEnvVars.ringer_url}/unregister_push_notifications/mobile`, {
+            method: "POST",
+            headers: {
+                username: credentials.username,
+                token: credentials.token
+            },
+            body: JSON.stringify({
+                "push-token": push_token
+            })
+        })
 
         await SecureStore.deleteItemAsync("username");
         await SecureStore.deleteItemAsync("token");
