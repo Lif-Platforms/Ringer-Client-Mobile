@@ -1,5 +1,5 @@
 import { Text, View, Image, ScrollView, TouchableOpacity, Linking } from "react-native";
-import { cloneElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../styles/account/style";
 import BottomNavBar from "../global_components/bottom_navbar";
 import getEnvVars from "../variables";
