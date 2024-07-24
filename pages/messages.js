@@ -1,4 +1,4 @@
-import { View, Text, Image, StatusBar, Dimensions, TextInput, KeyboardAvoidingView, ScrollView } from "react-native";
+import { View, Text, Image, StatusBar, Dimensions, TextInput, KeyboardAvoidingView, ScrollView, Alert } from "react-native";
 import styles from "../styles/messages/style";
 import { useEffect, useState, useRef } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -28,6 +28,7 @@ export function MessagesPage({ route, navigation }) {
     const [messageValue, setMessageValue] = useState("");
     const messagebox_ref = useRef();
     const [isSending, setIsSending] = useState(false);
+    const [isUnfriending, setIsUnfriending] = useState(false);
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
@@ -143,7 +144,61 @@ export function MessagesPage({ route, navigation }) {
         return () => {
             eventEmitter.off("Message_Sent", handle_message_sent);
         }
-    })
+    });
+
+    function handle_unfriend() {
+        async function unfriend_user(setIsUnfriending, conversation_id, navigation) {
+            setIsUnfriending(true);
+
+            // Get auth credentials
+            const credentials = await get_auth_credentials();
+
+            // Make request to server
+            fetch(`${getEnvVars.ringer_url}/remove_conversation/${conversation_id}`, {
+                method: "DELETE",
+                headers: {
+                    username: credentials.username,
+                    token: credentials.token
+                }
+            })
+            .then((response) => {
+                if (response.ok) {
+                    Alert.alert(
+                        "Success",
+                        "You unfriended this user.",
+                        [
+                            {
+                                text: "Ok",
+                                onPress: () => navigation.replace("Main")
+                            }
+                        ]
+                    );
+                } else {
+                    throw new Error("Request failed with status code: " + response.status);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                Alert.alert("Failed", "Something went wrong while attempting this action.")
+                setIsUnfriending(false);
+            })
+        }
+
+        Alert.alert(
+            "Unfriend User?",
+            "You will no longer be able to send or receive messages from this user.",
+            [
+                {
+                    text: "Cancel"
+                },
+                {
+                    text: "Yes, Do it",
+                    onPress: () => unfriend_user(setIsUnfriending, conversation_id, navigation)
+                }
+            ],
+            {cancelable: true}
+        )
+    }
 
     return (
         <View style={styles.page}>
@@ -218,7 +273,16 @@ export function MessagesPage({ route, navigation }) {
                         <Text style={styles.more_panel_section}>{userPronouns}</Text>
                         <Text style={styles.more_panel_section_title}>Bio</Text>
                         <Text style={styles.more_panel_section}>{userBio}</Text>
-                    </View>  
+                    </View>
+                    <View style={styles.more_panel_bottom_buttons}>
+                        <TouchableOpacity style={styles.more_panel_bottom_button} onPress={handle_unfriend}>
+                            {isUnfriending ? (
+                                <Text style={styles.more_panel_bottom_button_text}>Unfriending...</Text>
+                            ) : (
+                                <Text style={styles.more_panel_bottom_button_text}>Unfriend</Text>
+                            )}
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </SlidingUpPanel>
         </View>

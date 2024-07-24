@@ -150,6 +150,22 @@ const styles = StyleSheet.create({
     message_loading: {
         color: "white",
         textAlign: "center"
+    },
+    more_panel_bottom_buttons: {
+        display: "flex",
+        justifyContent: "center",
+        padding: 20
+    },
+    more_panel_bottom_button: {
+        backgroundColor: "#FF8A00",
+        padding: 10,
+        borderRadius: "100%"
+    },
+    more_panel_bottom_button_text: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center",
+        fontSize: 20
     }
 })
 
