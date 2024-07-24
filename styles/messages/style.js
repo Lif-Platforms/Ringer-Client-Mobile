@@ -159,7 +159,8 @@ const styles = StyleSheet.create({
     more_panel_bottom_button: {
         backgroundColor: "#FF8A00",
         padding: 10,
-        borderRadius: "100%"
+        borderRadius: "100%",
+        marginBottom: 15
     },
     more_panel_bottom_button_text: {
         color: "white",
