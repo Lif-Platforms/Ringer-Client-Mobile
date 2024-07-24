@@ -169,7 +169,7 @@ export function MessagesPage({ route, navigation }) {
                         [
                             {
                                 text: "Ok",
-                                onPress: () => navigation.replace("Main")
+                                onPress: () => navigation.reset({index: 0, routes: [{name: 'Main'}]})
                             }
                         ]
                     );
