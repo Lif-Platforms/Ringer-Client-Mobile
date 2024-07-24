@@ -1,4 +1,4 @@
-import { View, Text, Image, StatusBar, Dimensions, TextInput, KeyboardAvoidingView, ScrollView, Alert } from "react-native";
+import { View, Text, Image, StatusBar, Dimensions, TextInput, KeyboardAvoidingView, ScrollView, Alert, Platform } from "react-native";
 import styles from "../styles/messages/style";
 import { useEffect, useState, useRef } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -29,6 +29,7 @@ export function MessagesPage({ route, navigation }) {
     const messagebox_ref = useRef();
     const [isSending, setIsSending] = useState(false);
     const [isUnfriending, setIsUnfriending] = useState(false);
+    const [isReporting, setIsReporting] = useState(false);
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
@@ -199,6 +200,67 @@ export function MessagesPage({ route, navigation }) {
             {cancelable: true}
         )
     }
+    
+    function handle_user_report() {
+        function submit_report(reason, username, content, setIsReporting) {
+            setIsReporting(true);
+
+            // Create form data for request
+            const formData = new FormData();
+            formData.append("user", username);
+            formData.append("reason", reason);
+            formData.append("service", "Ringer");
+
+            // Format messages for report
+            let report_content = "";
+
+            content.forEach(message => {
+                report_content += `[${message.Author}]\n${message.Message}\n\n`;
+            });
+
+            // Add content to form data
+            formData.append("content", report_content);
+
+            // Make request to server
+            fetch(`${getEnvVars.auth_url}/account/report`, {
+                method: "POST",
+                body: formData
+            })
+            .then((response) => {
+                if (response.ok) {
+                    setIsReporting(false);
+                    Alert.alert("Done", "Your report has been sent to Lif Platforms for evaluation.");
+                } else {
+                    throw new Error("Request failed with status code: " + response.status);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                setIsReporting(false);
+                Alert.alert("Report Failed", "Something went wrong when submitting your report. Try again later.");
+            })
+        }
+
+        if (Platform.OS === "ios") {
+            Alert.prompt(
+                'Report User',
+                'Please specify the reason for your report.',
+                [
+                    {
+                        text: 'Cancel',
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'OK',
+                        onPress: (text) => submit_report(text, username, messages, setIsReporting),
+                    },
+                ],
+                'plain-text'
+            );
+        } else {
+            Alert.alert("Sorry", "This feature isn't available on Android yet.")
+        }
+    }
 
     return (
         <View style={styles.page}>
@@ -281,6 +343,13 @@ export function MessagesPage({ route, navigation }) {
                             ) : (
                                 <Text style={styles.more_panel_bottom_button_text}>Unfriend</Text>
                             )}
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.more_panel_bottom_button} onPress={handle_user_report}>
+                            {isReporting ? (
+                                <Text style={styles.more_panel_bottom_button_text}>Reporting...</Text>
+                            ) : (
+                                <Text style={styles.more_panel_bottom_button_text}>Report</Text>
+                            )}                        
                         </TouchableOpacity>
                     </View>
                 </View>
