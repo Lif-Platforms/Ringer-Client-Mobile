@@ -16,5 +16,6 @@
       }
     },
     "owner": "lif_platforms"
-  }
+  },
+  "bundleIdentifier": "com.lifplatforms.ringer"
 }
