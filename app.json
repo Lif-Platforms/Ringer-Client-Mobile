@@ -15,7 +15,9 @@
         "projectId": "2873c89f-ddd2-4ec5-8f5b-2406277488d5"
       }
     },
-    "owner": "lif_platforms"
-  },
-  "bundleIdentifier": "com.lifplatforms.ringer"
+    "owner": "lif_platforms",
+    "ios": {
+      "bundleIdentifier": "com.lifplatforms.ringer"
+    }
+  }
 }
