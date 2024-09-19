@@ -39,6 +39,8 @@ export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [initialRoute, setInitialRoute] = useState('Login');
 
+  console.log("app starting")
+
   // Get auth credentials from secure storage
   async function get_credentials() {
     const username = await getValueFor("username");

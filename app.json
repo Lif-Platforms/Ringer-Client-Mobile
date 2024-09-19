@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "ringer-client-mobile",
+    "name": "Ringer",
     "slug": "ringer-client-mobile",
-    "displayName": "Ringer",
     "version": "1.0.0",
     "owner": "lif_platforms",
     "orientation": "portrait",
     "icon": "./assets/global/icon.png",
     "userInterfaceStyle": "light",
+    "updates": { "enabled": false },
     "splash": {
       "image": "./assets/global/splash.png",
       "resizeMode": "contain",
@@ -15,7 +15,8 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.lifplatforms.ringer"
+      "bundleIdentifier": "com.lifplatforms.ringer",
+      "jsEngine": "hermes"
     },
     "android": {
       "adaptiveIcon": {
