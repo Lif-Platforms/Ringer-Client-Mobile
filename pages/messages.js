@@ -31,6 +31,7 @@ export function MessagesPage({ route, navigation }) {
     const [isUnfriending, setIsUnfriending] = useState(false);
     const [isReporting, setIsReporting] = useState(false);
     const panelRef = useRef();
+    const [showPanel, setShowPanel] = useState(false);
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
@@ -263,6 +264,19 @@ export function MessagesPage({ route, navigation }) {
         }
     }
 
+    function handle_more_panel_open() {
+        setShowPanel(true);
+      
+        const checkPanelRef = () => {
+          if (panelRef.current) {
+            panelRef.current.show({ toValue: Dimensions.get('window').height / 2 });
+          } else {
+            setTimeout(checkPanelRef, 1); // Check again after 100ms
+          }
+        };
+        checkPanelRef();
+    }
+
     return (
         <View style={styles.page}>
             <StatusBar style="light" />
@@ -277,7 +291,7 @@ export function MessagesPage({ route, navigation }) {
                     />
                     <Text style={styles.conversation_user}>{username}</Text>
                 </View>
-                <TouchableOpacity style={styles.more_icon_container} onPress={() => panelRef.current.show({toValue: Dimensions.get('window').height / 2})}>
+                <TouchableOpacity style={styles.more_icon_container} onPress={handle_more_panel_open}>
                     <Image style={styles.more_icon} source={require("../assets/messages/more_icon.png")} />
                 </TouchableOpacity>
             </View>
@@ -309,6 +323,7 @@ export function MessagesPage({ route, navigation }) {
                 behavior="padding" 
                 style={styles.message_bar_container}
                 keyboardVerticalOffset={65}
+                pointerEvents="box-none"
             >
                 <TextInput 
                     style={styles.message_box} 
@@ -326,39 +341,42 @@ export function MessagesPage({ route, navigation }) {
                     <Image style={styles.send_button} source={require("../assets/messages/send_button.png")} />
                 </TouchableOpacity>
             </KeyboardAvoidingView>
-            <SlidingUpPanel 
-                ref={panelRef} 
-                snappingPoints={[Dimensions.get('window').height / 2]}
-                pointerEvents="box-none"
-            >
-                <View style={styles.more_panel} pointerEvents="box-none">
-                    <Image style={styles.more_panel_banner} source={{uri: `${getEnvVars.auth_url}/profile/get_banner/${username}.png?timestamp=${new Date().getTime()}`}} />
-                    <Image style={styles.more_panel_avatar} source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png?timestamp=${new Date().getTime()}`}} />
-                    <Text style={styles.more_panel_username}>{username}</Text>
-                    <View style={styles.more_panel_info}>
-                        <Text style={styles.more_panel_section_title}>Pronouns</Text>
-                        <Text style={styles.more_panel_section}>{userPronouns}</Text>
-                        <Text style={styles.more_panel_section_title}>Bio</Text>
-                        <Text style={styles.more_panel_section}>{userBio}</Text>
+            {showPanel && (
+                <SlidingUpPanel 
+                    ref={panelRef} 
+                    snappingPoints={[Dimensions.get('window').height / 2]}
+                    pointerEvents="auto"
+                    onBottomReached={() => setShowPanel(false)}
+                >
+                    <View style={styles.more_panel} pointerEvents="box-none">
+                        <Image style={styles.more_panel_banner} source={{uri: `${getEnvVars.auth_url}/profile/get_banner/${username}.png?timestamp=${new Date().getTime()}`}} />
+                        <Image style={styles.more_panel_avatar} source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png?timestamp=${new Date().getTime()}`}} />
+                        <Text style={styles.more_panel_username}>{username}</Text>
+                        <View style={styles.more_panel_info}>
+                            <Text style={styles.more_panel_section_title}>Pronouns</Text>
+                            <Text style={styles.more_panel_section}>{userPronouns}</Text>
+                            <Text style={styles.more_panel_section_title}>Bio</Text>
+                            <Text style={styles.more_panel_section}>{userBio}</Text>
+                        </View>
+                        <View style={styles.more_panel_bottom_buttons}>
+                            <TouchableOpacity style={styles.more_panel_bottom_button} onPress={handle_unfriend}>
+                                {isUnfriending ? (
+                                    <Text style={styles.more_panel_bottom_button_text}>Unfriending...</Text>
+                                ) : (
+                                    <Text style={styles.more_panel_bottom_button_text}>Unfriend</Text>
+                                )}
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.more_panel_bottom_button} onPress={handle_user_report}>
+                                {isReporting ? (
+                                    <Text style={styles.more_panel_bottom_button_text}>Reporting...</Text>
+                                ) : (
+                                    <Text style={styles.more_panel_bottom_button_text}>Report</Text>
+                                )}                        
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    <View style={styles.more_panel_bottom_buttons}>
-                        <TouchableOpacity style={styles.more_panel_bottom_button} onPress={handle_unfriend}>
-                            {isUnfriending ? (
-                                <Text style={styles.more_panel_bottom_button_text}>Unfriending...</Text>
-                            ) : (
-                                <Text style={styles.more_panel_bottom_button_text}>Unfriend</Text>
-                            )}
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.more_panel_bottom_button} onPress={handle_user_report}>
-                            {isReporting ? (
-                                <Text style={styles.more_panel_bottom_button_text}>Reporting...</Text>
-                            ) : (
-                                <Text style={styles.more_panel_bottom_button_text}>Report</Text>
-                            )}                        
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </SlidingUpPanel>
+                </SlidingUpPanel>
+            )}
         </View>
     )
 }
