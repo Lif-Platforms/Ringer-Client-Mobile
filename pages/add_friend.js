@@ -55,7 +55,7 @@ export function AddFriendPage({ navigation }) {
         })
         .then((response) => {
             if (response.ok) {
-                alert("User Added!");
+                alert("User Added!", "You send a friend request to this user.");
                 navigation.goBack();
             } else {
                 throw new Error("Request failed! Status code: " + response.status);
@@ -64,7 +64,7 @@ export function AddFriendPage({ navigation }) {
         .catch((error) => {
             console.error(error);
             setAddButtonText("Add")
-            alert("Something Went Wrong!")
+            alert("Error", "Something Went Wrong!")
         })
     }
 

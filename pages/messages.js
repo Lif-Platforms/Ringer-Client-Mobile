@@ -30,6 +30,7 @@ export function MessagesPage({ route, navigation }) {
     const [isSending, setIsSending] = useState(false);
     const [isUnfriending, setIsUnfriending] = useState(false);
     const [isReporting, setIsReporting] = useState(false);
+    const panelRef = useRef();
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
@@ -276,7 +277,7 @@ export function MessagesPage({ route, navigation }) {
                     />
                     <Text style={styles.conversation_user}>{username}</Text>
                 </View>
-                <TouchableOpacity style={styles.more_icon_container} onPress={() => this._panel.show({toValue: Dimensions.get('window').height / 2})}>
+                <TouchableOpacity style={styles.more_icon_container} onPress={() => panelRef.current.show({toValue: Dimensions.get('window').height / 2})}>
                     <Image style={styles.more_icon} source={require("../assets/messages/more_icon.png")} />
                 </TouchableOpacity>
             </View>
@@ -314,7 +315,10 @@ export function MessagesPage({ route, navigation }) {
                     ref={messagebox_ref}
                     placeholder={`Message ${username}`} 
                     placeholderTextColor="#767676"
-                    onFocus={() => setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 100)}
+                    onFocus={(e) => {
+                        e.stopPropagation(); // Ensure it doesn't propagate to parent elements
+                        setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 100);
+                    }}
                     onChangeText={text => setMessageValue(text)}
                     editable={!isSending}
                 />
@@ -323,10 +327,11 @@ export function MessagesPage({ route, navigation }) {
                 </TouchableOpacity>
             </KeyboardAvoidingView>
             <SlidingUpPanel 
-                ref={c => this._panel = c} 
+                ref={panelRef} 
                 snappingPoints={[Dimensions.get('window').height / 2]}
+                pointerEvents="box-none"
             >
-                <View style={styles.more_panel}>
+                <View style={styles.more_panel} pointerEvents="box-none">
                     <Image style={styles.more_panel_banner} source={{uri: `${getEnvVars.auth_url}/profile/get_banner/${username}.png?timestamp=${new Date().getTime()}`}} />
                     <Image style={styles.more_panel_avatar} source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png?timestamp=${new Date().getTime()}`}} />
                     <Text style={styles.more_panel_username}>{username}</Text>

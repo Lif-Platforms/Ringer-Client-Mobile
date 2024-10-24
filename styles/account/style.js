@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         height: 150,
         marginLeft: "auto",
         marginRight: "auto",
-        borderRadius: "100%",
+        borderRadius: 100,
         transform: [
             {translateY: -75}
         ]
