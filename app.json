@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Ringer",
+    "slug": "ringer-client-mobile",
+    "version": "1.0.0",
+    "owner": "lif_platforms",
+    "orientation": "portrait",
+    "icon": "./assets/global/icon.png",
+    "userInterfaceStyle": "light",
+    "updates": {
+      "enabled": false
+    },
+    "splash": {
+      "image": "./assets/global/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "enabled": true
+      }
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.lifplatforms.ringer",
+      "jsEngine": "hermes"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/global/icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.lifplatforms.ringer"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2873c89f-ddd2-4ec5-8f5b-2406277488d5"
+      }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "newArchEnabled": true
+          },
+          "android": {
+            "newArchEnabled": true
+          }
+        }
+      ]
+    ]
+  }
+}
