@@ -1,5 +1,3 @@
-import Constants from 'expo-constants';
-
 const ENV = {
   dev: {
     auth_url: "http://localhost:8002",
@@ -13,10 +11,13 @@ const ENV = {
   }
 };
 
-function getEnvVars(env = "") {
-  if (env === null || env === undefined || env === "") return ENV.dev;
-  if (env.indexOf("dev") !== -1) return ENV.dev;
-  if (env.indexOf("prod") !== -1) return ENV.prod;
+function getEnvVars(env = __DEV__) {
+  if (env) {
+    console.log('detected dev env');
+    return ENV.dev;
+  } else {
+    return ENV.prod;
+  }
 }
 
-export default getEnvVars(Constants.expoConfig.releaseChannel);
+export default getEnvVars();
