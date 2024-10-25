@@ -72,7 +72,7 @@ export function AccountPage({ navigation }) {
             const response = await fetch(`${getEnvVars.auth_url}/profile/get_bio/${username}`)
 
             if (response.ok) {
-                const bio = (await response.text()).slice(1, -1);
+                const bio = (await response.text()).slice(1, -1).replace(/\\n/g, '\n').replace(/\\r/g, '\r');
 
                 setUserBio(bio);
             }
@@ -125,8 +125,8 @@ export function AccountPage({ navigation }) {
         <View style={styles.page}>
             <ScrollView>
             <View>
-                <Image style={styles.user_banner} source={{uri: `${getEnvVars.auth_url}/profile/get_banner/${username}.png?timestamp=${new Date().getTime()}`}} onError={(err) => console.error(err)}/>
-                <Image style={styles.user_avatar} source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png?timestamp=${new Date().getTime()}`}} onError={(err) => console.error(err)}/>
+                <Image style={styles.user_banner} source={{uri: `${getEnvVars.auth_url}/profile/get_banner/${username}.png`}} onError={(err) => console.error(err)}/>
+                <Image style={styles.user_avatar} source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png`}} onError={(err) => console.error(err)}/>
                 <Text style={styles.header_text}>{username}</Text>
             </View>
             <View style={styles.account_buttons}>
