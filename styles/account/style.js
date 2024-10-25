@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
         height: 150,
         width: "100%",
         objectFit: "cover",
+        backgroundColor: "#151515"
     },
     user_avatar: {
         width: 150,
@@ -23,7 +24,10 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         transform: [
             {translateY: -75}
-        ]
+        ],
+        backgroundColor: "#373737",
+        borderColor: "#160900",
+        borderWidth: 8
     },
     header_text: {
         color: "white",
@@ -63,10 +67,10 @@ const styles = StyleSheet.create({
     user_info: {
         backgroundColor: "#151515",
         borderRadius: 10,
-        overflow: "hidden",
+        overflow: "scroll",
         color: "white",
         padding: 10,
-        marginBottom: 10
+        marginBottom: 10,
     }
 })
 
