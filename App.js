@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import getEnvVars from "./variables";
+import * as SystemUI from 'expo-system-ui';
 
 // Page imports
 import { MainScreen } from './pages/main';

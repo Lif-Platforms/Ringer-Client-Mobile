@@ -6,7 +6,7 @@
     "owner": "lif_platforms",
     "orientation": "portrait",
     "icon": "./assets/global/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "updates": {
       "enabled": false
     },
@@ -23,7 +23,8 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.lifplatforms.ringer",
-      "jsEngine": "hermes"
+      "jsEngine": "hermes",
+      "userInterfaceStyle": "dark"
     },
     "android": {
       "adaptiveIcon": {
