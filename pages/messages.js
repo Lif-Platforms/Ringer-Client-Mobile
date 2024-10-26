@@ -1,4 +1,4 @@
-import { View, Text, Image, StatusBar, Dimensions, TextInput, KeyboardAvoidingView, ScrollView, Alert, Platform } from "react-native";
+import { Keyboard, View, Text, Image, StatusBar, Dimensions, TextInput, KeyboardAvoidingView, ScrollView, Alert, Platform } from "react-native";
 import styles from "../styles/messages/style";
 import { useEffect, useState, useRef } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -32,6 +32,7 @@ export function MessagesPage({ route, navigation }) {
     const [isReporting, setIsReporting] = useState(false);
     const panelRef = useRef();
     const [showPanel, setShowPanel] = useState(false);
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
@@ -39,6 +40,22 @@ export function MessagesPage({ route, navigation }) {
 
         return { username: username_, token: token_ };
     }
+
+    // Listen for keyboard events
+    useEffect(() => {
+        const keyboardShow = Keyboard.addListener('keyboardDidShow', () => {
+            setKeyboardVisible(true);
+        });
+
+        const keyboardHide = Keyboard.addListener('keyboardDidHide', () => {
+            setKeyboardVisible(false);
+        });
+
+        return () => {
+            keyboardShow.remove();
+            keyboardHide.remove();
+        }
+    }, []);
 
     // Configure styles for header bar
     useEffect(() => {
@@ -266,6 +283,12 @@ export function MessagesPage({ route, navigation }) {
 
     function handle_more_panel_open() {
         setShowPanel(true);
+
+        // Check if keyboard is visible
+        // If so, dismiss it
+        if (isKeyboardVisible) {
+            Keyboard.dismiss();
+        }
       
         const checkPanelRef = () => {
           if (panelRef.current) {
