@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import getEnvVars from "../variables";
-import * as SecureStore from 'expo-secure-store';
-import { eventEmitter } from './emitter';
-import { AppState } from 'react-native';
-import * as Notifications from 'expo-notifications';
+import * as SecureStore from "expo-secure-store";
+import { eventEmitter } from "./emitter";
+import { AppState } from "react-native";
+import * as Notifications from "expo-notifications";
 
 const WebSocketContext = createContext(null);
 
@@ -51,7 +51,7 @@ export const WebSocketProvider = ({ children }) => {
   useEffect(() => {
     const appStateChangeEvent = AppState.addEventListener("change", () => {
       setAppState(AppState.currentState);
-    })
+    });
 
     return () => {
       appStateChangeEvent.remove();
@@ -94,9 +94,9 @@ export const WebSocketProvider = ({ children }) => {
             id: data.Id,
             message: data.Message
           });
-          
+
           // Send client notification if user has app suspended
-          if (appState !== 'active' && data.Message.Author !== credentials.username) {
+          if (appState !== "active" && data.Message.Author !== credentials.username) {
             Notifications.scheduleNotificationAsync({
               content: {
                 title: data.Message.Author,
