@@ -1,9 +1,19 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import getEnvVars from "../variables";
-import * as SecureStore from 'expo-secure-store';
-import { eventEmitter } from './emitter';
+import * as SecureStore from "expo-secure-store";
+import { eventEmitter } from "./emitter";
+import { AppState } from "react-native";
+import * as Notifications from "expo-notifications";
 
 const WebSocketContext = createContext(null);
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -26,6 +36,7 @@ export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const webSocketRef = useRef(null);
   const shouldReconnect = useRef(false); // Track if we should attempt to reconnect
+  const [appState, setAppState] = useState(AppState.currentState);
 
   useEffect(() => {
     // Attempt to connect when the component mounts
@@ -35,6 +46,16 @@ export const WebSocketProvider = ({ children }) => {
     return () => {
       closeConnection();
     };
+  }, []);
+
+  useEffect(() => {
+    const appStateChangeEvent = AppState.addEventListener("change", () => {
+      setAppState(AppState.currentState);
+    });
+
+    return () => {
+      appStateChangeEvent.remove();
+    }
   }, []);
 
   const connectWebSocket = () => {
@@ -61,15 +82,29 @@ export const WebSocketProvider = ({ children }) => {
         }
       };
 
-      webSocketRef.current.onmessage = (event) => {
+      webSocketRef.current.onmessage = async (event) => {
         const data = JSON.parse(event.data);
         console.log('WebSocket message received:', data);
+
+        // Get user credentials
+        const credentials = await get_auth_credentials();
 
         if (data.Type === "MESSAGE_UPDATE") {
           eventEmitter.emit("Message_Update", {
             id: data.Id,
             message: data.Message
           });
+
+          // Send client notification if user has app suspended
+          if (appState !== "active" && data.Message.Author !== credentials.username) {
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: data.Message.Author,
+                body: data.Message.Message,
+              },
+              trigger: null,
+            });
+          }
         } else if ("ResponseType" in data & data.ResponseType === "MESSAGE_SENT") {
             eventEmitter.emit("Message_Sent");
         } else if ("Status" in data && data.Status == "Ok") {
