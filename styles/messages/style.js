@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     message_bar_container: {
-        marginBottom: 60,
+        paddingBottom: 10,
         paddingLeft: 10,
         paddingRight: 10,
         display: "flex",
