@@ -1,4 +1,4 @@
-import { Keyboard, View, Text, Image, StatusBar, Dimensions, TextInput, KeyboardAvoidingView, ScrollView, Alert, Platform } from "react-native";
+import { Keyboard, View, Text, Image, StatusBar, Dimensions, ScrollView, Alert, Platform } from "react-native";
 import styles from "../styles/messages/style";
 import { useEffect, useState, useRef } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -7,7 +7,7 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import { eventEmitter } from "../scripts/emitter";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import MessageBox from "../components/messages page/message_box";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -27,7 +27,6 @@ export function MessagesPage({ route, navigation }) {
     const scrollViewRef = useRef();
     const { sendMessage } = useWebSocket();
     const [messageValue, setMessageValue] = useState("");
-    const messagebox_ref = useRef();
     const [isSending, setIsSending] = useState(false);
     const [isUnfriending, setIsUnfriending] = useState(false);
     const [isReporting, setIsReporting] = useState(false);
@@ -126,14 +125,6 @@ export function MessagesPage({ route, navigation }) {
         }
         get_friends();
     }, []);
-
-    function handle_message_send() {
-        setIsSending(true);
-        sendMessage(messageValue, conversation_id);
-
-        // Clear message box
-        messagebox_ref.current.clear();
-    }
 
     // Add event listener for message updates
     useEffect(() => {
@@ -295,7 +286,7 @@ export function MessagesPage({ route, navigation }) {
           if (panelRef.current) {
             panelRef.current.show({ toValue: Dimensions.get('window').height / 2 });
           } else {
-            setTimeout(checkPanelRef, 1); // Check again after 100ms
+            setTimeout(checkPanelRef, 1); // Check again after 1ms
           }
         };
         checkPanelRef();
@@ -343,29 +334,16 @@ export function MessagesPage({ route, navigation }) {
                     <Text>Error Loading messages</Text>
                 )}
             </ScrollView>
-            <KeyboardAwareScrollView
-                style={{ flex: 1 }}
-                contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
-                keyboardShouldPersistTaps="handled"
-            >
-                <View style={styles.message_bar_container}>
-                    <TextInput
-                        style={styles.message_box}
-                        ref={messagebox_ref}
-                        placeholder={`Message ${username}`}
-                        placeholderTextColor="#767676"
-                        onFocus={(e) => {
-                            e.stopPropagation();
-                        setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 100);
-                        }}
-                        onChangeText={text => setMessageValue(text)}
-                        editable={!isSending}
-                    />
-                    <TouchableOpacity onPress={handle_message_send} disabled={isSending}>
-                        <Image style={styles.send_button} source={require("../assets/messages/send_button.png")} />
-                    </TouchableOpacity>
-                </View>
-            </KeyboardAwareScrollView>
+            <MessageBox
+                isSending={isSending}
+                username={username}
+                setMessageValue={setMessageValue}
+                sendMessage={sendMessage}
+                conversation_id={conversation_id}
+                messageValue={messageValue}
+                setIsSending={setIsSending}
+                scrollViewRef={scrollViewRef}
+            />
             {showPanel && (
                 <SlidingUpPanel 
                     ref={panelRef} 
