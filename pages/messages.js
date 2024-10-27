@@ -7,6 +7,7 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import { eventEmitter } from "../scripts/emitter";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -319,28 +320,29 @@ export function MessagesPage({ route, navigation }) {
                     <Text>Error Loading messages</Text>
                 )}
             </ScrollView>
-            <KeyboardAvoidingView 
-                behavior="padding" 
-                style={styles.message_bar_container}
-                keyboardVerticalOffset={65}
-                pointerEvents="box-none"
+            <KeyboardAwareScrollView
+                style={{ flex: 1 }}
+                contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
+                keyboardShouldPersistTaps="handled"
             >
-                <TextInput 
-                    style={styles.message_box} 
-                    ref={messagebox_ref}
-                    placeholder={`Message ${username}`} 
-                    placeholderTextColor="#767676"
-                    onFocus={(e) => {
-                        e.stopPropagation(); // Ensure it doesn't propagate to parent elements
+                <View style={styles.message_bar_container}>
+                    <TextInput
+                        style={styles.message_box}
+                        ref={messagebox_ref}
+                        placeholder={`Message ${username}`}
+                        placeholderTextColor="#767676"
+                        onFocus={(e) => {
+                            e.stopPropagation();
                         setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 100);
-                    }}
-                    onChangeText={text => setMessageValue(text)}
-                    editable={!isSending}
-                />
-                <TouchableOpacity onPress={handle_message_send} disabled={isSending}>
-                    <Image style={styles.send_button} source={require("../assets/messages/send_button.png")} />
-                </TouchableOpacity>
-            </KeyboardAvoidingView>
+                        }}
+                        onChangeText={text => setMessageValue(text)}
+                        editable={!isSending}
+                    />
+                    <TouchableOpacity onPress={handle_message_send} disabled={isSending}>
+                        <Image style={styles.send_button} source={require("../assets/messages/send_button.png")} />
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAwareScrollView>
             {showPanel && (
                 <SlidingUpPanel 
                     ref={panelRef} 
