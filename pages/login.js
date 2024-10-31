@@ -1,15 +1,18 @@
-import { View, Text, TouchableOpacity, StatusBar, Linking, TextInput, Image } from "react-native";
+import { View, Text, TouchableOpacity, StatusBar, Linking, TextInput, Image, Dimensions } from "react-native";
 import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 import styles from "../styles/login/style";
 import getEnvVars from "../variables";
-import { useWebSocket } from "../scripts/websocket_handler";
+
+// Get dimensions of screen
+const { width, height } = Dimensions.get('window');
 
 export function LoginScreen({ navigation }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loginStatus, setLoginStatus] = useState('');
     const [editable, setEditable] = useState();
+    const [headerImageDimensions, setHeaderImageDimensions] = useState({ width: 386, height: 286 });
 
     // Configure styles for header bar
     useEffect(() => {
@@ -23,8 +26,6 @@ export function LoginScreen({ navigation }) {
     async function secureSave(key, value) {
         await SecureStore.setItemAsync(key, value);
     }
-
-    const { closeConnection } = useWebSocket();
 
     // Handle navigation to main page
     function handle_login() {
@@ -67,6 +68,13 @@ export function LoginScreen({ navigation }) {
         })
     }
 
+    // Adjust header dimensions based on screen size
+    useEffect(() => {
+        if (width === 375 && height === 667) {
+            setHeaderImageDimensions({width: 250, height: 200});
+        }
+    }, []);
+
     return(
         <View style={styles.page}>
             <StatusBar style="light" />
@@ -74,6 +82,7 @@ export function LoginScreen({ navigation }) {
                 resizeMode="contain"
                 source={require('../assets/login/header_image.png')}
                 onError={(error) => console.log('Error loading image:', error)}
+                style={{width: headerImageDimensions.width, height: headerImageDimensions.height}}
             />
             <Text style={styles.header}>Login With Lif</Text>
             <TextInput 
