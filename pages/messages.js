@@ -20,7 +20,7 @@ async function getValueFor(key) {
 }   
 
 export function MessagesPage({ route, navigation }) {
-    const { username, conversation_id } = route.params;
+    const { username, conversation_id, online } = route.params;
     const [userPronouns, setUserPronouns] = useState("Loading...");
     const [userBio, setUserBio] = useState("Loading...");
     const [messages, setMessages] = useState("loading");
@@ -33,6 +33,12 @@ export function MessagesPage({ route, navigation }) {
     const panelRef = useRef();
     const [showPanel, setShowPanel] = useState(false);
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    const [isOnline, setIsOnline] = useState(false);
+
+    // Set online status when page loads
+    useEffect(() => {
+        setIsOnline(online);
+    }, []);
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
@@ -292,6 +298,21 @@ export function MessagesPage({ route, navigation }) {
         checkPanelRef();
     }
 
+    // Listen for online status update
+    useEffect(() => {
+        const handle_status_change = (data) => {
+            if (data.user === username) {
+                setIsOnline(data.online);
+            }
+        }
+
+        eventEmitter.on('User_Status_Update', handle_status_change);
+
+        return () => {
+            eventEmitter.off('User_Status_Update', handle_status_change);
+        }
+    }, []);
+
     return (
         <View style={styles.page}>
             <StatusBar style="light" />
@@ -300,10 +321,13 @@ export function MessagesPage({ route, navigation }) {
                     <TouchableOpacity onPress={handle_navigation_back}>
                         <Image style={styles.back_button} source={require("../assets/messages/back_icon.png")} />
                     </TouchableOpacity>
-                    <Image
-                        source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png` }}
-                        style={styles.header_avatar}
-                    />
+                    <View>
+                        <Image
+                            source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png` }}
+                            style={styles.header_avatar}
+                        />
+                        <View style={[styles.status_indicator, {backgroundColor: isOnline ? 'lightgreen' : 'gray'}]} />
+                    </View>
                     <Text style={styles.conversation_user}>{username}</Text>
                 </View>
                 <TouchableOpacity style={styles.more_icon_container} onPress={handle_more_panel_open}>
