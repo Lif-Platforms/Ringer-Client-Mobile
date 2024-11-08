@@ -46,6 +46,16 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: 'center',
     },
+    status_indicator: {
+        position: 'absolute',
+        bottom: 0,
+        right: 8,
+        width: 20,
+        height: 20,
+        borderRadius: 100,
+        borderWidth: 2,
+        borderColor: '#2E241D'
+    },
 })
 
 export default styles;

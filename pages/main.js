@@ -8,6 +8,7 @@ import { useWebSocket } from "../scripts/websocket_handler";
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import { eventEmitter } from "../scripts/emitter";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -61,22 +62,39 @@ function FriendsList({ navigation }) {
         fetchFriends();
     }, []);
 
-    function handle_messages_navigate(username, conversation_id) {
+    function handle_messages_navigate(username, conversation_id, online) {
         navigation.push('Messages', {
             username: username,
-            conversation_id: conversation_id
+            conversation_id: conversation_id,
+            online: online
         })
     }
+
+    // Listen for user status changes
+    useEffect(() => {
+        const handle_status_change = (data) => { 
+            setFriends(prevFriends => prevFriends.map(friend => friend.Username === data.user ? { ...friend, Online: data.online } : friend ) ); 
+        }
+
+        eventEmitter.on('User_Status_Update', handle_status_change);
+
+        return () => {
+            eventEmitter.off('User_Status_Update', handle_status_change);
+        }
+    }, [])
 
     return (
         <ScrollView contentContainerStyle={styles.friends_container}>
             {friends.length > 0 ? (
                 friends.map((friend, index) => (
-                    <TouchableOpacity key={index} style={styles.friendItem} onPress={() => handle_messages_navigate(friend.Username, friend.Id)}>
-                        <Image
-                            source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${friend.Username}.png` }}
-                            style={styles.friendImage}
-                        />
+                    <TouchableOpacity key={index} style={styles.friendItem} onPress={() => handle_messages_navigate(friend.Username, friend.Id, friend.Online)}>
+                        <View>
+                            <Image
+                                source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${friend.Username}.png` }}
+                                style={styles.friendImage}
+                            />
+                            <View style={[styles.status_indicator, {backgroundColor: friend.Online ? 'lightgreen' : 'gray'}]} />
+                        </View>
                         <Text style={styles.friendText}>{friend.Username}</Text>
                     </TouchableOpacity>
                 ))

@@ -109,7 +109,12 @@ export const WebSocketProvider = ({ children }) => {
             eventEmitter.emit("Message_Sent");
         } else if ("Status" in data && data.Status == "Ok") {
           shouldReconnect.current = true;
-        }
+        } else if (data.Type === "USER_STATUS_UPDATE") {
+          eventEmitter.emit("User_Status_Update", {
+            user: data.User,
+            online: data.Online
+          });
+        };
       };
 
       webSocketRef.current.onerror = (error) => {
