@@ -1,6 +1,18 @@
-import { View, TextInput, TouchableOpacity, Image, Animated, Keyboard } from "react-native";
+import { View, TextInput, TouchableOpacity, Image, Animated, Keyboard, Text } from "react-native";
 import { useRef, useState, useEffect } from "react";
 import styles from "../../styles/messages/messageBox";
+import { eventEmitter } from "../../scripts/emitter";
+import * as SecureStore from 'expo-secure-store';
+
+// Get values from secure store
+async function getValueFor(key) {
+    let result = await SecureStore.getItemAsync(key);
+    if (result) {
+        return result;
+    } else {
+        return null;
+    }    
+}   
 
 export default function MessageBox({
     isSending,
@@ -10,11 +22,14 @@ export default function MessageBox({
     conversation_id,
     sendMessage,
     messageValue,
-    scrollViewRef
+    scrollViewRef,
 }) {
     const messageBoxRef = useRef();
     const [keyboardHeight] = useState(new Animated.Value(0));
     const [bottomPadding, setBottomPadding] = useState(40);
+    const [isTyping, setIsTyping] = useState(false);
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
     function handle_message_send() {
         setIsSending(true);
@@ -23,6 +38,23 @@ export default function MessageBox({
         // Clear message box
         messageBoxRef.current.clear();
     }
+
+    // Listen for typing updates
+    useEffect(() => {
+        const handle_user_typing = async (data) => {
+            const current_user = await getValueFor('username');
+
+            if (data.user !== current_user && data.conversation_id === conversation_id) {
+                setIsTyping(data.typing);
+            }
+        }
+
+        eventEmitter.on('User_Typing', handle_user_typing);
+
+        return () => {
+            eventEmitter.off('User_Typing', handle_user_typing);
+        }
+    }, []);
 
     useEffect(() => {
         const showSubscription = Keyboard.addListener('keyboardWillShow', (event) => {
@@ -55,6 +87,36 @@ export default function MessageBox({
         };
     }, []);
 
+    useEffect(() => { 
+        if (isTyping) { 
+            Animated.parallel([ 
+                Animated.timing(fadeAnim, { 
+                    toValue: 1, // Fully visible 
+                    duration: 100, // Animation duration 
+                    useNativeDriver: true, 
+                }), 
+                Animated.timing(scaleAnim, { 
+                    toValue: 1, // Fully scaled 
+                    duration: 100, // Animation duration 
+                    useNativeDriver: true, 
+                }), 
+            ]).start();
+        } else { 
+            Animated.parallel([
+                Animated.timing(fadeAnim, { 
+                    toValue: 0, // Fully hidden 
+                    duration: 100, // Animation duration 
+                    useNativeDriver: true, 
+                }), 
+                Animated.timing(scaleAnim, { 
+                    toValue: 0.9, // Fully scaled down 
+                    duration: 100, // Animation duration 
+                    useNativeDriver: true, 
+                }), 
+            ]).start();
+        } 
+    }, [isTyping, fadeAnim]);
+
     return (
         <Animated.View 
             style={[
@@ -65,6 +127,9 @@ export default function MessageBox({
                 }
             ]}
         >
+            <Animated.View style={[styles.typing_indicator_container, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
+                <Text style={styles.typing_indicator}>{username} is typing...</Text>
+            </Animated.View>
             <TextInput
                 style={styles.message_box}
                 ref={messageBoxRef}

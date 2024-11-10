@@ -114,6 +114,12 @@ export const WebSocketProvider = ({ children }) => {
             user: data.User,
             online: data.Online
           });
+        } else if (data.Type === "USER_TYPING") {
+          eventEmitter.emit('User_Typing', {
+            conversation_id: data.Id,
+            user: data.User,
+            typing: data.Typing
+          });
         };
       };
 
