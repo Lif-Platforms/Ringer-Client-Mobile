@@ -21,6 +21,19 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50
     },
+    typing_indicator: {
+        color: 'white',
+        width: '100%',
+    },
+    typing_indicator_container: {
+        position: 'absolute',
+        top: -40,
+        backgroundColor: '#363636',
+        padding: 10,
+        borderRadius: 10,
+        width: '100%',
+        marginLeft: 10,
+    }
 });
 
 export default styles;

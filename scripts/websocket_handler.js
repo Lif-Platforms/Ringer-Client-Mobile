@@ -114,6 +114,12 @@ export const WebSocketProvider = ({ children }) => {
             user: data.User,
             online: data.Online
           });
+        } else if (data.Type === "USER_TYPING") {
+          eventEmitter.emit('User_Typing', {
+            conversation_id: data.Id,
+            user: data.User,
+            typing: data.Typing
+          });
         };
       };
 
@@ -138,8 +144,26 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
+  const updateTypingStatus = (status, conversation_id) => {
+    if (webSocketRef.current && isConnected) {
+      webSocketRef.current.send(JSON.stringify({
+        ConversationId: conversation_id,
+        Typing: status,
+        MessageType: "USER_TYPING"
+      }));
+    }
+  }
+
   return (
-    <WebSocketContext.Provider value={{ isConnected, connectWebSocket, sendMessage, closeConnection }}>
+    <WebSocketContext.Provider 
+      value={{
+        isConnected,
+        connectWebSocket,
+        sendMessage,
+        closeConnection,
+        updateTypingStatus,
+      }}
+    >
       {children}
     </WebSocketContext.Provider>
   );
