@@ -25,7 +25,7 @@ export function MessagesPage({ route, navigation }) {
     const [userBio, setUserBio] = useState("Loading...");
     const [messages, setMessages] = useState("loading");
     const scrollViewRef = useRef();
-    const { sendMessage } = useWebSocket();
+    const { sendMessage, updateTypingStatus } = useWebSocket();
     const [messageValue, setMessageValue] = useState("");
     const [isSending, setIsSending] = useState(false);
     const [isUnfriending, setIsUnfriending] = useState(false);
@@ -367,6 +367,7 @@ export function MessagesPage({ route, navigation }) {
                 messageValue={messageValue}
                 setIsSending={setIsSending}
                 scrollViewRef={scrollViewRef}
+                updateTypingStatus={updateTypingStatus}
             />
             {showPanel && (
                 <SlidingUpPanel 

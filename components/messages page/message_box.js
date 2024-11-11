@@ -23,6 +23,7 @@ export default function MessageBox({
     sendMessage,
     messageValue,
     scrollViewRef,
+    updateTypingStatus,
 }) {
     const messageBoxRef = useRef();
     const [keyboardHeight] = useState(new Animated.Value(0));
@@ -30,6 +31,8 @@ export default function MessageBox({
     const [isTyping, setIsTyping] = useState(false);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.9)).current;
+    const typingTimeout = useRef(null);
+    const isUserTyping = useRef(false);
 
     function handle_message_send() {
         setIsSending(true);
@@ -117,6 +120,43 @@ export default function MessageBox({
         } 
     }, [isTyping, fadeAnim]);
 
+    function handle_user_typing(text) {
+        // Update message value with new text
+        setMessageValue(text);
+
+        // Check if timeout exists
+        // If so, clear it
+        if (typingTimeout.current) {
+            clearTimeout(typingTimeout.current);
+        }
+
+        // Set typing timeout so the server will be notified when the user stops typing
+        typingTimeout.current = setTimeout(() => {
+            updateTypingStatus(false, conversation_id);
+            isUserTyping.current = false;
+        }, 3000);
+
+        // Set current typing status to true but only if it is currently false
+        if (!isUserTyping.current && text) {
+            updateTypingStatus(true, conversation_id);
+            isUserTyping.current = true;
+        }
+    }
+
+    // Handle component unmount
+    useEffect(() => {
+        // Set typing status to false and remove timeout
+        return () => {
+            if (typingTimeout.current) {
+                clearTimeout(typingTimeout.current);
+            }
+            if (isUserTyping.current) {
+                isUserTyping.current = false;
+                updateTypingStatus(false, conversation_id);
+            }
+        }
+    }, []);
+
     return (
         <Animated.View 
             style={[
@@ -136,7 +176,7 @@ export default function MessageBox({
                 placeholder={`Message ${username}`}
                 placeholderTextColor="#767676"
                 onFocus={() => setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 300)}
-                onChangeText={text => setMessageValue(text)}
+                onChangeText={text => handle_user_typing(text)}
                 editable={!isSending}
             />
             <TouchableOpacity onPress={handle_message_send} disabled={isSending}>
