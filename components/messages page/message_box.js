@@ -35,6 +35,9 @@ export default function MessageBox({
     const isUserTyping = useRef(false);
 
     function handle_message_send() {
+        // Refocus the message box
+        messageBoxRef.current.focus();
+
         setIsSending(true);
         sendMessage(messageValue, conversation_id);
 
@@ -177,7 +180,6 @@ export default function MessageBox({
                 placeholderTextColor="#767676"
                 onFocus={() => setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 300)}
                 onChangeText={text => handle_user_typing(text)}
-                editable={!isSending}
             />
             <TouchableOpacity onPress={handle_message_send} disabled={isSending}>
                 <Image style={styles.send_button} source={require("../../assets/messages/send_button.png")} />
