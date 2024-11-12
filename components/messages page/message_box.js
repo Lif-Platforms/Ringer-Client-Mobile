@@ -38,11 +38,15 @@ export default function MessageBox({
         // Refocus the message box
         messageBoxRef.current.focus();
 
-        setIsSending(true);
-        sendMessage(messageValue, conversation_id);
+        // Check to ensure message is not blank
+        if (messageValue.trim() !== "") {
+            setIsSending(true);
+            sendMessage(messageValue, conversation_id);
 
-        // Clear message box
-        messageBoxRef.current.clear();
+            // Clear message box and message value
+            messageBoxRef.current.clear();
+            setMessageValue("");
+        }
     }
 
     // Listen for typing updates
