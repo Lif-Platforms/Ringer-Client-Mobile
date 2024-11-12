@@ -46,6 +46,10 @@ export default function MessageBox({
             // Clear message box and message value
             messageBoxRef.current.clear();
             setMessageValue("");
+
+            // Update typing status after message is sent and clear typing timeout
+            clearTimeout(typingTimeout.current);
+            updateTypingStatus(false, conversation_id);
         }
     }
 
