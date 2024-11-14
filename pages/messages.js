@@ -1,4 +1,4 @@
-import { Keyboard, View, Text, Image, StatusBar, Dimensions, ScrollView, Alert, Platform } from "react-native";
+import { ActivityIndicator, Keyboard, View, Text, Image, StatusBar, Dimensions, ScrollView, Alert, Platform } from "react-native";
 import styles from "../styles/messages/style";
 import { useEffect, useState, useRef } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -29,6 +29,11 @@ export function MessagesPage({ route, navigation }) {
     const [isSending, setIsSending] = useState(false);
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
     const [isOnline, setIsOnline] = useState(false);
+    const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
+    const [loadMoreMessages, setLoadMoreMessages] = useState(false);
+    const currentScrollPosition = useRef(0);
+    const currentScrollHight = useRef(0);
+    const previousScrollHight = useRef(0);
     const [showGIFModal, setShowGIFModal] = useState(false);
 
     // Set online status when page loads
@@ -86,7 +91,37 @@ export function MessagesPage({ route, navigation }) {
     }
 
     useEffect(() => {
-        async function get_friends() {
+        async function fetch_pronouns() {
+            const response = await fetch(`${getEnvVars.auth_url}/profile/get_pronouns/${username}`);
+    
+            if (response.ok) {
+                const pronouns = (await response.text()).slice(1, -1);
+                setUserPronouns(pronouns);
+            } else {
+                console.error("Pronouns Request Failed! Status code: " + response.status)
+                setUserPronouns("Error Fetching Pronouns");
+            }
+        }
+        fetch_pronouns();
+    }, []);
+
+    useEffect(() => {
+        async function fetch_bio() {
+            const response = await fetch(`${getEnvVars.auth_url}/profile/get_bio/${username}`);
+    
+            if (response.ok) {
+                const bio = (await response.text()).slice(1, -1);
+                setUserBio(bio);
+            } else {
+                console.error("Bio Request Failed! Status code: " + response.status)
+                setUserBio("Error Fetching Bio");
+            }
+        }
+        fetch_bio();
+    }, []);
+
+    useEffect(() => {
+        async function load_messages() {
             // Get auth credentials
             const credentials = await get_auth_credentials();
 
@@ -99,12 +134,25 @@ export function MessagesPage({ route, navigation }) {
             });
 
             if (response.ok) {
-                setMessages(await response.json());
+                const data = await response.json();
+
+                if (data.length >= 20) {
+                    setLoadMoreMessages(true);
+                }
+                setMessages(data);
+
+                // Scroll to end of conversation
+                // Set timeout to ensure messages load before scrolling
+                setTimeout(() => {
+                    if (scrollViewRef.current) {
+                        scrollViewRef.current.scrollToEnd({ animated: false });
+                    }
+                }, 1);  
             } else {
                 setMessages("Messages_Error");
             }
         }
-        get_friends();
+        load_messages();
     }, []);
 
     // Add event listener for message updates
@@ -114,6 +162,14 @@ export function MessagesPage({ route, navigation }) {
           if (event.id === conversation_id) {
             // Use functional state update to ensure the latest state is used
             setMessages((prevMessages) => [...prevMessages, event.message]);
+
+            // Scroll to end of conversation
+            // Set timeout to ensure messages load before scrolling
+            setTimeout(() => {
+                if (scrollViewRef.current) {
+                    scrollViewRef.current.scrollToEnd({ animated: true });
+                }
+            }, 1);  
           }
         };
     
@@ -163,6 +219,60 @@ export function MessagesPage({ route, navigation }) {
         }
     }, []);
 
+    async function handle_scroll(event) {
+        const scrollPosition = event.nativeEvent.contentOffset.y;
+        currentScrollPosition.current = scrollPosition;
+        
+        if (scrollPosition <= 0  && !isLoadingMoreMessages && messages.length >= 20 && loadMoreMessages) {
+            setIsLoadingMoreMessages(true);
+
+            // Fetch auth credentials
+            const credentials = await get_auth_credentials();
+
+            // Fetch messages from server
+            fetch(`${getEnvVars.ringer_url}/load_messages/${conversation_id}?offset=${messages.length}`, {
+                headers: {
+                    username: credentials.username,
+                    token: credentials.token
+                }
+            })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Something Went Wrong");
+                }
+            })
+            .then((data) => {
+                // Add messages to list
+                const messages_ = [...data, ...messages];
+                setMessages(messages_);
+                setIsLoadingMoreMessages(false);
+
+                if (data.length < 20) {
+                    setLoadMoreMessages(false);
+                }
+
+                // Scroll to end of conversation
+                // Set timeout to ensure messages load before scrolling
+                setTimeout(() => {
+                    if (scrollViewRef.current) {
+                        scrollViewRef.current.scrollTo({ x: 0, y: currentScrollHight.current - previousScrollHight.current, animated: false });
+                    }
+                }, 0);  
+            })
+            .catch((err) => {
+                console.error(err);
+                setIsLoadingMoreMessages(false);
+            })
+        }
+    }
+
+    function handle_content_size_change(width, height) {
+        previousScrollHight.current = currentScrollHight.current || height;
+        currentScrollHight.current = height;
+    }
+
     // Handle dismissing the GIF modal
     function onDismiss() {
         setShowGIFModal(false);
@@ -192,8 +302,12 @@ export function MessagesPage({ route, navigation }) {
             <ScrollView 
                 contentContainerStyle={styles.messages_viewer}
                 ref={scrollViewRef}
-                onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: false })}
+                onScroll={handle_scroll}
+                onContentSizeChange={handle_content_size_change}
             >
+                {isLoadingMoreMessages ? (
+                    <ActivityIndicator size="large" color="#ffffff" />
+                ): null}
                 {Array.isArray(messages) ? (
                     messages.map((message, index) => (
                         <Message
