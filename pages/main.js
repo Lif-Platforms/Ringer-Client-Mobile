@@ -9,6 +9,8 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { eventEmitter } from "../scripts/emitter";
+import NotificationBadge from "../components/global/notification";
+import { useNavigationState } from '@react-navigation/native';
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -107,6 +109,7 @@ function FriendsList({ navigation }) {
 
 export function MainScreen({ navigation }) {
     const { connectWebSocket } = useWebSocket();
+    const routeName = useNavigationState((state) => state.routes[state.index].name);
 
     // Configure styles for header bar
     useEffect(() => {
@@ -193,9 +196,32 @@ export function MainScreen({ navigation }) {
         });
     }, []);
 
+    // Listen for message updates
+    useEffect(() => {
+        async function handle_message_update(event) {
+            const credentials = await get_auth_credentials();
+            console.log(event.message.Author)
+
+            if (routeName === "Main" && event.message.Author !== credentials.username) {
+                eventEmitter.emit('Show_Notification', {
+                    title: event.message.Author,
+                    content: event.message.Message,
+                    conversation_id: event.id
+                });
+            }
+        }
+
+        eventEmitter.on('Message_Update', handle_message_update);
+
+        return () => {
+            eventEmitter.off('Message_Update', handle_message_update);
+        }
+    }, []);
+
     return(
         <View style={styles.page}>
             <StatusBar style="light" />
+            <NotificationBadge navigation={navigation} />
             <View style={styles.header}>
                 <Text style={styles.title}>People</Text>
                 <TouchableOpacity style={styles.add_button} onPress={() => navigation.push("Add Friend")}>

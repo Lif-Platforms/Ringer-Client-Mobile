@@ -7,6 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import { eventEmitter } from "../scripts/emitter";
 import MessageBox from "../components/messages page/message_box";
+import NotificationBadge from "../components/global/notification";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -97,11 +98,23 @@ export function MessagesPage({ route, navigation }) {
 
     // Add event listener for message updates
     useEffect(() => {
-        const handle_message_update = (event) => {
+        const handle_message_update = async (event) => {
           // Check if the update was for this conversation
           if (event.id === conversation_id) {
             // Use functional state update to ensure the latest state is used
             setMessages((prevMessages) => [...prevMessages, event.message]);
+
+          } else {
+            const credentials = await get_auth_credentials();
+
+            if (event.message.Author !== credentials.username) {
+                // Show notification of incoming message
+                eventEmitter.emit('Show_Notification', {
+                    title: event.message.Author,
+                    content: event.message.Message,
+                    conversation_id: event.id
+                });
+            }
           }
         };
     
