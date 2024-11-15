@@ -252,8 +252,6 @@ PODS:
     - Yoga
   - ExpoSecureStore (13.0.2):
     - ExpoModulesCore
-  - ExpoSystemUI (3.0.7):
-    - ExpoModulesCore
   - EXSplashScreen (0.27.6):
     - DoubleConversion
     - ExpoModulesCore
@@ -1507,7 +1505,7 @@ PODS:
     - React-logger (= 0.74.6)
     - React-perflogger (= 0.74.6)
     - React-utils (= 0.74.6)
-  - RNGestureHandler (2.16.2):
+  - RNGestureHandler (2.21.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1528,7 +1526,73 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated (3.10.1):
+  - RNReanimated (3.16.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNReanimated/reanimated (= 3.16.1)
+    - RNReanimated/worklets (= 3.16.1)
+    - Yoga
+  - RNReanimated/reanimated (3.16.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNReanimated/reanimated/apple (= 3.16.1)
+    - Yoga
+  - RNReanimated/reanimated/apple (3.16.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - RNReanimated/worklets (3.16.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1616,7 +1680,6 @@ DEPENDENCIES:
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
-  - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -1719,8 +1782,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoSecureStore:
     :path: "../node_modules/expo-secure-store/ios"
-  ExpoSystemUI:
-    :path: "../node_modules/expo-system-ui/ios"
   EXSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   EXUpdatesInterface:
@@ -1858,7 +1919,6 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: 3b8815d9dd1d419ee474df004021c69fdd316d08
   ExpoModulesCore: b86c114a7ba4a083dbe06c916e4e015783c07ec1
   ExpoSecureStore: 060cebcb956b80ddae09821610ac1aa9e1ac74cd
-  ExpoSystemUI: d4f065a016cae6721b324eb659cdee4d4cf0cb26
   EXSplashScreen: 10b116117c9bb6a272ba782706f21dadc23f44d9
   EXUpdatesInterface: 996527fd7d1a5d271eb523258d603f8f92038f24
   FBLazyVector: 4b1589d37c9ff4dba11a63083fe7515fad3ac111
@@ -1913,8 +1973,8 @@ SPEC CHECKSUMS:
   React-runtimescheduler: b63ebebd3e000e0ba4ac19ca69bdac071559ad57
   React-utils: 2955bdc1b2ed495f14dc7d3bfbbb7e3624cfc0fc
   ReactCommon: 5c504a77030c7ab89eee75b1725b80d8cee7f5d7
-  RNGestureHandler: 156548e18203327173a764c6932a3f52e90cb9cd
-  RNReanimated: 58a768c2c17a5589ef732fa6bd8d7ed0eb6df1c1
+  RNGestureHandler: a035b1894b17694163f397a938afbb9e660af420
+  RNReanimated: 9e3870d25b7f8c7b79bf0b1cadc98da6470bfcec
   RNScreens: 63fe8222c172a79f5c30dd1aefaeb369c6eb57b6
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 4f4f07a17818e76d1b04edc01b68b6d49a682100
