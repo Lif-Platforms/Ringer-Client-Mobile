@@ -5,7 +5,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import getEnvVars from "./variables";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Page imports
 import { MainScreen } from './pages/main';
@@ -93,7 +92,6 @@ export default function App() {
   }
 
   return (
-    <GestureHandlerRootView>
       <WebSocketProvider>
           <NavigationContainer>
             <Stack.Navigator 
@@ -138,6 +136,5 @@ export default function App() {
             </Stack.Navigator>
           </NavigationContainer>
       </WebSocketProvider>
-    </GestureHandlerRootView>
   );
 }

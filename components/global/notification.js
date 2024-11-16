@@ -3,7 +3,6 @@ import { Animated, View, Text, Image, TouchableOpacity } from 'react-native';
 import styles from '../../styles/components/notification/style';
 import getEnvVars from '../../variables';
 import { eventEmitter } from '../../scripts/emitter';
-import { GestureDetector } from 'react-native-gesture-handler';
 
 export default function NotificationBadge({ navigation }) {
     const [title, setTitle] = useState();
@@ -33,7 +32,7 @@ export default function NotificationBadge({ navigation }) {
                 useNativeDriver: true, // Use native driver for better performance 
             }).start(() => { 
                 // This callback will be executed after the animation completes 
-                //setShowNotification(false); 
+                setShowNotification(false); 
             });
         }, 5000);
     }
@@ -67,22 +66,20 @@ export default function NotificationBadge({ navigation }) {
 
     if (showNotification) {
         return (
-            <GestureDetector>
-                <Animated.View style={[styles.notification_container, { transform: [{ translateY: slideAnim }] }]}>
-                    <TouchableOpacity style={styles.notification} onPress={handle_click}>
-                        <View>
-                            <Image
-                                source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${title}.png` }}
-                                style={styles.avatar}
-                            />
-                        </View>
-                        <View style={styles.notification_content}>
-                            <Text style={styles.notification_title}>{title}</Text>
-                            <Text style={styles.notification_text}>{content}</Text>
-                        </View>
-                    </TouchableOpacity>
-                </Animated.View>
-            </GestureDetector>
+            <Animated.View style={[styles.notification_container, { transform: [{ translateY: slideAnim }] }]}>
+                <TouchableOpacity style={styles.notification} onPress={handle_click}>
+                    <View>
+                        <Image
+                            source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${title}.png` }}
+                            style={styles.avatar}
+                        />
+                    </View>
+                    <View style={styles.notification_content}>
+                        <Text style={styles.notification_title}>{title}</Text>
+                        <Text style={styles.notification_text}>{content}</Text>
+                    </View>
+                </TouchableOpacity>
+            </Animated.View>
         );
     }
 }
