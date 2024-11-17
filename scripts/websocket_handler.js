@@ -140,7 +140,15 @@ export const WebSocketProvider = ({ children }) => {
 
   const sendMessage = (message, conversation_id) => {
     if (webSocketRef.current && isConnected) {
-      webSocketRef.current.send(JSON.stringify({ MessageType: "SEND_MESSAGE", ConversationId: conversation_id, Message: message }));
+      // Get current UTC time
+      const UTC_time = new Date().toISOString();
+
+      webSocketRef.current.send(JSON.stringify({
+        MessageType: "SEND_MESSAGE",
+        ConversationId: conversation_id,
+        Message: message,
+        SendTime: UTC_time
+      }));
     }
   };
 
