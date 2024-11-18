@@ -37,6 +37,7 @@ export const WebSocketProvider = ({ children }) => {
   const webSocketRef = useRef(null);
   const shouldReconnect = useRef(false); // Track if we should attempt to reconnect
   const [appState, setAppState] = useState(AppState.currentState);
+  const messageSendTimeout = useRef();
 
   useEffect(() => {
     // Attempt to connect when the component mounts
@@ -107,6 +108,7 @@ export const WebSocketProvider = ({ children }) => {
           }
         } else if ("ResponseType" in data & data.ResponseType === "MESSAGE_SENT") {
             eventEmitter.emit("Message_Sent");
+            clearTimeout(messageSendTimeout.current);
         } else if ("Status" in data && data.Status == "Ok") {
           shouldReconnect.current = true;
         } else if (data.Type === "USER_STATUS_UPDATE") {
@@ -138,7 +140,7 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
-  const sendMessage = (message, conversation_id) => {
+  const sendMessage = async (message, conversation_id) => {
     if (webSocketRef.current && isConnected) {
       // Get current UTC time
       const UTC_time = new Date().toISOString();
@@ -149,6 +151,20 @@ export const WebSocketProvider = ({ children }) => {
         Message: message,
         SendTime: UTC_time
       }));
+
+      // Get credentials
+      const credentials = await get_auth_credentials();
+      const username = credentials.username;
+
+      // Give the message 5 seconds to send
+      // Otherwise, fail the send
+      messageSendTimeout.current = setTimeout(() => {
+        eventEmitter.emit("Message_Send_Failure", {
+          conversation_id: conversation_id,
+          message: message,
+          message_author: username
+        });
+      }, 5000);
     }
   };
 

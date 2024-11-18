@@ -13,7 +13,8 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        padding: 10
+        padding: 10,
+        position: 'relative'
     },
     header_avatar: {
         width: 50,
@@ -100,31 +101,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         padding: 16,
         width: "100%"
-    },
-    message: {
-        display: "flex",
-        flexDirection: "row",
-        marginBottom: 30,
-        gap: 10,
-        flexShrink: 1
-    },
-    message_avatar: {
-        width: 50,
-        height: 50,
-        objectFit: "cover",
-        borderRadius: 25
-    },
-    messages_author: {
-        color: "white",
-        fontSize: 25,
-    },
-    message_text_container: {
-        flex: 1,
-        flexShrink: 1,
-    },
-    messages_content: {
-        color: "white",
-        flexShrink: 1,
     },
     message_loading: {
         color: "white",
