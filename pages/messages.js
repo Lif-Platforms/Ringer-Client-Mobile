@@ -8,6 +8,8 @@ import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import { eventEmitter } from "../scripts/emitter";
 import MessageBox from "../components/messages page/message_box";
+import HeaderLoader from "../components/messages page/header_loader";
+import Message from "../components/messages page/message";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -151,18 +153,28 @@ export function MessagesPage({ route, navigation }) {
         };
     }, []);
 
-    // Add event listener for message send event
+    // Add event listener for message sent and failure event
     useEffect(() => {
         const handle_message_sent = () => {
             setIsSending(false);
         }
 
+        const handle_message_send_failure = (event) =>  {
+            setIsSending(false);
+            if (event.conversation_id === conversation_id) {
+                const uniqueId = String.toString(Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000);
+                const message = {Message: event.message, Author: event.message_author, FailedToSend: true, Id: uniqueId};
+                setMessages((prevMessages) => [...prevMessages, message]);
+            }
+        }
+
         eventEmitter.on("Message_Sent", handle_message_sent);
+        eventEmitter.on("Message_Send_Failure", handle_message_send_failure);
 
         return () => {
             eventEmitter.off("Message_Sent", handle_message_sent);
         }
-    });
+    }, []);
 
     function handle_unfriend() {
         async function unfriend_user(setIsUnfriending, conversation_id, navigation) {
@@ -333,6 +345,7 @@ export function MessagesPage({ route, navigation }) {
                 <TouchableOpacity style={styles.more_icon_container} onPress={handle_more_panel_open}>
                     <Image style={styles.more_icon} source={require("../assets/messages/more_icon.png")} />
                 </TouchableOpacity>
+                <HeaderLoader isSending={isSending} />
             </View>
             <ScrollView 
                 contentContainerStyle={styles.messages_viewer}
@@ -341,16 +354,18 @@ export function MessagesPage({ route, navigation }) {
             >
                 {Array.isArray(messages) ? (
                     messages.map((message, index) => (
-                        <View key={index} style={styles.message}>
-                            <Image
-                                source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${message.Author}.png` }}
-                                style={styles.message_avatar}
-                            />
-                            <View style={styles.message_text_container}>
-                                <Text style={styles.messages_author}>{message.Author}</Text>
-                                <Text style={styles.messages_content} selectable={true}>{message.Message}</Text>
-                            </View>
-                        </View>
+                        <Message
+                            author={message.Author}
+                            content={message.Message}
+                            failed_to_send={message.FailedToSend}
+                            send_message={sendMessage}
+                            setIsSending={setIsSending}
+                            conversation_id={conversation_id}
+                            key={index}
+                            message_id={message.Id}
+                            messages={messages}
+                            setMessages={setMessages}
+                        />
                     ))
                 ) : messages === "loading" ? (
                     <Text style={styles.message_loading}>Loading...</Text>
