@@ -13,6 +13,7 @@ import { MessagesPage } from "./pages/messages";
 import { Notifications } from './pages/notifications'; 
 import { AddFriendPage } from './pages/add_friend';
 import { AccountPage } from './pages/account';
+import { UserProfilePage } from './pages/user_profile';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
@@ -132,6 +133,11 @@ export default function App() {
             name="Account"
             component={AccountPage}
             options={{ title: 'Account', animationEnabled: false}}
+          />
+          <Stack.Screen
+            name='User Profile'
+            component={UserProfilePage}
+            options={{ title: 'User Profile', animationEnabled: true, headerLeft: () => null}}
           />
         </Stack.Navigator>
       </NavigationContainer>

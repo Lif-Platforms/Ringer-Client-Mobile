@@ -37,16 +37,19 @@ const styles = StyleSheet.create({
         marginBottom: "auto",
         fontSize: 25
     },
-    more_icon: {
+    more_arrow: {
         marginTop: "auto",
         marginBottom: "auto",
-        width: 30,
-        height: 30,
-        objectFit: "contain"
+        width: 20,
+        height: 20,
+        objectFit: "contain",
+        marginLeft: 10
     },
-    more_icon_container: {
+    header_user_container: {
         marginBottom: "auto",
-        marginTop: "auto"
+        marginTop: "auto",
+        display: "flex",
+        flexDirection: "row"
     },
     more_panel: {
         backgroundColor: "#1b1b1b",
