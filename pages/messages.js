@@ -8,6 +8,7 @@ import { useWebSocket } from "../scripts/websocket_handler";
 import { eventEmitter } from "../scripts/emitter";
 import MessageBox from "../components/messages page/message_box";
 import GIFModal from '../components/messages page/gif_modal';
+import Message from "../components/messages page/message";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -195,16 +196,11 @@ export function MessagesPage({ route, navigation }) {
             >
                 {Array.isArray(messages) ? (
                     messages.map((message, index) => (
-                        <View key={index} style={styles.message}>
-                            <Image
-                                source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${message.Author}.png` }}
-                                style={styles.message_avatar}
-                            />
-                            <View style={styles.message_text_container}>
-                                <Text style={styles.messages_author}>{message.Author}</Text>
-                                <Text style={styles.messages_content} selectable={true}>{message.Message}</Text>
-                            </View>
-                        </View>
+                        <Message
+                            key={index}
+                            message={message}
+                            index={index}
+                        />
                     ))
                 ) : messages === "loading" ? (
                     <Text style={styles.message_loading}>Loading...</Text>
@@ -227,6 +223,7 @@ export function MessagesPage({ route, navigation }) {
             <GIFModal
                 showGIFModal={showGIFModal}
                 onDismiss={onDismiss}
+                conversation_id={conversation_id}
             />
         </View>
     )

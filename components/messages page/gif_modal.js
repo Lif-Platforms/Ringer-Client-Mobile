@@ -5,7 +5,7 @@ import { PanGestureHandler, ScrollView } from 'react-native-gesture-handler';
 import GIFList from "./gif_list";
 import GIFSendButton from "./gif_send_button";
 
-export default function GIFModal({ showGIFModal, onDismiss }) {
+export default function GIFModal({ showGIFModal, onDismiss, conversation_id }) {
     const modalRef = useRef();
     const flyAnimation = useRef(new Animated.Value(0)).current; // will be updated later
     const searchRef = useRef();
@@ -109,7 +109,12 @@ export default function GIFModal({ showGIFModal, onDismiss }) {
                             gifToSend={gifToSend}
                             setGifToSend={setGifToSend}
                         />
-                        <GIFSendButton gifToSend={gifToSend} />
+                        <GIFSendButton
+                            gifToSend={gifToSend}
+                            conversation_id={conversation_id}
+                            onDismiss={onDismiss}
+                            flyAnimation={flyAnimation}
+                        />
                     </Animated.View>
                 </PanGestureHandler>
             </View>

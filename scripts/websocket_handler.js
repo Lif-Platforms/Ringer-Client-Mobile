@@ -138,9 +138,21 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
-  const sendMessage = (message, conversation_id) => {
+  const sendMessage = (message, conversation_id, GIF_url = null) => {
     if (webSocketRef.current && isConnected) {
-      webSocketRef.current.send(JSON.stringify({ MessageType: "SEND_MESSAGE", ConversationId: conversation_id, Message: message }));
+      let message_data = {
+        MessageType: "SEND_MESSAGE",
+        ConversationId: conversation_id,
+        Message: message
+      };
+
+      // Check for GIF URL and add data to message
+      if (GIF_url) {
+        message_data.Message_Type = "GIF";
+        message_data.GIF_URL = GIF_url;
+      }
+
+      webSocketRef.current.send(JSON.stringify(message_data));
     }
   };
 
