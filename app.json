@@ -13,7 +13,7 @@
     "splash": {
       "image": "./assets/global/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#160900"
     },
     "doctor": {
       "reactNativeDirectoryCheck": {
