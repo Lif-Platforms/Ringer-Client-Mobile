@@ -11,7 +11,9 @@ const styles = StyleSheet.create({
         zIndex: 999,
     },
     notification: { 
-        backgroundColor: '#222222',
+        backgroundColor: '#1C1C1C',
+        borderWidth: 1,
+        borderColor: '#353535',
         borderRadius: 15,
         width: '100%',
         padding: 10,

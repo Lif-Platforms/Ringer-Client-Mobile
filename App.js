@@ -18,6 +18,7 @@ import { UserProfilePage } from './pages/user_profile';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
+import NotificationBadge from './components/global/notification';
 
 // Create navigation stack instance
 const Stack = createStackNavigator();
@@ -95,9 +96,9 @@ export default function App() {
 
   return (
     <GestureHandlerRootView>
-      <Notifications />
       <WebSocketProvider>
           <NavigationContainer>
+            <NotificationBadge />
             <Stack.Navigator 
               initialRouteName={initialRoute}
               screenOptions={{

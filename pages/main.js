@@ -196,28 +196,6 @@ export function MainScreen({ navigation }) {
         });
     }, []);
 
-    // Listen for message updates
-    useEffect(() => {
-        async function handle_message_update(event) {
-            const credentials = await get_auth_credentials();
-            console.log(event.message.Author)
-
-            if (routeName === "Main" && event.message.Author !== credentials.username) {
-                eventEmitter.emit('Show_Notification', {
-                    title: event.message.Author,
-                    content: event.message.Message,
-                    conversation_id: event.id
-                });
-            }
-        }
-
-        eventEmitter.on('Message_Update', handle_message_update);
-
-        return () => {
-            eventEmitter.off('Message_Update', handle_message_update);
-        }
-    }, []);
-
     return(
         <View style={styles.page}>
             <StatusBar style="light" />

@@ -103,18 +103,6 @@ export function MessagesPage({ route, navigation }) {
           if (event.id === conversation_id) {
             // Use functional state update to ensure the latest state is used
             setMessages((prevMessages) => [...prevMessages, event.message]);
-
-          } else {
-            const credentials = await get_auth_credentials();
-
-            if (event.message.Author !== credentials.username) {
-                // Show notification of incoming message
-                eventEmitter.emit('Show_Notification', {
-                    title: event.message.Author,
-                    content: event.message.Message,
-                    conversation_id: event.id
-                });
-            }
           }
         };
     
