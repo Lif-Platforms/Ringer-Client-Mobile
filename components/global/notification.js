@@ -15,24 +15,35 @@ export default function NotificationBadge() {
     const navigation = useNavigation();
     const currentRoute = useNavigationState(state => state?.routes[state.index]);
 
+    useEffect(() => {
+        console.log(currentRoute);
+    }, [currentRoute]);
+
     function handle_show_notification(event) {
+        console.log("notification event called");
         setTitle(event.title);
         setContent(event.content);
         setConversationId(event.conversation_id);
 
-        console.log(currentRoute.name);
-
-        // Check if conversation id is not the same as the current conversation
-        // Also check if the current route is not the messages page
-        if (currentRoute.name === 'Messages') {
-            if (event.conversation_id !== currentRoute.params.conversation_id) {
-                setShowNotification(true);
+        // Check if the current route is set
+        if (currentRoute) {
+            // Check if conversation id is not the same as the current conversation
+            // Also check if the current route is not the messages page
+            if (currentRoute.name === 'Messages') {
+                if (event.conversation_id !== currentRoute.params.conversation_id) {
+                    setShowNotification(true);
+                } else {
+                    console.log("Conversation is already open");
+                    // Do not show notification if the conversation is already open
+                    return;
+                }
             } else {
-                // Do not show notification if the conversation is already open
-                return;
+                setShowNotification(true);
             }
         } else {
-            setShowNotification(true);
+            console.log("Current route is not set");
+            // Do not show notification if the current route is not set
+            return;
         }
 
         // Play slide-in animation
