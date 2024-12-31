@@ -7,7 +7,6 @@ import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import { eventEmitter } from "../scripts/emitter";
 import MessageBox from "../components/messages page/message_box";
-import NotificationBadge from "../components/global/notification";
 
 // Get values from secure store
 async function getValueFor(key) {

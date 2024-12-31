@@ -6,6 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import getEnvVars from "./variables";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { NotifierWrapper } from 'react-native-notifier';
 
 // Page imports
 import { MainScreen } from './pages/main';
@@ -15,10 +16,10 @@ import { Notifications } from './pages/notifications';
 import { AddFriendPage } from './pages/add_friend';
 import { AccountPage } from './pages/account';
 import { UserProfilePage } from './pages/user_profile';
+import NotificationHandler from './components/global/notification_handler';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
-import NotificationBadge from './components/global/notification';
 
 // Create navigation stack instance
 const Stack = createStackNavigator();
@@ -97,8 +98,9 @@ export default function App() {
   return (
     <GestureHandlerRootView>
       <WebSocketProvider>
+        <NotifierWrapper>
           <NavigationContainer>
-            <NotificationBadge />
+            <NotificationHandler />
             <Stack.Navigator 
               initialRouteName={initialRoute}
               screenOptions={{
@@ -145,6 +147,7 @@ export default function App() {
               />
             </Stack.Navigator>
           </NavigationContainer>
+        </NotifierWrapper>
       </WebSocketProvider>
     </GestureHandlerRootView>
   );

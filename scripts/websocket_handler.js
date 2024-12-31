@@ -96,13 +96,11 @@ export const WebSocketProvider = ({ children }) => {
           });
 
           // Send in-app notification event to trigger in-app notification
-          eventEmitter.emit("Show_Notification", {
+          eventEmitter.emit("show_notification", {
             title: data.Message.Author,
             content: data.Message.Message,
             conversation_id: data.Id
           });
-
-          console.log("notification event emitted");
 
           // Send client notification if user has app suspended
           if (appState !== "active" && data.Message.Author !== credentials.username) {

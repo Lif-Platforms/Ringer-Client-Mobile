@@ -5640,6 +5640,11 @@ react-native-keyboard-spacer@^0.4.1:
   resolved "https://registry.yarnpkg.com/react-native-keyboard-spacer/-/react-native-keyboard-spacer-0.4.1.tgz#46f18a320432098a25ea9fa89f5143dd254d332d"
   integrity sha512-QPX2El4U2VfhRQm1YOTrTsOJIDjJBydpdz87jmiFOxBmKJfVn7CwiTzzipKTiLwfAFoUYQ+sB/xcnIhRZPF+SQ==
 
+react-native-notifier@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-notifier/-/react-native-notifier-2.0.0.tgz#99bb703fae8cbf0c0465a5beacdca923613344fa"
+  integrity sha512-CKaoldBM2Lz9FIWn1frUZ70R8n1jCwaUsO4hGfqbNYFUZLV4OYy/UeEicWvrLy3Ce8fEg7WyYWVd0q+crsFQlA==
+
 react-native-reanimated@^3.16.1:
   version "3.16.1"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.16.1.tgz#7c3cb256adb8fb436f57911d0e8e7cae68e28a67"

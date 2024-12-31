@@ -9,7 +9,6 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { eventEmitter } from "../scripts/emitter";
-import NotificationBadge from "../components/global/notification";
 import { useNavigationState } from '@react-navigation/native';
 
 // Get values from secure store
@@ -199,7 +198,6 @@ export function MainScreen({ navigation }) {
     return(
         <View style={styles.page}>
             <StatusBar style="light" />
-            <NotificationBadge navigation={navigation} />
             <View style={styles.header}>
                 <Text style={styles.title}>People</Text>
                 <TouchableOpacity style={styles.add_button} onPress={() => navigation.push("Add Friend")}>
