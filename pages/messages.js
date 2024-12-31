@@ -97,7 +97,7 @@ export function MessagesPage({ route, navigation }) {
 
     // Add event listener for message updates
     useEffect(() => {
-        const handle_message_update = (event) => {
+        const handle_message_update = async (event) => {
           // Check if the update was for this conversation
           if (event.id === conversation_id) {
             // Use functional state update to ensure the latest state is used

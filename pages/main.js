@@ -9,6 +9,7 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { eventEmitter } from "../scripts/emitter";
+import { useNavigationState } from '@react-navigation/native';
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -107,6 +108,7 @@ function FriendsList({ navigation }) {
 
 export function MainScreen({ navigation }) {
     const { connectWebSocket } = useWebSocket();
+    const routeName = useNavigationState((state) => state.routes[state.index].name);
 
     // Configure styles for header bar
     useEffect(() => {
