@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
       zIndex: 999,
       bottom: 0,
       borderTopLeftRadius: 20,
-      borderTopRightRadius: 20
+      borderTopRightRadius: 20,
     },
     modal_container: {
         backgroundColor: "#00000078",

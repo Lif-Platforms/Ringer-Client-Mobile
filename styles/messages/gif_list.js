@@ -6,8 +6,8 @@ const styles = StyleSheet.create({
         textAlign: "center"
     },
     gif: {
-        width: 120,
-        height: 120,
+        width: 115,
+        height: 115,
         borderRadius: 10
     },
     gif_list: {
@@ -15,12 +15,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         flexGrow: 1,
+        justifyContent: "center",
         gap: 10,
-        paddingBottom: 55
+        paddingBottom: 55,
     },
     gif_scroll: {
         padding: 10,
-        margin: "auto",
+
     },
     selected_gif: {
         borderColor: "#ff9500",
