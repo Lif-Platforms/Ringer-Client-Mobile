@@ -101,52 +101,52 @@ export default function App() {
         <NotifierWrapper>
           <NavigationContainer>
             <NotificationHandler />
-            <Stack.Navigator 
-              initialRouteName={initialRoute}
-              screenOptions={{
-                headerMode: 'screen', // Keep the header static during transitions
-              }}
-            >
-              <Stack.Screen
-                name="Login"
-                component={LoginScreen}
-                options={{ title: 'Login Page', animationEnabled: false }}
-              />
-              <Stack.Screen
-                name="Main"
-                component={MainScreen}
-                options={{ title: 'Main Page', animationEnabled: false }}
-              />
-              <Stack.Screen
-                name="Messages"
-                component={MessagesPage}
-                options={{ 
-                  title: 'Messages Page', 
-                  headerLeft: () => null,
+              <Stack.Navigator 
+                initialRouteName={initialRoute}
+                screenOptions={{
+                  headerMode: 'screen', // Keep the header static during transitions
                 }}
-              />
-              <Stack.Screen
-                name="Notifications"
-                component={Notifications}
-                options={{ title: 'Notifications', animationEnabled: false }}
-              />
-              <Stack.Screen
-                name="Add Friend"
-                component={AddFriendPage}
-                options={{ title: 'Add Friend', headerLeft: () => null}}
-              />
-              <Stack.Screen
-                name="Account"
-                component={AccountPage}
-                options={{ title: 'Account', animationEnabled: false}}
-              />
-              <Stack.Screen
-                name='User Profile'
-                component={UserProfilePage}
-                options={{ title: 'User Profile', animationEnabled: true, headerLeft: () => null}}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
+              >
+                <Stack.Screen
+                  name="Login"
+                  component={LoginScreen}
+                  options={{ title: 'Login Page', animationEnabled: false }}
+                />
+                <Stack.Screen
+                  name="Main"
+                  component={MainScreen}
+                  options={{ title: 'Main Page', animationEnabled: false }}
+                />
+                <Stack.Screen
+                  name="Messages"
+                  component={MessagesPage}
+                  options={{ 
+                    title: 'Messages Page', 
+                    headerLeft: () => null,
+                  }}
+                />
+                <Stack.Screen
+                  name="Notifications"
+                  component={Notifications}
+                  options={{ title: 'Notifications', animationEnabled: false }}
+                />
+                <Stack.Screen
+                  name="Add Friend"
+                  component={AddFriendPage}
+                  options={{ title: 'Add Friend', headerLeft: () => null}}
+                />
+                <Stack.Screen
+                  name="Account"
+                  component={AccountPage}
+                  options={{ title: 'Account', animationEnabled: false}}
+                />
+                <Stack.Screen
+                  name='User Profile'
+                  component={UserProfilePage}
+                  options={{ title: 'User Profile', animationEnabled: true, headerLeft: () => null}}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
         </NotifierWrapper>
       </WebSocketProvider>
     </GestureHandlerRootView>

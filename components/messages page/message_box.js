@@ -1,8 +1,9 @@
-import { View, TextInput, TouchableOpacity, Image, Animated, Keyboard, Text } from "react-native";
+import { View, TextInput, TouchableOpacity, Image, Animated, Keyboard, Text, Dimensions } from "react-native";
 import { useRef, useState, useEffect } from "react";
 import styles from "../../styles/messages/messageBox";
 import { eventEmitter } from "../../scripts/emitter";
 import * as SecureStore from 'expo-secure-store';
+import { AddMediaOptions } from "./add_media_options";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -24,6 +25,7 @@ export default function MessageBox({
     messageValue,
     scrollViewRef,
     updateTypingStatus,
+    setShowGIFModal
 }) {
     const messageBoxRef = useRef();
     const [keyboardHeight] = useState(new Animated.Value(0));
@@ -33,6 +35,9 @@ export default function MessageBox({
     const scaleAnim = useRef(new Animated.Value(0.9)).current;
     const typingTimeout = useRef(null);
     const isUserTyping = useRef(false);
+    const [showMediaOptions, setShowMediaOptions] = useState(false);
+    const addMediaButtonRef = useRef(null);
+    const [addMediaOptionsRightPosition, setAddMediaOptionsRightPosition] = useState(0);
 
     function handle_message_send() {
         // Refocus the message box
@@ -168,6 +173,26 @@ export default function MessageBox({
         }
     }, []);
 
+    function handle_add_media() {
+        // Toggle media options between show/hide
+        setShowMediaOptions(!showMediaOptions);
+    }
+
+    // Get the position of the add media button from the right side of the screen
+    // This is used to position the add media options menu
+    useEffect(() => {
+        // Make sure button exists before doing measurements on it
+        if (addMediaButtonRef.current) {
+            // Get the right position of the add media button
+            addMediaButtonRef.current.measure((x, y, width, height, pageX, pageY) => { 
+                const screenWidth = Dimensions.get('window').width; 
+                const rightX = screenWidth - (pageX + width) - 10;
+
+                setAddMediaOptionsRightPosition(rightX);
+            });
+        }
+    }, [showMediaOptions]);
+
     return (
         <Animated.View 
             style={[
@@ -181,17 +206,31 @@ export default function MessageBox({
             <Animated.View style={[styles.typing_indicator_container, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
                 <Text style={styles.typing_indicator}>{username} is typing...</Text>
             </Animated.View>
-            <TextInput
-                style={styles.message_box}
-                ref={messageBoxRef}
-                placeholder={`Message ${username}`}
-                placeholderTextColor="#767676"
-                onFocus={() => setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 300)}
-                onChangeText={text => handle_user_typing(text)}
-            />
-            <TouchableOpacity onPress={handle_message_send} disabled={isSending}>
-                <Image style={styles.send_button} source={require("../../assets/messages/send_button.png")} />
-            </TouchableOpacity>
+            <View style={styles.message_box}>
+                <AddMediaOptions
+                    showMediaOptions={showMediaOptions}
+                    rightPosition={addMediaOptionsRightPosition}
+                    handle_add_media={handle_add_media}
+                    setShowGIFModal={setShowGIFModal}
+                />
+                <TextInput
+                    ref={messageBoxRef}
+                    style={styles.message_input}
+                    placeholder={`Message ${username}`}
+                    placeholderTextColor="#767676"
+                    onFocus={() => setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 300)}
+                    onChangeText={text => handle_user_typing(text)}
+                    keyboardAppearance="dark"
+                />
+                <View style={styles.controls}>
+                    <TouchableOpacity ref={addMediaButtonRef} onPress={handle_add_media} disabled={isSending}>
+                        <Image style={styles.send_button} source={require("../../assets/messages/add_media_button.png")} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handle_message_send} disabled={isSending}>
+                        <Image style={styles.send_button} source={require("../../assets/messages/send_button.png")} />
+                    </TouchableOpacity>
+                </View>
+            </View>
         </Animated.View>
     );
 }

@@ -7,19 +7,35 @@ const styles = StyleSheet.create({
         display: "flex",
         gap: 10,
         flexDirection: "row",
-        paddingTop: 5
+        paddingTop: 5,
+        position: 'relative'
     },
     message_box: {
         flex: 1,
+        flexDirection: "row",
+        alignItems: 'center',
         height: 50,
-        backgroundColor: "#353535",
-        padding: 15,
-        color: "white",
+        backgroundColor: "#1C1C1C",
+        borderColor: "#353535",
+        borderWidth: 1,
+        padding: 5,
         borderRadius: 25
     },
     send_button: {
-        width: 50,
-        height: 50
+        width: 40,
+        height: 40,
+    },
+    message_input: {
+        flex: 1,
+        color: "white",
+        paddingLeft: 15,
+        paddingRight: 10
+    },
+    controls: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: 'center',
+        gap: 7,
     },
     typing_indicator: {
         color: 'white',

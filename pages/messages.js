@@ -7,6 +7,8 @@ import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import { eventEmitter } from "../scripts/emitter";
 import MessageBox from "../components/messages page/message_box";
+import GIFModal from '../components/messages page/gif_modal';
+import Message from "../components/messages page/message";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -27,6 +29,7 @@ export function MessagesPage({ route, navigation }) {
     const [isSending, setIsSending] = useState(false);
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
     const [isOnline, setIsOnline] = useState(false);
+    const [showGIFModal, setShowGIFModal] = useState(false);
 
     // Set online status when page loads
     useEffect(() => {
@@ -58,16 +61,25 @@ export function MessagesPage({ route, navigation }) {
 
     // Configure styles for header bar
     useEffect(() => {
+        let header_color;
+
+        // Change header color if GIF modal is open
+        if (showGIFModal) {
+            header_color = '#0e0a07';   
+        } else {
+            header_color = '#19120E';
+        }
+
         navigation.setOptions({
             headerTitle: '',
             headerTintColor: 'white',
             headerStyle: {
-                backgroundColor: '#19120E',
+                backgroundColor: header_color,
                 height: 55,
                 shadowColor: 'transparent'
             }
         });    
-    }, [navigation]);
+    }, [navigation, showGIFModal]);
 
     function handle_navigation_back() {
         navigation.goBack();
@@ -151,6 +163,11 @@ export function MessagesPage({ route, navigation }) {
         }
     }, []);
 
+    // Handle dismissing the GIF modal
+    function onDismiss() {
+        setShowGIFModal(false);
+    }
+
     return (
         <View style={styles.page}>
             <StatusBar style="light" />
@@ -179,16 +196,11 @@ export function MessagesPage({ route, navigation }) {
             >
                 {Array.isArray(messages) ? (
                     messages.map((message, index) => (
-                        <View key={index} style={styles.message}>
-                            <Image
-                                source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${message.Author}.png` }}
-                                style={styles.message_avatar}
-                            />
-                            <View style={styles.message_text_container}>
-                                <Text style={styles.messages_author}>{message.Author}</Text>
-                                <Text style={styles.messages_content} selectable={true}>{message.Message}</Text>
-                            </View>
-                        </View>
+                        <Message
+                            key={index}
+                            message={message}
+                            index={index}
+                        />
                     ))
                 ) : messages === "loading" ? (
                     <Text style={styles.message_loading}>Loading...</Text>
@@ -206,6 +218,12 @@ export function MessagesPage({ route, navigation }) {
                 setIsSending={setIsSending}
                 scrollViewRef={scrollViewRef}
                 updateTypingStatus={updateTypingStatus}
+                setShowGIFModal={setShowGIFModal}
+            />
+            <GIFModal
+                showGIFModal={showGIFModal}
+                onDismiss={onDismiss}
+                conversation_id={conversation_id}
             />
         </View>
     )
