@@ -1,6 +1,6 @@
 // Module imports
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets, CardStyleInterpolators } from '@react-navigation/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
@@ -133,7 +133,13 @@ export default function App() {
                 <Stack.Screen
                   name="Add Friend"
                   component={AddFriendPage}
-                  options={{ title: 'Add Friend', headerLeft: () => null}}
+                  options={{ 
+                    title: 'Add Friend', 
+                    headerLeft: () => null,
+                    gestureDirection: 'vertical',
+                    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+                    ...TransitionPresets.ModalSlideFromBottomIOS,
+                  }}
                 />
                 <Stack.Screen
                   name="Account"

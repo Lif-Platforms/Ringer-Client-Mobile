@@ -56,6 +56,12 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#2E241D'
     },
+    add_button: {
+        marginRight: 20
+    },
+    add_button_icon: {
+        margin: "auto"
+    }
 })
 
 export default styles;
