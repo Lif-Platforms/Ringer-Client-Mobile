@@ -13,7 +13,24 @@ const styles = StyleSheet.create({
     },
     username: {
         color: "white",
-        fontSize: 20
+        fontSize: 25,
+        marginVertical: "auto"
+    },
+    result: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        borderBottomWidth: 1,
+        borderBottomColor: "#353535",
+        paddingBottom: 10,
+    },
+    add_button: {
+        backgroundColor: "#00430F",
+        paddingHorizontal: 25,
+        borderRadius: 5,
+    },
+    add_button_icon: {
+        margin: "auto"
     }
 });
 
