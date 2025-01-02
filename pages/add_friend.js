@@ -1,8 +1,10 @@
-import { Text, Image, View, TouchableOpacity, TextInput } from "react-native";
-import { useEffect, useState } from "react";
+import { Text, Image, View, TouchableOpacity, TextInput, Keyboard } from "react-native";
+import { useEffect, useRef, useState } from "react";
 import styles from "../styles/add_friend/style";
 import * as SecureStore from 'expo-secure-store';
 import getEnvVars from "../variables";
+import { ScrollView } from "react-native-gesture-handler";
+import SearchResult from "../components/add friend/search_result";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -15,8 +17,11 @@ async function getValueFor(key) {
 }   
 
 export function AddFriendPage({ navigation }) {
-    const [addButtonText, setAddButtonText] = useState("Add");
+    const [searchResults, setSearchResults] = useState(null);
     const [addUser, setAddUser] = useState();
+    const websocketConn = useRef();
+    const [isConnected, setIsConnected] = useState(false);
+    const searchBoxRef = useRef();
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
@@ -31,7 +36,7 @@ export function AddFriendPage({ navigation }) {
             headerTitle: '',
             headerTintColor: 'white',
             headerStyle: {
-                backgroundColor: '#19120E',
+                backgroundColor: '#160900',
                 height: 55,
                 shadowColor: 'transparent'
             }
@@ -68,19 +73,79 @@ export function AddFriendPage({ navigation }) {
         })
     }
 
+    // Connect to websocket
+    useEffect(() => {
+        websocketConn.current = new WebSocket(`${getEnvVars.ringer_url_ws}/user_search`);
+
+        websocketConn.current.onopen = () => {
+            console.log("Websocket connected");
+            setIsConnected(true);
+        }
+
+        websocketConn.current.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log(data);
+
+            setSearchResults(data);
+        }
+
+        websocketConn.current.onclose = () => {
+            console.log("Websocket closed");
+        }
+
+        return () => {
+            websocketConn.current.close();
+        }
+    }, []);
+    
+    // Send search query to server
+    useEffect(() => {
+        if (addUser) {
+            websocketConn.current.send(JSON.stringify({user: addUser}));
+        }
+    }, [addUser]);
+
+    // Focus the search bar when websocket connects
+    useEffect(() => {
+        if (isConnected) {
+            searchBoxRef.current.focus();
+        }
+    }, [isConnected]);
+
     return (
         <View style={styles.page}>
             <View style={styles.header}>
                 <TouchableOpacity style={styles.back_button} onPress={() => navigation.goBack()}>
-                    <Image source={require("../assets/add_friend/back_icon.png")} />
+                    <Image style={styles.back_button_icon} source={require("../assets/add_friend/back_icon.png")} />
                 </TouchableOpacity>
-                <Text style={styles.header_text}>Add Friend</Text>
+                <Text style={styles.header_text}>Add Friends</Text>
             </View>
             <View style={styles.container}>
-                <TextInput onChangeText={(text) => setAddUser(text)} style={styles.user_entry} placeholder="Username" placeholderTextColor="#767676" />
-                <TouchableOpacity onPress={handle_add_user} style={styles.add_button}>
-                    <Text style={styles.add_button_text}>{addButtonText}</Text>
-                </TouchableOpacity>
+                <TextInput
+                    onChangeText={(text) => setAddUser(text)}
+                    style={[styles.user_entry, {opacity: isConnected ? 1 : 0.5}]}
+                    placeholder="Search..."
+                    placeholderTextColor="#494949"
+                    keyboardAppearance="dark"
+                    editable={isConnected}
+                    ref={searchBoxRef}
+                />
+                <ScrollView 
+                    style={styles.search_results}
+                    onScrollBeginDrag={() => Keyboard.dismiss()} // Dismiss keyboard when scrolling
+                >
+                    {searchResults ? (
+                        searchResults.length === 0 ? (
+                            <Text style={styles.start_search_text}>No Results Found</Text>
+                        ) : (
+                            searchResults.map((result, index) => (
+                                <SearchResult key={index} username={result} />
+                            ))
+                        )
+                    ) : (
+                        <Text style={styles.start_search_text}>Start By Typing</Text>
+                    )}
+                </ScrollView>
             </View>
         </View>
     )
