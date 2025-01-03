@@ -91,36 +91,6 @@ export function MessagesPage({ route, navigation }) {
     }
 
     useEffect(() => {
-        async function fetch_pronouns() {
-            const response = await fetch(`${getEnvVars.auth_url}/profile/get_pronouns/${username}`);
-    
-            if (response.ok) {
-                const pronouns = (await response.text()).slice(1, -1);
-                setUserPronouns(pronouns);
-            } else {
-                console.error("Pronouns Request Failed! Status code: " + response.status)
-                setUserPronouns("Error Fetching Pronouns");
-            }
-        }
-        fetch_pronouns();
-    }, []);
-
-    useEffect(() => {
-        async function fetch_bio() {
-            const response = await fetch(`${getEnvVars.auth_url}/profile/get_bio/${username}`);
-    
-            if (response.ok) {
-                const bio = (await response.text()).slice(1, -1);
-                setUserBio(bio);
-            } else {
-                console.error("Bio Request Failed! Status code: " + response.status)
-                setUserBio("Error Fetching Bio");
-            }
-        }
-        fetch_bio();
-    }, []);
-
-    useEffect(() => {
         async function load_messages() {
             // Get auth credentials
             const credentials = await get_auth_credentials();
@@ -244,22 +214,17 @@ export function MessagesPage({ route, navigation }) {
                 }
             })
             .then((data) => {
+                // Set loading state to false
+                setIsLoadingMoreMessages(false);
+
                 // Add messages to list
                 const messages_ = [...data, ...messages];
                 setMessages(messages_);
-                setIsLoadingMoreMessages(false);
 
+                // Check if there are more messages to load
                 if (data.length < 20) {
                     setLoadMoreMessages(false);
                 }
-
-                // Scroll to end of conversation
-                // Set timeout to ensure messages load before scrolling
-                setTimeout(() => {
-                    if (scrollViewRef.current) {
-                        scrollViewRef.current.scrollTo({ x: 0, y: currentScrollHight.current - previousScrollHight.current, animated: false });
-                    }
-                }, 0);  
             })
             .catch((err) => {
                 console.error(err);
@@ -269,8 +234,25 @@ export function MessagesPage({ route, navigation }) {
     }
 
     function handle_content_size_change(width, height) {
-        previousScrollHight.current = currentScrollHight.current || height;
-        currentScrollHight.current = height;
+        // If conversation is loading more messages then don't scroll
+        if (!isLoadingMoreMessages) {
+            // Save previous scroll height
+            previousScrollHight.current = currentScrollHight.current;
+
+            // Save current scroll height
+            currentScrollHight.current = height;
+
+            // Scroll to end of conversation
+            // Set timeout to ensure messages load before scrolling
+            setTimeout(() => {
+                if (scrollViewRef.current) {
+                    // Calculate scroll position
+                    const new_scroll_position = currentScrollHight.current - previousScrollHight.current + currentScrollPosition.current - 50; // Subtract 50 to move it up a bit so the user can see the new messages
+
+                    scrollViewRef.current.scrollTo({ x: 0, y: new_scroll_position, animated: false });
+                }
+            }, 1); 
+        }
     }
 
     // Handle dismissing the GIF modal
