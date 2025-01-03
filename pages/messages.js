@@ -35,6 +35,7 @@ export function MessagesPage({ route, navigation }) {
     const currentScrollHight = useRef(0);
     const previousScrollHight = useRef(0);
     const [showGIFModal, setShowGIFModal] = useState(false);
+    const [keepScrollPosition, setKeepScrollPosition] = useState(false);
 
     // Set online status when page loads
     useEffect(() => {
@@ -217,6 +218,9 @@ export function MessagesPage({ route, navigation }) {
                 // Set loading state to false
                 setIsLoadingMoreMessages(false);
 
+                // Set keep scroll position to true
+                setKeepScrollPosition(true);
+
                 // Add messages to list
                 const messages_ = [...data, ...messages];
                 setMessages(messages_);
@@ -235,7 +239,8 @@ export function MessagesPage({ route, navigation }) {
 
     function handle_content_size_change(width, height) {
         // If conversation is loading more messages then don't scroll
-        if (!isLoadingMoreMessages) {
+        // If keep scroll position is false then don't scroll
+        if (!isLoadingMoreMessages && keepScrollPosition) {
             // Save previous scroll height
             previousScrollHight.current = currentScrollHight.current;
 
@@ -251,7 +256,10 @@ export function MessagesPage({ route, navigation }) {
 
                     scrollViewRef.current.scrollTo({ x: 0, y: new_scroll_position, animated: false });
                 }
-            }, 1); 
+            }, 1);
+
+            // Set keep scroll position to false
+            setKeepScrollPosition(false);
         }
     }
 
