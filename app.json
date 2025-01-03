@@ -2,11 +2,11 @@
   "expo": {
     "name": "Ringer",
     "slug": "ringer-client-mobile",
-    "version": "1.3.1",
+    "version": "1.4.0",
     "owner": "lif_platforms",
     "orientation": "portrait",
     "icon": "./assets/global/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "updates": {
       "enabled": false
     },
