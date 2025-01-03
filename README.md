@@ -1,5 +1,5 @@
 <h1 align="center">💬 Ringer-Client-Mobile</h1>
-<p>Ringer is a new messaging app for IOS/Android that helps you connect with friends, family, and the people that matter most.</p>
+<p align="center">Ringer is a new messaging app for IOS/Android that helps you connect with friends, family, and the people that matter most.</p>
 <div align="center">
  <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/Lif-Platforms/Ringer-Client-Mobile?style=for-the-badge">
  <img alt="GitHub License" src="https://img.shields.io/github/license/Lif-Platforms/Ringer-Client-Mobile?style=for-the-badge">
