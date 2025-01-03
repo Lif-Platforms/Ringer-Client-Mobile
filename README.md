@@ -1,7 +1,11 @@
-# 💬 Ringer-Client-Mobile
-Ringer is a new messaging app for IOS/Android. It's currently in beta but let's work together to make it better. The code here is snapshot code so it might not work as intended. To get the latest stable build pls download the installer. 
-
-**NOTE: Ringer doesn't have very good security as of right now. If you do sign up please make sure your password is unique to Ringer and not something you use for another service.**
+<h1 align="center">💬 Ringer-Client-Mobile</h1>
+<p>Ringer is a new messaging app for IOS/Android that helps you connect with friends, family, and the people that matter most.</p>
+<div align="center">
+ <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/Lif-Platforms/Ringer-Client-Mobile?style=for-the-badge">
+ <img alt="GitHub License" src="https://img.shields.io/github/license/Lif-Platforms/Ringer-Client-Mobile?style=for-the-badge">
+ <img alt="GitHub Issues" src="https://img.shields.io/github/issues/Lif-Platforms/Ringer-Client-Mobile?style=for-the-badge">
+ <img alt="Codacy grade" src="https://img.shields.io/codacy/grade/24b985bda996484c8dd862e5c79342c9?style=for-the-badge">
+</div>
 
 # 👋🏻 HELP WANTED
 Lif Platforms is looking for contributors for Ringer and other services from Lif. If you are interested please reach out at: Lif.Platforms@gmail.com
