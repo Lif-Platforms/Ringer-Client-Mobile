@@ -29,7 +29,7 @@ export default function ReconnectBar() {
     useEffect(() => {
         if (visible) {
             Animated.timing(topValue, {
-                toValue: 100,
+                toValue: 110,
                 duration: 200,
                 useNativeDriver: true,
             }).start();
