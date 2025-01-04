@@ -1,6 +1,17 @@
 import styles from "../../styles/messages/message";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, Linking } from "react-native";
 import getEnvVars from "../../variables";
+import Hyperlink from "react-native-hyperlink";
+
+const MessageText = ({ message }) => {
+    return ( 
+        <View style={styles.messages_content}> 
+            <Hyperlink linkStyle={styles.message_link} onPress={(url) => Linking.openURL(url)} > 
+                <Text style={styles.message_text} selectable={true}>{message}</Text> 
+            </Hyperlink> 
+        </View> 
+    );
+};
 
 export default function Message({ message, index }) {
     return (
@@ -23,7 +34,7 @@ export default function Message({ message, index }) {
                         />
                     </>
                 ) : (
-                    <Text style={styles.messages_content} selectable={true}>{message.Message}</Text>
+                    <MessageText message={message.Message} />
                 )}
             </View>
         </View>
