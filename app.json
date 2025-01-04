@@ -23,7 +23,12 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.lifplatforms.ringer",
-      "jsEngine": "hermes"
+      "jsEngine": "hermes",
+      "icon": {
+        "light": "./assets/global/icon_light.png",
+        "dark": "./assets/global/icon_dark.png",
+        "tinted": "./assets/global/icon_tinted.png"
+      }
     },
     "android": {
       "adaptiveIcon": {
