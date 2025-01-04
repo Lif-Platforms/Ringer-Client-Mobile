@@ -107,6 +107,7 @@ export default function App() {
         <NotifierWrapper>
           <NavigationContainer>
             <NotificationHandler />
+              <NotificationHandler />
               <Stack.Navigator 
                 initialRouteName={initialRoute}
                 screenOptions={{
