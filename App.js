@@ -37,6 +37,12 @@ async function getValueFor(key) {
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
+// Set the animation options.
+SplashScreen.setOptions({
+  duration: 500,
+  fade: true,
+});
+
 // Default component for app
 // Mainly responsible for structuring our routes
 export default function App() {
