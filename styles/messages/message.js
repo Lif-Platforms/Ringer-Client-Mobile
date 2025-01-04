@@ -36,7 +36,16 @@ const styles = StyleSheet.create({
         width: 110,
         marginTop: 10,
         height: 15
-    }
+    },
+    message_link: {
+        color: "#00b3ff",
+        textDecorationLine: "underline",
+        textDecorationColor: "#00b3ff",
+        textDecorationStyle: "solid",
+    },
+    message_text: {
+        color: "white",
+    },
 });
 
 export default styles;
