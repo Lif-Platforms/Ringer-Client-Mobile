@@ -20,6 +20,7 @@ import NotificationHandler from './components/global/notification_handler';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
+import ReconnectBar from './components/global/reconnect_bar';
 
 // Create navigation stack instance
 const Stack = createStackNavigator();
@@ -106,6 +107,7 @@ export default function App() {
       <WebSocketProvider>
         <NotifierWrapper>
           <NavigationContainer>
+            <ReconnectBar />
             <NotificationHandler />
               <NotificationHandler />
               <Stack.Navigator 

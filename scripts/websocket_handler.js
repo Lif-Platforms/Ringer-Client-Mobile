@@ -78,7 +78,7 @@ export const WebSocketProvider = ({ children }) => {
 
         // Attempt to reconnect if the connection was not closed manually
         if (shouldReconnect.current) {
-          setTimeout(connectWebSocket, 5000); // Reconnect after 5 seconds
+          setTimeout(connectWebSocket, 3000); // Reconnect after 5 seconds
         }
       };
 
