@@ -22,12 +22,11 @@ const styles = StyleSheet.create({
     friends_container: {
         flexGrow: 1,
         justifyContent: 'flex-start',
-        padding: 10,
+        paddingHorizontal: 10,
     },
     friendItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 10,
         paddingVertical: 10,
         borderBottomWidth: 1,
         borderBottomColor: "#525252"
