@@ -9,9 +9,10 @@ const styles = StyleSheet.create({
     },
     title: {
         color: "white",
-        fontSize: 45,
-        fontWeight: "bold",
-        margin: 20
+        fontSize: 30,
+        marginLeft: 10,
+        marginBottom: 10,
+        marginTop: 10
     },
     header: {
         display: "flex",
@@ -21,25 +22,25 @@ const styles = StyleSheet.create({
     friends_container: {
         flexGrow: 1,
         justifyContent: 'flex-start',
-        padding: 16,
+        paddingHorizontal: 10,
     },
     friendItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
-        padding: 10,
-        backgroundColor: '#ffffff1c',
-        borderRadius: 8,
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#525252"
     },
     friendImage: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         borderRadius: 25,
         marginRight: 10,
     },
     friendText: {
         color: 'white',
-        fontSize: 25,
+        fontSize: 20,
+        fontWeight: 'bold',
     },
     noFriendsText: {
         color: 'white',
@@ -50,17 +51,19 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         right: 8,
-        width: 20,
-        height: 20,
+        width: 15,
+        height: 15,
         borderRadius: 100,
         borderWidth: 2,
-        borderColor: '#2E241D'
+        borderColor: '#160900',
     },
     add_button: {
-        marginRight: 20
+        marginRight: 20,
     },
     add_button_icon: {
-        margin: "auto"
+        margin: "auto",
+        width: 25,
+        height: 25,
     }
 })
 
