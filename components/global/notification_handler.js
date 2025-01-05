@@ -32,8 +32,7 @@ export default function NotificationHandler() {
                                 name: 'Messages',
                                 params: {
                                     username: event.title,
-                                    conversation_id: event.conversation_id,
-                                    online: true
+                                    conversation_id: event.conversation_id
                                 }
                             }
                         ]
