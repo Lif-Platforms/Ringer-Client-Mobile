@@ -199,7 +199,7 @@ export function MainScreen({ navigation }) {
         <View style={styles.page}>
             <StatusBar style="light" />
             <View style={styles.header}>
-                <Text style={styles.title}>People</Text>
+                <Text style={styles.title}>Messages</Text>
                 <TouchableOpacity style={styles.add_button} onPress={() => navigation.push("Add Friend")}>
                     <Image style={styles.add_button_icon} source={require("../assets/main/add_button.png")} />
                 </TouchableOpacity>
