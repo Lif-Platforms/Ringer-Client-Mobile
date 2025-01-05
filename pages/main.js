@@ -61,11 +61,10 @@ function FriendsList({ navigation, userData, setUserData }) {
         fetchFriends();
     }, []);
 
-    function handle_messages_navigate(username, conversation_id, online) {
+    function handle_messages_navigate(username, conversation_id) {
         navigation.push('Messages', {
             username: username,
-            conversation_id: conversation_id,
-            online: online
+            conversation_id: conversation_id
         })
     }
 
