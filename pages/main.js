@@ -9,7 +9,7 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { eventEmitter } from "../scripts/emitter";
-import { useNavigationState } from '@react-navigation/native';
+import { useUserData } from "../scripts/user_data_provider";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -21,9 +21,7 @@ async function getValueFor(key) {
     }    
 }   
 
-function FriendsList({ navigation }) {
-    const [friends, setFriends] = useState([]);
-
+function FriendsList({ navigation, userData, setUserData }) {
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
         const token_ = await getValueFor("token");
@@ -51,7 +49,7 @@ function FriendsList({ navigation }) {
 
                 if (response.ok) {
                     const data = await response.json();
-                    setFriends(data);
+                    setUserData(data);
                 } else {
                     throw new Error("Request Failed! Status Code: " + response.status);
                 }
@@ -71,23 +69,10 @@ function FriendsList({ navigation }) {
         })
     }
 
-    // Listen for user status changes
-    useEffect(() => {
-        const handle_status_change = (data) => { 
-            setFriends(prevFriends => prevFriends.map(friend => friend.Username === data.user ? { ...friend, Online: data.online } : friend ) ); 
-        }
-
-        eventEmitter.on('User_Status_Update', handle_status_change);
-
-        return () => {
-            eventEmitter.off('User_Status_Update', handle_status_change);
-        }
-    }, [])
-
     return (
         <ScrollView contentContainerStyle={styles.friends_container}>
-            {friends.length > 0 ? (
-                friends.map((friend, index) => (
+            {Array.isArray(userData) && userData.length > 0 ? (
+                userData.map((friend, index) => (
                     <TouchableOpacity key={index} style={styles.friendItem} onPress={() => handle_messages_navigate(friend.Username, friend.Id, friend.Online)}>
                         <View>
                             <Image
@@ -108,7 +93,7 @@ function FriendsList({ navigation }) {
 
 export function MainScreen({ navigation }) {
     const { connectWebSocket } = useWebSocket();
-    const routeName = useNavigationState((state) => state.routes[state.index].name);
+    const { userData, setUserData } = useUserData();
 
     // Configure styles for header bar
     useEffect(() => {
@@ -204,7 +189,11 @@ export function MainScreen({ navigation }) {
                     <Image style={styles.add_button_icon} source={require("../assets/main/add_button.png")} />
                 </TouchableOpacity>
             </View>
-            <FriendsList navigation={navigation} />
+            <FriendsList 
+                navigation={navigation}
+                setUserData={setUserData}
+                userData={userData}
+            />
             <BottomNavBar navigation={navigation}/>
         </View>
     )

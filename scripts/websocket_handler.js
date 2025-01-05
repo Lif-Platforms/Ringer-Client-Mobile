@@ -4,6 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import { eventEmitter } from "./emitter";
 import { AppState } from "react-native";
 import * as Notifications from "expo-notifications";
+import { useUserData } from './user_data_provider';
 
 const WebSocketContext = createContext(null);
 
@@ -37,6 +38,7 @@ export const WebSocketProvider = ({ children }) => {
   const webSocketRef = useRef(null);
   const shouldReconnect = useRef(false); // Track if we should attempt to reconnect
   const [appState, setAppState] = useState(AppState.currentState);
+  const { update_user_presence } = useUserData();
 
   useEffect(() => {
     // Attempt to connect when the component mounts
@@ -114,13 +116,14 @@ export const WebSocketProvider = ({ children }) => {
           }
         } else if ("ResponseType" in data & data.ResponseType === "MESSAGE_SENT") {
             eventEmitter.emit("Message_Sent");
+
         } else if ("Status" in data && data.Status == "Ok") {
           shouldReconnect.current = true;
+
         } else if (data.Type === "USER_STATUS_UPDATE") {
-          eventEmitter.emit("User_Status_Update", {
-            user: data.User,
-            online: data.Online
-          });
+          // Update user presence
+          update_user_presence(data.User, data.Online);
+
         } else if (data.Type === "USER_TYPING") {
           eventEmitter.emit('User_Typing', {
             conversation_id: data.Id,

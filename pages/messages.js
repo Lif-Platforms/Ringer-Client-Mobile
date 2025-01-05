@@ -9,6 +9,7 @@ import { eventEmitter } from "../scripts/emitter";
 import MessageBox from "../components/messages page/message_box";
 import GIFModal from '../components/messages page/gif_modal';
 import Message from "../components/messages page/message";
+import { useUserData } from "../scripts/user_data_provider";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -21,7 +22,7 @@ async function getValueFor(key) {
 }   
 
 export function MessagesPage({ route, navigation }) {
-    const { username, conversation_id, online } = route.params;
+    const { username, conversation_id } = route.params;
     const [messages, setMessages] = useState("loading");
     const scrollViewRef = useRef();
     const { sendMessage, updateTypingStatus } = useWebSocket();
@@ -36,11 +37,12 @@ export function MessagesPage({ route, navigation }) {
     const previousScrollHight = useRef(0);
     const [showGIFModal, setShowGIFModal] = useState(false);
     const [keepScrollPosition, setKeepScrollPosition] = useState(false);
+    const { userData } = useUserData();
 
-    // Set online status when page loads
+    // Set online status when user data updates or when page loads
     useEffect(() => {
-        setIsOnline(online);
-    }, []);
+        setIsOnline(userData.find((user) => user.Username === username).Online);
+    }, [userData]);
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
@@ -174,21 +176,6 @@ export function MessagesPage({ route, navigation }) {
             conversation_id: conversation_id
         });
     }
-
-    // Listen for online status update
-    useEffect(() => {
-        const handle_status_change = (data) => {
-            if (data.user === username) {
-                setIsOnline(data.online);
-            }
-        }
-
-        eventEmitter.on('User_Status_Update', handle_status_change);
-
-        return () => {
-            eventEmitter.off('User_Status_Update', handle_status_change);
-        }
-    }, []);
 
     async function handle_scroll(event) {
         const scrollPosition = event.nativeEvent.contentOffset.y;

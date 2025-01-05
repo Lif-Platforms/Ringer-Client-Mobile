@@ -21,6 +21,7 @@ import NotificationHandler from './components/global/notification_handler';
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
 import ReconnectBar from './components/global/reconnect_bar';
+import { UserDataProvider } from './scripts/user_data_provider';
 
 // Create navigation stack instance
 const Stack = createStackNavigator();
@@ -104,6 +105,7 @@ export default function App() {
 
   return (
     <GestureHandlerRootView>
+      <UserDataProvider>
       <WebSocketProvider>
         <NotifierWrapper>
           <NavigationContainer>
@@ -164,6 +166,7 @@ export default function App() {
             </NavigationContainer>
         </NotifierWrapper>
       </WebSocketProvider>
+      </UserDataProvider>
     </GestureHandlerRootView>
   );
 }
