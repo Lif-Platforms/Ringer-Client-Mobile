@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         height: 25,
     },
     lastMessageText: {
-        color: '#a0a0a0',
+        color: "#a0a0a0",
         fontSize: 20,
         overflow: 'hidden',
     },

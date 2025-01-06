@@ -6,7 +6,12 @@ export const UserDataProvider = ({ children }) => {
     const [userData, setUserData] = useState(null);
     const [dataQueue, setDataQueue] = useState([]);
 
-    // Create a queue for data to be updated once the user data loads in
+    /**
+    * Add an item to data queue
+    *
+    * @param {string} type - The type of data being added to the queue.
+    * @param {object} data - The data being added to the queue.
+    */
     function queue_data_update(type, data) {
         // Create copy of current data queue
         let newDataQueue = [...dataQueue];
@@ -19,7 +24,7 @@ export const UserDataProvider = ({ children }) => {
     }
 
     /**
-    * Updates the online status of users.
+    * Updates the online status of users
     *
     * @param {string} username -The user who's status is being updated.
     * @param {boolean} online - The value the users status is being set to.
@@ -40,12 +45,15 @@ export const UserDataProvider = ({ children }) => {
             setUserData(newUserData);
         } else {
             // Add data to queue to be added in once user data loads
-            queue_data_update("user_presence", {username: username, online: online});
+            queue_data_update("user_presence", {
+                username: username,
+                online: online
+            });
         }
     }
 
     /**
-    * Updates the last sent message for a specific conversation.
+    * Updates the last sent message for a specific conversation
     *
     * @param {string} message_author - The author of the message.
     * @param {string} message - The content of the message.
