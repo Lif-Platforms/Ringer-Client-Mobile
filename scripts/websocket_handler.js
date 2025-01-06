@@ -101,7 +101,7 @@ export const WebSocketProvider = ({ children }) => {
           update_last_sent_message(
             data.Message.Author,
             data.Message.Message,
-            data.Id
+            data.Id,
           );
 
           // Send in-app notification event to trigger in-app notification

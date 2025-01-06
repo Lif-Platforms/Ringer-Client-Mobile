@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext } from "react";
 
 const UserDataContext = createContext(null);
 
@@ -19,7 +19,13 @@ export const UserDataProvider = ({ children }) => {
         setUserData(newUserData);
     }
 
-    // Update last sent message
+    /**
+    * Updates the last sent message for a specific conversation.
+    *
+    * @param {string} message_author - The author of the message.
+    * @param {string} message - The content of the message.
+    * @param {number} conversation_id - The ID of the conversation to update.
+    */
     function update_last_sent_message(message_author, message, conversation_id) {
         // Update the user data immutably
         const newUserData = userData.map((user) => {
@@ -38,7 +44,7 @@ export const UserDataProvider = ({ children }) => {
             userData,
             setUserData,
             update_user_presence,
-            update_last_sent_message
+            update_last_sent_message,
         }}>
             {children}
         </UserDataContext.Provider>
