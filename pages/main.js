@@ -8,7 +8,6 @@ import { useWebSocket } from "../scripts/websocket_handler";
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
-import { eventEmitter } from "../scripts/emitter";
 import { useUserData } from "../scripts/user_data_provider";
 
 // Get values from secure store
