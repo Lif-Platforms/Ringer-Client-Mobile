@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 10,
         borderBottomWidth: 1,
-        borderBottomColor: "#525252"
+        borderBottomColor: "#525252",
     },
     friendImage: {
         width: 40,
@@ -64,6 +64,14 @@ const styles = StyleSheet.create({
         margin: "auto",
         width: 25,
         height: 25,
+    },
+    lastMessageText: {
+        color: 'white',
+        fontSize: 20,
+        overflow: 'hidden',
+    },
+    friendTextContainer: {
+        flex: 1
     }
 })
 

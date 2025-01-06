@@ -80,7 +80,10 @@ function FriendsList({ navigation, userData, setUserData }) {
                             />
                             <View style={[styles.status_indicator, {backgroundColor: friend.Online ? 'lightgreen' : 'gray'}]} />
                         </View>
-                        <Text style={styles.friendText}>{friend.Username}</Text>
+                        <View style={styles.friendTextContainer}>
+                            <Text style={styles.friendText}>{friend.Username}</Text>
+                            <Text numberOfLines={1} ellipsizeMode='tail' style={styles.lastMessageText}>{friend.Last_Message}</Text>
+                        </View>
                     </TouchableOpacity>
                 ))
             ) : (

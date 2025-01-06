@@ -37,7 +37,7 @@ export function MessagesPage({ route, navigation }) {
     const previousScrollHight = useRef(0);
     const [showGIFModal, setShowGIFModal] = useState(false);
     const [keepScrollPosition, setKeepScrollPosition] = useState(false);
-    const { userData } = useUserData();
+    const { userData, update_last_sent_message } = useUserData();
 
     // Set online status when user data updates or when page loads
     useEffect(() => {
@@ -121,6 +121,18 @@ export function MessagesPage({ route, navigation }) {
                         scrollViewRef.current.scrollToEnd({ animated: false });
                     }
                 }, 1);  
+
+                // Update last sent message
+                if (data.length >= 1) {
+                    const data_index = data.length - 1;
+                    const last_message = data[data_index];
+
+                    update_last_sent_message(
+                        last_message.Author,
+                        last_message.Message,
+                        conversation_id
+                    );
+                }
             } else {
                 setMessages("Messages_Error");
             }
