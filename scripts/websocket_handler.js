@@ -38,7 +38,7 @@ export const WebSocketProvider = ({ children }) => {
   const webSocketRef = useRef(null);
   const shouldReconnect = useRef(false); // Track if we should attempt to reconnect
   const [appState, setAppState] = useState(AppState.currentState);
-  const { update_user_presence } = useUserData();
+  const { update_user_presence, update_last_sent_message } = useUserData();
 
   useEffect(() => {
     // Attempt to connect when the component mounts
@@ -96,6 +96,13 @@ export const WebSocketProvider = ({ children }) => {
             id: data.Id,
             message: data.Message
           });
+
+          // Update last sent message
+          update_last_sent_message(
+            data.Message.Author,
+            data.Message.Message,
+            data.Id
+          );
 
           // Send in-app notification event to trigger in-app notification
           eventEmitter.emit("show_notification", {
