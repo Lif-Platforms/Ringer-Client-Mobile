@@ -191,6 +191,7 @@ export const WebSocketProvider = ({ children }) => {
         sendMessage,
         closeConnection,
         updateTypingStatus,
+        shouldReconnect,
       }}
     >
       {children}
