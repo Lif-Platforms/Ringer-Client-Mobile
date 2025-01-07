@@ -7,6 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
+import { useUserData } from "../scripts/user_data_provider";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -22,6 +23,7 @@ export function AccountPage({ navigation }) {
     const [username, setUsername] = useState("");
     const [userPronouns, setUserPronouns] = useState();
     const [userBio, setUserBio] = useState();
+    const { setUserData } = useUserData();
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
@@ -115,8 +117,12 @@ export function AccountPage({ navigation }) {
             })
         })
 
+        // Delete auth credentials from device
         await SecureStore.deleteItemAsync("username");
         await SecureStore.deleteItemAsync("token");
+
+        // Clear user data from user data provider
+        setUserData(null);
 
         navigation.replace("Login");
     }

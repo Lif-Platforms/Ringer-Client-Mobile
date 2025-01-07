@@ -4,13 +4,13 @@ import styles from "../../styles/components/reconnect_bar/style";
 import { Text, Animated } from "react-native";
 
 export default function ReconnectBar() {
-    const { isConnected } = useWebSocket();
+    const { isConnected, shouldReconnect } = useWebSocket();
     const reconnectTimeout = useRef(null);
     const [visible, setVisible] = useState(false);
     const topValue = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        if (!isConnected) {
+        if (!isConnected && shouldReconnect.current) {
             reconnectTimeout.current = setTimeout(() => {
                 setVisible(true);
             }, 4000);
