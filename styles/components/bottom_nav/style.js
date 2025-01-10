@@ -6,7 +6,13 @@ const styles = StyleSheet.create({
         display: "flex",
         justifyContent: "space-evenly",
         flexDirection: "row",
-        padding: 15
+        paddingVertical: 15
+    },
+    avatar: {
+        width: 55,
+        height: 55,
+        borderRadius: 100,
+        backgroundColor: "black"
     }
 })
 
