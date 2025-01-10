@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StatusBar, Image, ScrollView } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import styles from "../styles/main/style";
-import BottomNavBar from "../global_components/bottom_navbar";
+import BottomNavBar from "../components/global/bottom_navbar";
 import getEnvVars from "../variables";
 import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";

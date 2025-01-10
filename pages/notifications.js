@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import BottomNavBar from "../global_components/bottom_navbar";
+import BottomNavBar from "../components/global/bottom_navbar";
 import { useEffect, useState } from "react";
 import styles from "../styles/notifications/style";
 import getEnvVars from "../variables";
