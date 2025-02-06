@@ -30,7 +30,7 @@ export default function SearchResult({ username }) {
         const credentials = await get_auth_credentials();
 
         const formData = new FormData();
-        formData.append("user", username);
+        formData.append("recipient", username);
 
         fetch(`${getEnvVars.ringer_url}/add_friend`, {
             headers: {
@@ -44,6 +44,12 @@ export default function SearchResult({ username }) {
             if (response.ok) {
                 setIsLoading(false);
                 Alert.alert("Request Sent!", `You send a friend request to ${username}.`);
+            } else if (response.status === 409) {
+                setIsLoading(false);
+                Alert.alert("Already Outgoing Request", "You already have an outgoing friend request to this user.");
+            } else if (response.status === 404) {
+                setIsLoading(false);
+                Alert.alert("User Not Found", "The user you are trying to add does not exist.");
             } else {
                 throw new Error("Request failed! Status code: " + response.status);
             }
