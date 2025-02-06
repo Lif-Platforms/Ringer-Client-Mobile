@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "../styles/notifications/style";
 import getEnvVars from "../variables";
 import * as SecureStore from 'expo-secure-store';
+import Notification from "../components/notifications/notification";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -61,39 +62,6 @@ export function Notifications({ navigation }) {
         get_requests();
     }, []);
 
-    async function handle_notification(request, task) {
-        setIsLoading(true);
-
-        const credentials = await get_auth_credentials();
-
-        const formData = new FormData();
-        formData.append("user", request);
-
-        // Set path based on task
-        const path = task === "accept" ? "accept_friend_request" : "deny_friend_request";
-
-        fetch(`${getEnvVars.ringer_url}/${path}`, {
-            headers: {
-                username: credentials.username,
-                token: credentials.token
-            },
-            method: "POST",
-            body: formData
-        })
-        .then((response) => {
-            if (response.ok) {
-                // Reloads the page
-                navigation.replace("Notifications");
-            } else {
-                throw new Error("Request failed! Status code: " + response.status)
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-            setIsLoading(false);
-        })
-    }
-
     return (
         <View style={styles.page}>
             <View>
@@ -102,22 +70,12 @@ export function Notifications({ navigation }) {
             <ScrollView contentContainerStyle={styles.requests_viewer}>
                 {Array.isArray(friendRequests) & friendRequests.length > 0 ? (
                     friendRequests.map((request, key) => (
-                        <View key={key} style={styles.request}>
-                            <Text style={styles.request_text}>{request.name}</Text>
-                            {isLoading ? (
-                                <Text style={styles.notifications_loader}>Loading...</Text>
-                            ) : (
-                                <View style={styles.request_controls}>
-                                    <TouchableOpacity style={styles.request_controls_button} onPress={() => handle_notification(request.name, "accept")}>
-                                        <Image style={styles.request_controls_image} source={require("../assets/notifications/accept_icon.png")} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.request_controls_button} onPress={() => handle_notification(request.name, "deny")}>
-                                        <Image style={styles.request_controls_image} source={require("../assets/notifications/decline_icon.png")} />
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                            
-                        </View>
+                        <Notification 
+                            key={key}
+                            id={request.Request_Id}
+                            name={request.Recipient}
+                            navigation={navigation}
+                        />
                     ))
                 ) : Array.isArray(friendRequests) & friendRequests.length === 0 ? (
                     <Text style={styles.info_text}>No Friend Requests At This Time</Text>
