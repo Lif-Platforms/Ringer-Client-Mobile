@@ -1,0 +1,23 @@
+name: Tracking Issue
+description: Create a tracking issue to track progress on a feature or bug.
+title: "[TRACKING ISSUE] "
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: A clear and concise description of the feature or bug.
+      placeholder: Describe the feature or bug you are tracking.
+    validations:
+      required: true
+  
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      description: List the tasks that need to be completed.
+      placeholder: |
+        - [ ]  
+        - [ ]
+        - [ ]
+    validations:
+      required: true
