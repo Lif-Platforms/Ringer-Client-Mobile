@@ -15,7 +15,7 @@ body:
     attributes:
       label: Tasks
       description: List the tasks that need to be completed.
-      placeholder: |
+      value: |
         - [ ]  
         - [ ]
         - [ ]
