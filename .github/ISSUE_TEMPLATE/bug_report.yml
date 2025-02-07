@@ -1,7 +1,7 @@
 name: Bug Report
 description: Create a report to help us improve.
-title: ""
-labels: ["bug"]
+title: "Bug: "
+type: "bug"
 assignees: [""]
 body:
   - type: markdown
@@ -16,9 +16,7 @@ body:
       label: Description
       description: A clear and concise description of what the bug is.
       placeholder: Describe the issue you are experiencing.
-      validations:
-        required: true
-
+  
   - type: markdown
     attributes:
       value: |
@@ -35,8 +33,6 @@ body:
       label: Steps to Reproduce
       description: List the steps to reproduce the behavior.
       placeholder: Describe the steps to reproduce the issue.
-      validations:
-        required: true
 
   - type: markdown
     attributes:
@@ -50,8 +46,6 @@ body:
       label: Expected Behavior
       description: A clear and concise description of what you expected to happen.
       placeholder: Describe what you expected to happen.
-      validations:
-        required: true
 
   - type: markdown
     attributes:
@@ -59,7 +53,7 @@ body:
         ### Screenshots
         <!--If applicable, add screenshots to help explain your problem. Otherwise, remove this section.-->
 
-  - type: textarea
+  - type: input
     id: screenshots
     attributes:
       label: Screenshots
@@ -74,7 +68,7 @@ body:
         - OS Version: [e.g. 4.0]
         - Ringer Version: [e.g 5.0]
 
-  - type: textarea
+  - type: input
     id: desktop-info
     attributes:
       label: Desktop Information
