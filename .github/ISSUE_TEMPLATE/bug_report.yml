@@ -10,6 +10,8 @@ body:
       label: Description
       description: A clear and concise description of what the bug is.
       placeholder: Describe the issue you are experiencing.
+    validations:
+      required: true
   
   - type: textarea
     attributes:
@@ -29,12 +31,8 @@ body:
       label: Expected Behavior
       description: A clear and concise description of what you expected to happen.
       placeholder: Describe what you expected to happen.
-
-  - type: markdown
-    attributes:
-      value: |
-        ### Screenshots
-        <!--If applicable, add screenshots to help explain your problem. Otherwise, remove this section.-->
+    validations:
+      required: true
 
   - type: input
     id: screenshots
@@ -43,26 +41,17 @@ body:
       description: Add any screenshots to help explain your problem.
       placeholder: You can paste image URLs here.
 
-  - type: markdown
-    attributes:
-      value: |
-        ### Desktop (please complete the following information):
-        - OS: [e.g. iOS]
-        - OS Version: [e.g. 4.0]
-        - Ringer Version: [e.g 5.0]
-
-  - type: input
+  - type: textarea
     id: desktop-info
     attributes:
-      label: Desktop Information
-      description: Provide details about your desktop environment.
-      placeholder: List your OS, OS Version, and Ringer Version.
-
-  - type: markdown
-    attributes:
+      label: App Info
+      description: Provide details about your app environment.
       value: |
-        ### Additional context
-        <!--Add any other context about the problem here. Otherwise, remove this section-->
+        OS: iOS, Android
+        OS Version: 
+        Ringer Version: 
+    validations:
+      required: true
 
   - type: textarea
     id: additional-context
