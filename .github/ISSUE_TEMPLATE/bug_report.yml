@@ -1,0 +1,95 @@
+name: Bug Report
+description: Create a report to help us improve.
+title: ""
+labels: ["bug"]
+assignees: [""]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Description
+        <!--A clear and concise description of what the bug is.-->
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe the issue you are experiencing.
+      validations:
+        required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### To Reproduce
+        Steps to reproduce the behavior:
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+
+  - type: textarea
+    id: reproduce-steps
+    attributes:
+      label: Steps to Reproduce
+      description: List the steps to reproduce the behavior.
+      placeholder: Describe the steps to reproduce the issue.
+      validations:
+        required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Expected behavior
+        <!--A clear and concise description of what you expected to happen.-->
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: Describe what you expected to happen.
+      validations:
+        required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Screenshots
+        <!--If applicable, add screenshots to help explain your problem. Otherwise, remove this section.-->
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Add any screenshots to help explain your problem.
+      placeholder: You can paste image URLs here.
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Desktop (please complete the following information):
+        - OS: [e.g. iOS]
+        - OS Version: [e.g. 4.0]
+        - Ringer Version: [e.g 5.0]
+
+  - type: textarea
+    id: desktop-info
+    attributes:
+      label: Desktop Information
+      description: Provide details about your desktop environment.
+      placeholder: List your OS, OS Version, and Ringer Version.
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Additional context
+        <!--Add any other context about the problem here. Otherwise, remove this section-->
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem.
+      placeholder: Add any additional context about the issue.
