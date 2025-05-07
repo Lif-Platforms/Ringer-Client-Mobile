@@ -69,7 +69,12 @@ export function Notifications({ navigation }) {
             <ScrollView contentContainerStyle={styles.requests_viewer}>
                 {Array.isArray(friendRequests) & friendRequests.length > 0 ? (
                     friendRequests.map((request, key) => (
-                        <Notification key={key} request={request} navigation={navigation} />
+                        <Notification 
+                            key={key}
+                            id={request.Request_Id}
+                            name={request.Recipient}
+                            navigation={navigation}
+                        />
                     ))
                 ) : Array.isArray(friendRequests) & friendRequests.length === 0 ? (
                     <Text style={styles.info_text}>No Friend Requests At This Time</Text>

@@ -19,11 +19,6 @@ const styles = StyleSheet.create({
     info_text: {
         color: "white",
         textAlign: "center"
-    },
-    notifications_loader: {
-        color: "white",
-        marginTop: "auto",
-        marginBottom: "auto"
     }
 })
 

@@ -3,6 +3,7 @@ import styles from '../../styles/notifications/notification';
 import { useState } from 'react';
 import getEnvVars from '../../variables';
 import * as SecureStore from 'expo-secure-store';
+import { Alert } from "react-native";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -14,7 +15,7 @@ async function getValueFor(key) {
     }    
 }
 
-export default function Notification({ request, navigation }) {
+export default function Notification({ id, name, navigation }) {
     const [isLoading, setIsLoading] = useState(false);
 
     async function get_auth_credentials() {
@@ -24,13 +25,13 @@ export default function Notification({ request, navigation }) {
         return { username: username_, token: token_ };
     }
 
-    async function handle_notification(request, task) {
+    async function handle_notification(request_id, task) {
         setIsLoading(true);
 
         const credentials = await get_auth_credentials();
 
         const formData = new FormData();
-        formData.append("user", request);
+        formData.append("request_id", request_id);
 
         // Set path based on task
         const path = task === "accept" ? "accept_friend_request" : "deny_friend_request";
@@ -54,6 +55,7 @@ export default function Notification({ request, navigation }) {
         .catch((error) => {
             console.error(error);
             setIsLoading(false);
+            Alert.alert("Error", "Something Went Wrong!");
         })
     }
 
@@ -62,9 +64,9 @@ export default function Notification({ request, navigation }) {
             <View style={styles.text_container}>
                 <Image
                     style={styles.avatar}
-                    source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${request.name}.png`}}
+                    source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${name}.png`}}
                 />
-                <Text style={styles.username}>{request.name}</Text>
+                <Text style={styles.username}>{name}</Text>
                 <Text
                     lineBreakMode="tail"
                     style={styles.notification_text}
@@ -80,11 +82,11 @@ export default function Notification({ request, navigation }) {
                 <View style={styles.controls}>
                     <TouchableOpacity 
                         style={[styles.controls_button, {backgroundColor: "#006F00"}]}
-                        onPress={() => handle_notification(request.name, "accept")}
+                        onPress={() => handle_notification(id, "accept")}
                     >
                         <Image style={styles.controls_icon} source={require("../../assets/notifications/accept_icon.png")} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.controls_button, {backgroundColor: "#C20000"}]} onPress={() => handle_notification(request.name, "deny")}>
+                    <TouchableOpacity style={[styles.controls_button, {backgroundColor: "#C20000"}]} onPress={() => handle_notification(id, "deny")}>
                         <Image style={styles.controls_icon} source={require("../../assets/notifications/decline_icon.png")} />
                     </TouchableOpacity>
                 </View>
