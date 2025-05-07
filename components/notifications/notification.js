@@ -1,6 +1,6 @@
-import styles from "../../styles/notifications/notification";
-import { View, Text, TouchableOpacity, Image } from "react-native";
-import { useState } from "react";
+import { View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import styles from '../../styles/notifications/notification';
+import { useState } from 'react';
 import getEnvVars from '../../variables';
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from "react-native";
@@ -60,20 +60,37 @@ export default function Notification({ id, name, navigation }) {
     }
 
     return (
-        <View style={styles.request}>
-        <Text style={styles.request_text}>{name}</Text>
+        <View style={styles.notification}>
+            <View style={styles.text_container}>
+                <Image
+                    style={styles.avatar}
+                    source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${name}.png`}}
+                />
+                <Text style={styles.username}>{name}</Text>
+                <Text
+                    lineBreakMode="tail"
+                    style={styles.notification_text}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    sent you a friend request.
+                </Text>
+            </View>
             {isLoading ? (
-                <Text style={styles.notifications_loader}>Loading...</Text>
+                <ActivityIndicator style={styles.loader} size={"small"} />
             ) : (
-                <View style={styles.request_controls}>
-                    <TouchableOpacity style={styles.request_controls_button} onPress={() => handle_notification(id, "accept")}>
-                        <Image style={styles.request_controls_image} source={require("../../assets/notifications/accept_icon.png")} />
+                <View style={styles.controls}>
+                    <TouchableOpacity 
+                        style={[styles.controls_button, {backgroundColor: "#006F00"}]}
+                        onPress={() => handle_notification(id, "accept")}
+                    >
+                        <Image style={styles.controls_icon} source={require("../../assets/notifications/accept_icon.png")} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.request_controls_button} onPress={() => handle_notification(id, "deny")}>
-                        <Image style={styles.request_controls_image} source={require("../../assets/notifications/decline_icon.png")} />
+                    <TouchableOpacity style={[styles.controls_button, {backgroundColor: "#C20000"}]} onPress={() => handle_notification(id, "deny")}>
+                        <Image style={styles.controls_icon} source={require("../../assets/notifications/decline_icon.png")} />
                     </TouchableOpacity>
                 </View>
             )}
         </View>
-    );
+    )
 }

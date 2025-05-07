@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import getEnvVars from "./variables";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NotifierWrapper } from 'react-native-notifier';
+import handle_startup from './scripts/handle_startup';
 
 // Page imports
 import { MainScreen } from './pages/main';
@@ -17,6 +18,7 @@ import { AddFriendPage } from './pages/add_friend';
 import { AccountPage } from './pages/account';
 import { UserProfilePage } from './pages/user_profile';
 import NotificationHandler from './components/global/notification_handler';
+import NoInternet from './pages/no_internet';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
@@ -25,16 +27,6 @@ import { UserDataProvider } from './scripts/user_data_provider';
 
 // Create navigation stack instance
 const Stack = createStackNavigator();
-
-// Get values from secure storage
-async function getValueFor(key) {
-  let result = await SecureStore.getItemAsync(key);
-  if (result) {
-      return result;
-  } else {
-      return null;
-  }
-}
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -51,42 +43,21 @@ export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [initialRoute, setInitialRoute] = useState('Login');
 
-  console.log("app starting")
-
-  // Get auth credentials from secure storage
-  async function get_credentials() {
-    const username = await getValueFor("username");
-    const token = await getValueFor("token");
-
-    return {username: username, token: token};
-  }
-
   // Authenticate with auth server
   useEffect(() => {
     async function authenticate() {
-      const credentials = await get_credentials();
+      // Run handle startup script
+      const auth_status = await handle_startup();
 
-      const formData = new FormData();
-      formData.append("username", credentials.username);
-      formData.append("token", credentials.token);
-
-      fetch(`${getEnvVars.auth_url}/auth/verify_token`, {
-        method: "POST",
-        body: formData
-      })
-      .then((response) => {
-        if (response.ok) {
-          setInitialRoute('Main');
-          setIsReady(true);
-        } else {
-          throw new Error("Request Failed! Status code: " + response.status);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+      if (auth_status && auth_status === "auth_ok") {
+        setInitialRoute('Main');
+      } else if (auth_status && auth_status === "no_internet") {
+        setInitialRoute('No Internet');
+      } else {
         setInitialRoute('Login');
-        setIsReady(true);
-      })
+      }
+
+      setIsReady(true);
     }
     authenticate();
   }, []);
@@ -161,6 +132,10 @@ export default function App() {
                   name='User Profile'
                   component={UserProfilePage}
                   options={{ title: 'User Profile', animationEnabled: true, headerLeft: () => null}}
+                />
+                <Stack.Screen
+                  name='No Internet'
+                  component={NoInternet}
                 />
               </Stack.Navigator>
             </NavigationContainer>

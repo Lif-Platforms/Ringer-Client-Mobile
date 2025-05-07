@@ -10,12 +10,11 @@ const styles = StyleSheet.create({
     header_text: {
         color: "white",
         margin: 20,
-        fontSize: 45,
-        fontWeight: "bold"
+        fontSize: 30,
     },
     requests_viewer: {
         flex: 1,
-        padding: 20
+        padding: 10
     },
     info_text: {
         color: "white",

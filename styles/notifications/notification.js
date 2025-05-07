@@ -1,42 +1,63 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-    request: {
-        backgroundColor: "#ffffff1c",
-        padding: 10,
+    notification: {
+        backgroundColor: "#1C1C1C",
+        borderWidth: 1,
+        borderColor: "#353535",
+        padding: 5,
         borderRadius: 10,
         marginBottom: 10,
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between"
     },
-    request_controls: {
+    controls: {
         display: "flex",
         flexDirection: "row",
-        gap: 15
+        gap: 10
     },
-    request_controls_image: {
+    controls_icon: {
         width: 25,
         height: 25,
         objectFit: "contain",
         margin: "auto",
     },
-    request_controls_button: {
+    controls_button: {
         padding: 5,
-        backgroundColor: "#ffffff42",
         borderRadius: 5
     },
-    request_text: {
+    notification_text: {
         color: "white",
-        fontSize: 20,
+        fontSize: 15,
         marginTop: "auto",
-        marginBottom: "auto"
+        marginBottom: "auto",
+        flexShrink: 1
     },
-    notifications_loader: {
-        color: "white",
+    avatar: {
+        width: 20,
+        height: 20,
+        borderRadius: 100,
         marginTop: "auto",
-        marginBottom: "auto"
+        marginBottom: "auto",
+        marginRight: 10
+    },
+    username: {
+        color: "white",
+        fontSize: 15,
+        marginTop: "auto",
+        marginBottom: "auto",
+        fontWeight: "bold",
+        marginRight: 5
+    },
+    text_container: {
+        display: "flex",
+        flexDirection: "row",
+        flexShrink: 1
+    },
+    loader: {
+        height: 30
     }
-});
+})
 
 export default styles;

@@ -1,5 +1,5 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
-import BottomNavBar from "../global_components/bottom_navbar";
+import { View, Text, ScrollView } from "react-native";
+import BottomNavBar from "../components/global/bottom_navbar";
 import { useEffect, useState } from "react";
 import styles from "../styles/notifications/style";
 import getEnvVars from "../variables";
@@ -18,7 +18,6 @@ async function getValueFor(key) {
 
 export function Notifications({ navigation }) {
     const [friendRequests, setFriendRequests] = useState("Loading");
-    const [isLoading, setIsLoading] = useState(false);
 
     async function get_auth_credentials() {
         const username_ = await getValueFor("username");
