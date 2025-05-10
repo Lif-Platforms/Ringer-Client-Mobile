@@ -116,11 +116,9 @@ export default function App() {
                   name="Add Friend"
                   component={AddFriendPage}
                   options={{ 
-                    title: 'Add Friend', 
+                    title: 'Add Friend',
+                    presentation: 'modal',
                     headerLeft: () => null,
-                    gestureDirection: 'vertical',
-                    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-                    ...TransitionPresets.ModalSlideFromBottomIOS,
                   }}
                 />
                 <Stack.Screen
