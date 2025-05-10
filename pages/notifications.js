@@ -71,7 +71,7 @@ export function Notifications({ navigation }) {
                         <Notification 
                             key={key}
                             id={request.Request_Id}
-                            name={request.Recipient}
+                            name={request.Sender}
                             navigation={navigation}
                         />
                     ))
