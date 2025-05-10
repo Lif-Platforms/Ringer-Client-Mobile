@@ -24,6 +24,23 @@ import NoInternet from './pages/no_internet';
 import { WebSocketProvider } from './scripts/websocket_handler';
 import ReconnectBar from './components/global/reconnect_bar';
 import { UserDataProvider } from './scripts/user_data_provider';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://0d802587ad5dda365997ef1ede010d37@o4507181227769856.ingest.us.sentry.io/4509296049651712',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 // Create navigation stack instance
 const Stack = createStackNavigator();
@@ -39,7 +56,7 @@ SplashScreen.setOptions({
 
 // Default component for app
 // Mainly responsible for structuring our routes
-export default function App() {
+export default Sentry.wrap(function App() {
   const [isReady, setIsReady] = useState(false);
   const [initialRoute, setInitialRoute] = useState('Login');
 
@@ -142,4 +159,4 @@ export default function App() {
       </UserDataProvider>
     </GestureHandlerRootView>
   );
-}
+});
