@@ -1,6 +1,5 @@
 import styles from "../../styles/messages/message";
 import { View, Image, Text, Linking } from "react-native";
-import getEnvVars from "../../variables";
 import Hyperlink from "react-native-hyperlink";
 
 const MessageText = ({ message }) => {
@@ -17,7 +16,7 @@ export default function Message({ message, index }) {
     return (
         <View key={index} style={styles.message}>
             <Image
-                source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${message.Author}.png` }}
+                source={{ uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${message.Author}.png` }}
                 style={styles.message_avatar}
             />
             <View style={styles.message_text_container}>

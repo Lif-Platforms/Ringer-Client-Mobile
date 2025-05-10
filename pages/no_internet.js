@@ -1,7 +1,7 @@
-import { View, Image, Text, TouchableOpacity, ActivityIndicator, Animated } from "react-native";
+import { View, Image, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import styles from "../styles/no_internet/style";
 import React, { useState } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import handle_startup from "../scripts/handle_startup";
 
 export default function NoInternet({ navigation }) {

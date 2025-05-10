@@ -1,6 +1,5 @@
 import { View, Text, Image, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import styles from "../../styles/add_friend/search_result";
-import getEnvVars from "../../variables";
 import * as SecureStore from 'expo-secure-store';
 import { useState } from "react";
 
@@ -32,7 +31,7 @@ export default function SearchResult({ username }) {
         const formData = new FormData();
         formData.append("recipient", username);
 
-        fetch(`${getEnvVars.ringer_url}/add_friend`, {
+        fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/add_friend`, {
             headers: {
                 username: credentials.username,
                 token: credentials.token
@@ -64,7 +63,7 @@ export default function SearchResult({ username }) {
     return (
         <View style={styles.result}>
             <View style={styles.user}>
-                <Image source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png` }} style={styles.avatar} />
+                <Image source={{ uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${username}.png` }} style={styles.avatar} />
                 <Text style={styles.username}>{username}</Text>
             </View>
             <TouchableOpacity 

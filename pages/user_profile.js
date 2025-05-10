@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/user_profile/style";
 import { View, Image, ScrollView, Text, TouchableOpacity, Alert, Platform } from "react-native";
-import getEnvVars from "../variables";
 import { Header } from "../components/user info page/header/header";
 import * as SecureStore from 'expo-secure-store';
 
@@ -63,7 +62,7 @@ export function UserProfilePage({ route, navigation }) {
     // Fetch user profile information
     useEffect(() => {
         // Fetch Pronouns
-        fetch(`${getEnvVars.auth_url}/profile/get_pronouns/${username}`)
+        fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_pronouns/${username}`)
         .then((response) => {
             if (response.ok) {
                 return response.text();
@@ -82,7 +81,7 @@ export function UserProfilePage({ route, navigation }) {
         })
 
         // Fetch bio
-        fetch(`${getEnvVars.auth_url}/profile/get_bio/${username}`)
+        fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_bio/${username}`)
         .then((response) => {
             if (response.ok) {
                 return response.text();
@@ -147,7 +146,7 @@ export function UserProfilePage({ route, navigation }) {
             formData.append("content", report_content);
 
             // Make request to server
-            fetch(`${getEnvVars.auth_url}/account/report`, {
+            fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/account/report`, {
                 method: "POST",
                 body: formData
             })
@@ -195,7 +194,7 @@ export function UserProfilePage({ route, navigation }) {
             const credentials = await get_auth_credentials();
 
             // Make request to server
-            fetch(`${getEnvVars.ringer_url}/remove_conversation/${conversation_id}`, {
+            fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/remove_conversation/${conversation_id}`, {
                 method: "DELETE",
                 headers: {
                     username: credentials.username,
@@ -251,7 +250,7 @@ export function UserProfilePage({ route, navigation }) {
             <ScrollView onScroll={handle_scroll} style={styles.page}>
                 <View style={styles.header}>
                     <Image
-                        source={{uri: `${getEnvVars.auth_url}/profile/get_banner/${username}.png`}}
+                        source={{uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_banner/${username}.png`}}
                         style={styles.user_banner}
                     />
                     <Image
@@ -260,7 +259,7 @@ export function UserProfilePage({ route, navigation }) {
                     />
                     <View style={styles.avatar_container}>
                         <Image
-                            source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png`}}
+                            source={{uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${username}.png`}}
                             style={styles.user_avatar}
                         />
                     </View>

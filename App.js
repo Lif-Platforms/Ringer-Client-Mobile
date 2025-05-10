@@ -1,10 +1,8 @@
 // Module imports
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, TransitionPresets, CardStyleInterpolators } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import * as SplashScreen from 'expo-splash-screen';
-import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
-import getEnvVars from "./variables";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NotifierWrapper } from 'react-native-notifier';
 import handle_startup from './scripts/handle_startup';

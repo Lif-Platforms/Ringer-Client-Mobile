@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ScrollView, View, Text, Image, TouchableOpacity } from "react-native";
 import styles from "../../styles/messages/gif_list";
-import GetEnvVars from '../../variables';
 
 export default function GIFList({ search_query, gifToSend, setGifToSend }) {
     const [results, setResults] = useState();
@@ -11,7 +10,7 @@ export default function GIFList({ search_query, gifToSend, setGifToSend }) {
             setResults("loading");
             setGifToSend({url: null, id: null});
 
-            fetch(`${GetEnvVars.ringer_url}/search_gifs?search=${search_query}`)
+            fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/search_gifs?search=${search_query}`)
             .then((response) => {
                 if (response.ok) {
                     return response.json();

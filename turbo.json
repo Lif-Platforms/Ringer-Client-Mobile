@@ -1,0 +1,20 @@
+{
+    "pipeline": {
+      "build": {
+        "env": [
+          "EXPO_PUBLIC_AUTH_SERVER_URL",
+          "EXPO_PUBLIC_RINGER_SERVER_URL",
+          "EXPO_PUBLIC_RINGER_SERVER_WS",
+          "SENTRY_AUTH_TOKEN"
+        ]
+      },
+      "start": {
+        "env": [
+          "EXPO_PUBLIC_AUTH_SERVER_URL",
+          "EXPO_PUBLIC_RINGER_SERVER_URL",
+          "EXPO_PUBLIC_RINGER_SERVER_WS",
+          "SENTRY_AUTH_TOKEN"
+        ]
+      }
+    }
+}

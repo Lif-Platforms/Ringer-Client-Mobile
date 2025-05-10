@@ -1,7 +1,6 @@
 import { Text, Image, View, TouchableOpacity, TextInput, Keyboard } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import styles from "../styles/add_friend/style";
-import getEnvVars from "../variables";
 import { ScrollView } from "react-native-gesture-handler";
 import SearchResult from "../components/add friend/search_result";
 
@@ -27,7 +26,7 @@ export function AddFriendPage({ navigation }) {
 
     // Connect to websocket
     useEffect(() => {
-        websocketConn.current = new WebSocket(`${getEnvVars.ringer_url_ws}/user_search`);
+        websocketConn.current = new WebSocket(`${process.env.EXPO_PUBLIC_RINGER_SERVER_WS}/user_search`);
 
         websocketConn.current.onopen = () => {
             console.log("Websocket connected");

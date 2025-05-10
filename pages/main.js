@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, StatusBar, Image, ScrollView } from "reac
 import { useEffect } from "react";
 import styles from "../styles/main/style";
 import BottomNavBar from "../components/global/bottom_navbar";
-import getEnvVars from "../variables";
 import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import * as Notifications from 'expo-notifications';
@@ -32,13 +31,10 @@ function FriendsList({ navigation, userData, setUserData }) {
     useEffect(() => {
         async function fetchFriends() {
             try {
-                // Get env vars
-                const ringer_url = getEnvVars.ringer_url;
-
                 // Get auth credentials
                 const credentials = await get_auth_credentials();
 
-                const response = await fetch(`${ringer_url}/get_friends`, {
+                const response = await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/get_friends`, {
                     headers: {
                         username: credentials.username,
                         token: credentials.token
@@ -74,7 +70,7 @@ function FriendsList({ navigation, userData, setUserData }) {
                     <TouchableOpacity key={index} style={styles.friendItem} onPress={() => handle_messages_navigate(friend.Username, friend.Id, friend.Online)}>
                         <View>
                             <Image
-                                source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${friend.Username}.png` }}
+                                source={{ uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${friend.Username}.png` }}
                                 style={styles.friendImage}
                             />
                             <View style={[styles.status_indicator, {backgroundColor: friend.Online ? 'lightgreen' : 'gray'}]} />
@@ -160,7 +156,7 @@ export function MainScreen({ navigation }) {
             }
         
             // Register for push notifications with Ringer Server
-            fetch(`${getEnvVars.ringer_url}/register_push_notifications/mobile`, {
+            fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/register_push_notifications/mobile`, {
                 method: "POST",
                 headers: {
                     username: credentials.username,

@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import { eventEmitter } from '../../scripts/emitter';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { Notifier, Easing, NotifierComponents } from 'react-native-notifier';
-import getEnvVars from '../../variables';
 
 export default function NotificationHandler() {
     const navigation = useNavigation();
@@ -41,7 +40,7 @@ export default function NotificationHandler() {
                 hideOnPress: true,
                 Component: NotifierComponents.Notification,
                 componentProps: {
-                    imageSource: { uri: `${getEnvVars.auth_url}/profile/get_avatar/${event.title}.png` },
+                    imageSource: { uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${event.title}.png` },
                     imageStyle: { borderRadius: 100 },
                     containerStyle: { 
                         backgroundColor: '#1C1C1C',
