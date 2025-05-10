@@ -24,15 +24,15 @@ Ringer is built with these languages:
 
 And these frameworks: 
  - React Native
+ - Expo
 
 # 💾 Server Code
-Ringers server code is located in another repository: https://github.com/Lif-Platforms/New-Ringer-Server
+Ringer server code is located in another repository: https://github.com/Lif-Platforms/New-Ringer-Server
 
 # 🙋🏻‍♂️ Our Team 
 <a href="https://github.com/Lif-Platforms/Ringer-Client-Mobile/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Lif-Platforms/Ringer-Client-Mobile" />
 </a>
 
- 
- # 🛠️ How To Contribute
- In the projects section there is a project that has a list of things that need to be worked on and their status. Working on the stuff in the project would be the best way to contribute. See [`CONTRIBUTING`](CONTRIBUTING.md) for details. 
+# 🛠️ How To Contribute
+In the projects section there is a project that has a list of things that need to be worked on and their status. Working on the stuff in the project would be the best way to contribute. See [`CONTRIBUTING`](CONTRIBUTING.md) for details. 
