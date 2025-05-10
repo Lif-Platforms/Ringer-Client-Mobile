@@ -34,3 +34,5 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 .DS_Store
+
+.env.local
