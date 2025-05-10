@@ -92,12 +92,12 @@ export default function App() {
                 <Stack.Screen
                   name="Login"
                   component={LoginScreen}
-                  options={{ title: 'Login Page', animationEnabled: false }}
+                  options={{ title: 'Login Page', animation: 'none' }}
                 />
                 <Stack.Screen
                   name="Main"
                   component={MainScreen}
-                  options={{ title: 'Main Page', animationEnabled: false }}
+                  options={{ title: 'Main Page', animation: 'none' }}
                 />
                 <Stack.Screen
                   name="Messages"
@@ -110,7 +110,7 @@ export default function App() {
                 <Stack.Screen
                   name="Notifications"
                   component={Notifications}
-                  options={{ title: 'Notifications', animationEnabled: false }}
+                  options={{ title: 'Notifications', animation: 'none' }}
                 />
                 <Stack.Screen
                   name="Add Friend"
@@ -126,7 +126,7 @@ export default function App() {
                 <Stack.Screen
                   name="Account"
                   component={AccountPage}
-                  options={{ title: 'Account', animationEnabled: false}}
+                  options={{ title: 'Account', animation: 'none' }}
                 />
                 <Stack.Screen
                   name='User Profile'
