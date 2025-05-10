@@ -1,5 +1,4 @@
 import * as SecureStore from 'expo-secure-store';
-import getEnvVars from '../variables';
 
 /**
  * Handle App Startup.
@@ -45,7 +44,7 @@ export default async function handle_startup() {
 
     // Make auth request
     try {
-        const auth_request = await fetch(`${getEnvVars.auth_url}/auth/verify_token`, {
+        const auth_request = await fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/auth/verify_token`, {
             method: "POST",
             body: formData
         })

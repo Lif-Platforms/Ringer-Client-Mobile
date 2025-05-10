@@ -2,7 +2,6 @@ import { View, Text, ScrollView } from "react-native";
 import BottomNavBar from "../components/global/bottom_navbar";
 import { useEffect, useState } from "react";
 import styles from "../styles/notifications/style";
-import getEnvVars from "../variables";
 import * as SecureStore from 'expo-secure-store';
 import Notification from "../components/notifications/notification";
 
@@ -43,7 +42,7 @@ export function Notifications({ navigation }) {
         async function get_requests() {
             const credentials = await get_auth_credentials();
 
-            const response = await fetch(`${getEnvVars.ringer_url}/get_friend_requests`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/get_friend_requests`, {
                 headers: {
                     username: credentials.username,
                     token: credentials.token

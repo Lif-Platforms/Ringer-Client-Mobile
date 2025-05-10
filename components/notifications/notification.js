@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import styles from '../../styles/notifications/notification';
 import { useState } from 'react';
-import getEnvVars from '../../variables';
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from "react-native";
 
@@ -36,7 +35,7 @@ export default function Notification({ id, name, navigation }) {
         // Set path based on task
         const path = task === "accept" ? "accept_friend_request" : "deny_friend_request";
 
-        fetch(`${getEnvVars.ringer_url}/${path}`, {
+        fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/${path}`, {
             headers: {
                 username: credentials.username,
                 token: credentials.token
@@ -64,7 +63,7 @@ export default function Notification({ id, name, navigation }) {
             <View style={styles.text_container}>
                 <Image
                     style={styles.avatar}
-                    source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${name}.png`}}
+                    source={{uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${name}.png`}}
                 />
                 <Text style={styles.username}>{name}</Text>
                 <Text

@@ -2,7 +2,6 @@ import { ActivityIndicator, Keyboard, View, Text, Image, StatusBar, Dimensions, 
 import styles from "../styles/messages/style";
 import { useEffect, useState, useRef } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import getEnvVars from "../variables";
 import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import { eventEmitter } from "../scripts/emitter";
@@ -99,7 +98,7 @@ export function MessagesPage({ route, navigation }) {
             const credentials = await get_auth_credentials();
 
             // Fetch friends from server
-            const response = await fetch(`${getEnvVars.ringer_url}/load_messages/${conversation_id}`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/load_messages/${conversation_id}`, {
                 headers: {
                     username: credentials.username,
                     token: credentials.token
@@ -200,7 +199,7 @@ export function MessagesPage({ route, navigation }) {
             const credentials = await get_auth_credentials();
 
             // Fetch messages from server
-            fetch(`${getEnvVars.ringer_url}/load_messages/${conversation_id}?offset=${messages.length}`, {
+            fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/load_messages/${conversation_id}?offset=${messages.length}`, {
                 headers: {
                     username: credentials.username,
                     token: credentials.token
@@ -277,7 +276,7 @@ export function MessagesPage({ route, navigation }) {
                     </TouchableOpacity>
                     <View>
                         <Image
-                            source={{ uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png` }}
+                            source={{ uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${username}.png` }}
                             style={styles.header_avatar}
                         />
                         <View style={[styles.status_indicator, {backgroundColor: isOnline ? 'lightgreen' : 'gray'}]} />

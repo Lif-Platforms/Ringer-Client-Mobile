@@ -2,7 +2,6 @@ import { Text, View, Image, ScrollView, TouchableOpacity, Linking } from "react-
 import { useEffect, useState } from "react";
 import styles from "../styles/account/style";
 import BottomNavBar from "../components/global/bottom_navbar";
-import getEnvVars from "../variables";
 import * as SecureStore from 'expo-secure-store';
 import { useWebSocket } from "../scripts/websocket_handler";
 import * as Notifications from "expo-notifications";
@@ -58,7 +57,7 @@ export function AccountPage({ navigation }) {
 
     useEffect(() => {
         async function get_pronouns() {
-            const response = await fetch(`${getEnvVars.auth_url}/profile/get_pronouns/${username}`)
+            const response = await fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_pronouns/${username}`)
 
             if (response.ok) {
                 const pronouns = (await response.text()).slice(1, -1);
@@ -71,7 +70,7 @@ export function AccountPage({ navigation }) {
 
     useEffect(() => {
         async function get_bio() {
-            const response = await fetch(`${getEnvVars.auth_url}/profile/get_bio/${username}`)
+            const response = await fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_bio/${username}`)
 
             if (response.ok) {
                 const bio = (await response.text()).slice(1, -1).replace(/\\n/g, '\n').replace(/\\r/g, '\r');
@@ -106,7 +105,7 @@ export function AccountPage({ navigation }) {
         const push_token = await get_expo_push_token();
 
         // Unregister device for push notifications
-        await fetch(`${getEnvVars.ringer_url}/unregister_push_notifications/mobile`, {
+        await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/unregister_push_notifications/mobile`, {
             method: "POST",
             headers: {
                 username: credentials.username,
@@ -131,8 +130,8 @@ export function AccountPage({ navigation }) {
         <View style={styles.page}>
             <ScrollView>
             <View>
-                <Image style={styles.user_banner} source={{uri: `${getEnvVars.auth_url}/profile/get_banner/${username}.png`}} onError={(err) => console.error(err)}/>
-                <Image style={styles.user_avatar} source={{uri: `${getEnvVars.auth_url}/profile/get_avatar/${username}.png`}} onError={(err) => console.error(err)}/>
+                <Image style={styles.user_banner} source={{uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_banner/${username}.png`}} onError={(err) => console.error(err)}/>
+                <Image style={styles.user_avatar} source={{uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${username}.png`}} onError={(err) => console.error(err)}/>
                 <Text style={styles.header_text}>{username}</Text>
             </View>
             <View style={styles.account_buttons}>

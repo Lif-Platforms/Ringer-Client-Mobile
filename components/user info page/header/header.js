@@ -1,6 +1,5 @@
 import { View, Image, TouchableOpacity, Text, Animated } from "react-native";
 import styles from "../../../styles/user_profile/header";
-import GetEnvVars from '../../../variables';
 import { useEffect, useRef } from "react";
 
 export function Header({ navigation, username, headerMode }) {
@@ -45,7 +44,7 @@ export function Header({ navigation, username, headerMode }) {
             {headerMode === 1 ? (
                 <Animated.View style={[styles.user_info, {transform: [{ translateX: slideAnim }], opacity: fadeAnim}]}>
                     <Image
-                        source={{uri: `${GetEnvVars.auth_url}/profile/get_avatar/${username}.png`}}
+                        source={{uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${username}.png`}}
                         style={styles.avatar}
                     />
                     <Text style={styles.username}>{username}</Text>

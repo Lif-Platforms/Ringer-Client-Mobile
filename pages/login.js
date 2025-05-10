@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, StatusBar, Linking, TextInput, Image, Dim
 import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 import styles from "../styles/login/style";
-import getEnvVars from "../variables";
 
 // Get dimensions of screen
 const { width, height } = Dimensions.get('window');
@@ -29,9 +28,6 @@ export function LoginScreen({ navigation }) {
 
     // Handle navigation to main page
     function handle_login() {
-        // Get auth url
-        const auth_url = getEnvVars.auth_url;
-
         // Disable username and password entries
         setEditable(false);
 
@@ -41,7 +37,7 @@ export function LoginScreen({ navigation }) {
         formData.append("password", password);
 
         // Make request to auth server
-        fetch(`${auth_url}/auth/login`, {
+        fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/auth/login`, {
             method: "POST",
             body: formData
         })

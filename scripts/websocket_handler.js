@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
-import getEnvVars from "../variables";
 import * as SecureStore from "expo-secure-store";
 import { eventEmitter } from "./emitter";
 import { AppState } from "react-native";
@@ -62,7 +61,7 @@ export const WebSocketProvider = ({ children }) => {
 
   const connectWebSocket = () => {
     if (!webSocketRef.current) {
-      webSocketRef.current = new WebSocket(`${getEnvVars.ringer_url_ws}/live_updates`);
+      webSocketRef.current = new WebSocket(`${process.env.EXPO_PUBLIC_RINGER_SERVER_WS}/live_updates`);
 
       webSocketRef.current.onopen = async () => {
         setIsConnected(true);

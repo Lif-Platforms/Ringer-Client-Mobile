@@ -1,7 +1,6 @@
 import { View,  TouchableOpacity, Image } from "react-native";
 import styles from "../../styles/components/bottom_nav/style";
 import { useEffect, useState } from "react";
-import getEnvVars from "../../variables";
 import * as SecureStore from 'expo-secure-store';
 import React from "react";
 
@@ -39,7 +38,7 @@ function BottomNavBar({ navigation }) {
         */
         async function fetchAvatarURL() {
             const credentials = await get_auth_credentials();
-            setAvatarURL(`${getEnvVars.auth_url}/profile/get_avatar/${credentials.username}.png`);
+            setAvatarURL(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${credentials.username}.png`);
         }
 
         fetchAvatarURL();
