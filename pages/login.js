@@ -104,7 +104,7 @@ export function LoginScreen({ navigation }) {
                 <Text style={styles.button_text}>Login</Text>
             </TouchableOpacity>
             <Text style={styles.login_status}>{loginStatus}</Text>
-            <TouchableOpacity onPress={() => Linking.openURL("https://my.lifplatforms.com/create_account")}>
+            <TouchableOpacity onPress={() => navigation.navigate('Create Account')}>
                 <Text style={styles.bottom_text}>
                     Don't have an account? <Text style={styles.create_account_text}>Create One!</Text>
                 </Text>
