@@ -8,7 +8,10 @@ export default function CreateAccountScreen({ navigation }) {
             console.log(data);
             await SecureStore.setItemAsync('username', data.username);
             await SecureStore.setItemAsync('token', data.token);
-            navigation.reset('Main');
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Main' }],
+            });
         } 
     }
 
