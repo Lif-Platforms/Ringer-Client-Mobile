@@ -3,7 +3,7 @@
   "version": "1.6.0",
   "main": "index.js",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web"
@@ -31,6 +31,7 @@
     "react-native-reanimated": "^3.16.1",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
+    "react-native-webview": "^13.13.5",
     "rn-sliding-up-panel": "^2.4.6"
   },
   "devDependencies": {

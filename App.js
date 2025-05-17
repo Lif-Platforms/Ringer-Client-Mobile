@@ -17,6 +17,7 @@ import { AccountPage } from './pages/account';
 import { UserProfilePage } from './pages/user_profile';
 import NotificationHandler from './components/global/notification_handler';
 import NoInternet from './pages/no_internet';
+import CreateAccountScreen from './pages/create_account';
 
 // Import websocket provider
 import { WebSocketProvider } from './scripts/websocket_handler';
@@ -149,6 +150,11 @@ export default Sentry.wrap(function App() {
                 <Stack.Screen
                   name='No Internet'
                   component={NoInternet}
+                />
+                <Stack.Screen
+                  name="Create Account"
+                  component={CreateAccountScreen}
+                  options={{ presentation: 'modal', headerShown: true }}
                 />
               </Stack.Navigator>
             </NavigationContainer>
