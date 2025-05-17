@@ -17,7 +17,7 @@ export default function CreateAccountScreen({ navigation }) {
 
     return (
         <WebView
-            source={{ uri: 'http://localhost:3000/create_account' }}
+            source={{ uri: 'https://my.lifplatforms.com/create_account' }}
             userAgent='RingerMobileWebView'
             onMessage={handle_message}
         />
