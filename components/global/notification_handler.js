@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { eventEmitter } from '../../scripts/emitter';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { Notifier, Easing, NotifierComponents } from 'react-native-notifier';
+import { Vibration } from 'react-native';
 
 export default function NotificationHandler() {
     const navigation = useNavigation();
@@ -52,6 +53,9 @@ export default function NotificationHandler() {
                     descriptionStyle: { color: 'white' },
                 }
             });
+
+            // Vibrate the device
+            Vibration.vibrate(1000);
         }
 
         // Check if the current route is set
