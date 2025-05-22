@@ -1,13 +1,13 @@
 import { View, Text, TouchableOpacity, StatusBar, Image, ScrollView } from "react-native";
 import { useEffect } from "react";
 import styles from "@styles/main/style";
-import BottomNavBar from "@components/global/bottom_navbar";
 import { secureGet } from "@scripts/secure_storage";
 import { useWebSocket } from "@scripts/websocket_handler";
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { useUserData } from "@scripts/user_data_provider";
+import { useRouter } from "expo-router";
 
 function FriendsList({ userData, setUserData }) {
     async function get_auth_credentials() {
@@ -16,6 +16,8 @@ function FriendsList({ userData, setUserData }) {
 
         return { username: username_, token: token_ };
     }
+
+    const router = useRouter();
 
     // Fetch friends list from server
     useEffect(() => {
@@ -46,18 +48,15 @@ function FriendsList({ userData, setUserData }) {
         fetchFriends();
     }, []);
 
-    function handle_messages_navigate(username, conversation_id) {
-        navigation.push('Messages', {
-            username: username,
-            conversation_id: conversation_id
-        })
+    function handle_messages_navigate(conversation_id) {
+        router.push(`/conversations/${conversation_id}`);
     }
 
     return (
         <ScrollView contentContainerStyle={styles.friends_container}>
             {Array.isArray(userData) && userData.length > 0 ? (
                 userData.map((friend, index) => (
-                    <TouchableOpacity key={index} style={styles.friendItem} onPress={() => handle_messages_navigate(friend.Username, friend.Id, friend.Online)}>
+                    <TouchableOpacity key={index} style={styles.friendItem} onPress={() => handle_messages_navigate(friend.Id)}>
                         <View>
                             <Image
                                 source={{ uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${friend.Username}.png` }}

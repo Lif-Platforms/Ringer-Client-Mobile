@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "@scripts/auth";
-import { Redirect, Slot } from "expo-router";
+import { Redirect, Slot, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { WebSocketProvider } from "@scripts/websocket_handler";
 import { UserDataProvider } from "@scripts/user_data_provider";
@@ -44,7 +44,18 @@ export default function AppLayout() {
         return (
             <UserDataProvider>
                 <WebSocketProvider>
-                    <Slot />
+                    <Stack>
+                        <Stack.Screen name="conversations/[conversation_id]" options={{
+                            headerShown: false,   
+                        }} />
+                        <Stack.Screen name="user_profile/[username]" options={{
+                            headerShown: false,
+                        }} />
+                        <Stack.Screen name="(tabs)" options={{
+                            headerShown: false,
+                            animation: "none",
+                        }} />
+                    </Stack>
                 </WebSocketProvider>
             </UserDataProvider>
         );
