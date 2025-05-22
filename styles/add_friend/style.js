@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
     header: {
         display: "flex",
         flexDirection: "row",
-        gap: 40
+        gap: 40,
+        marginTop: 20
     },
     header_text: {
         color: "white",

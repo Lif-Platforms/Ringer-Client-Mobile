@@ -3,9 +3,6 @@ import { useEffect } from "react";
 import styles from "@styles/main/style";
 import { secureGet } from "@scripts/secure_storage";
 import { useWebSocket } from "@scripts/websocket_handler";
-import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
-import Constants from 'expo-constants';
 import { useUserData } from "@scripts/user_data_provider";
 import { useRouter } from "expo-router";
 
@@ -86,79 +83,14 @@ export default function MainScreen() {
         connectWebSocket(); // Connect WebSocket when HomeScreen mounts
     }, []);
 
-    async function get_auth_credentials() {
-        const username_ = await getValueFor("username");
-        const token_ =  await getValueFor("token");
-
-        return { username: username_, token: token_ };
-    }
-
-    async function registerForPushNotificationsAsync() {
-        let token;
-        if (Platform.OS === 'android') {
-          await Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#FF231F7C',
-          });
-        }
-      
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== 'granted') {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
-        }
-      
-        if (finalStatus !== 'granted') {
-          return;
-        }
-      
-        token = (await Notifications.getExpoPushTokenAsync({
-          projectId: Constants.expoConfig.extra.eas.projectId,
-        })).data;
-        return token;
-    }
-
-    useEffect(() => {
-        registerForPushNotificationsAsync().then( async (token) => {
-            // Get auth credentials
-            const credentials = await get_auth_credentials();
-
-            // Create request body
-            const body = {
-                "push-token": token
-            }
-        
-            // Register for push notifications with Ringer Server
-            fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/register_push_notifications/mobile`, {
-                method: "POST",
-                headers: {
-                    username: credentials.username,
-                    token: credentials.token
-                },
-                body: JSON.stringify(body)
-            })
-            .then((response) => {
-                if (response.ok) {
-                    console.log("Push notifications registered successfully");
-                } else {
-                    throw new Error("Notifications registration failed with status code: " + response.status);
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-            })
-        });
-    }, []);
+    const router = useRouter();
 
     return(
         <View style={styles.page}>
             <StatusBar style="light" />
             <View style={styles.header}>
                 <Text style={styles.title}>Messages</Text>
-                <TouchableOpacity style={styles.add_button} onPress={() => navigation.push("Add Friend")}>
+                <TouchableOpacity style={styles.add_button} onPress={() => router.push("/add_friend")}>
                     <Image style={styles.add_button_icon} source={require("@assets/main/add_button.png")} />
                 </TouchableOpacity>
             </View>
