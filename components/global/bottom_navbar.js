@@ -3,6 +3,7 @@ import styles from "../../styles/components/bottom_nav/style";
 import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 import React from "react";
+import { Link } from "expo-router";
 
 /**
  * Gets value from secure storage.
@@ -18,7 +19,7 @@ async function getValueFor(key) {
     }    
 }   
 
-function BottomNavBar({ navigation }) {
+function BottomNavBar() {
     const [avatarURL, setAvatarURL] = useState(null);
 
     /**
@@ -46,15 +47,15 @@ function BottomNavBar({ navigation }) {
 
     return (
         <View style={styles.navbar}>
-            <TouchableOpacity onPress={() => navigation.replace("Main")}>
-                <Image source={require("../../assets/bottom_nav/people_icon.png")} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.replace("Notifications")}>
-                <Image source={require("../../assets/bottom_nav/notification_icon.png")} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.replace("Account")}>
+            <Link href="/(tabs)">
+                <Image source={require("@assets/bottom_nav/people_icon.png")} />
+            </Link>
+            <Link href="/(tabs)/notifications">
+                <Image source={require("@assets/bottom_nav/notification_icon.png")} />
+            </Link>
+            <Link href="/(tabs)/account">
                 <Image style={styles.avatar} source={{uri: avatarURL}} />
-            </TouchableOpacity>
+            </Link>
         </View>
     )
 }

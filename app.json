@@ -7,13 +7,15 @@
     "orientation": "portrait",
     "icon": "./assets/global/icon.png",
     "userInterfaceStyle": "dark",
+    "scheme": "ringer-mobile",
     "updates": {
       "enabled": false
     },
     "splash": {
       "image": "./assets/global/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#160900"
+      "backgroundColor": "#160900",
+      "autoHide": false
     },
     "doctor": {
       "reactNativeDirectoryCheck": {

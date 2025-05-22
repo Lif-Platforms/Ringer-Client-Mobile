@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>ringer-mobile</string>
           <string>com.lifplatforms.ringer</string>
         </array>
       </dict>

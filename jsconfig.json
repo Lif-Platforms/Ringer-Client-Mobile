@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@components/*": ["components/*"],
+        "@pages/*": ["pages/*"],
+        "@assets/*": ["assets/*"],
+        "@styles/*": ["styles/*"],
+        "@scripts/*": ["scripts/*"]
+      }
+    },
+    "include": ["**/*"] // Include all files in the project
+  }
