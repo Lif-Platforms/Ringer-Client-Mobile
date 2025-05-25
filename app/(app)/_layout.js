@@ -1,12 +1,13 @@
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "@scripts/auth";
-import { Redirect, Slot, Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { WebSocketProvider } from "@scripts/websocket_handler";
 import { UserDataProvider } from "@scripts/user_data_provider";
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import { ConversationDataProvider } from "@scripts/conversation_data_provider";
 
 export default function AppLayout() {
     //  Get auth context
@@ -107,24 +108,26 @@ export default function AppLayout() {
     if (!isLoading && isAuthenticated) {
         return (
             <UserDataProvider>
-                <WebSocketProvider>
-                    <Stack>
-                        <Stack.Screen name="conversations/[conversation_id]" options={{
-                            headerShown: false,   
-                        }} />
-                        <Stack.Screen name="user_profile/[username]" options={{
-                            headerShown: false,
-                        }} />
-                        <Stack.Screen name="(tabs)" options={{
-                            headerShown: false,
-                            animation: "none",
-                        }} />
-                        <Stack.Screen name="add_friend" options={{
-                            presentation: "modal",
-                            headerShown: false,
-                        }} />
-                    </Stack>
-                </WebSocketProvider>
+                <ConversationDataProvider>
+                    <WebSocketProvider>
+                        <Stack>
+                            <Stack.Screen name="conversations/[conversation_id]" options={{
+                                headerShown: false,   
+                            }} />
+                            <Stack.Screen name="user_profile/[username]" options={{
+                                headerShown: false,
+                            }} />
+                            <Stack.Screen name="(tabs)" options={{
+                                headerShown: false,
+                                animation: "none",
+                            }} />
+                            <Stack.Screen name="add_friend" options={{
+                                presentation: "modal",
+                                headerShown: false,
+                            }} />
+                        </Stack>
+                    </WebSocketProvider>
+                </ConversationDataProvider>
             </UserDataProvider>
         );
     }

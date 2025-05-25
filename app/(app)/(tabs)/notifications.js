@@ -35,6 +35,10 @@ export default function Notifications() {
         } 
         get_requests();
     }, []);
+    
+    function remove_notification(id) {
+        setFriendRequests((prevRequests) => prevRequests.filter(request => request.Request_Id !== id));
+    }
 
     return (
         <View style={styles.page}>
@@ -48,7 +52,7 @@ export default function Notifications() {
                             key={key}
                             id={request.Request_Id}
                             name={request.Sender}
-                            navigation={navigation}
+                            remove_notification={remove_notification}
                         />
                     ))
                 ) : Array.isArray(friendRequests) & friendRequests.length === 0 ? (

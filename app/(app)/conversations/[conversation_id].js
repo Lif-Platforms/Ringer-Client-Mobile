@@ -10,12 +10,12 @@ import { useUserData } from "@scripts/user_data_provider";
 import { useLocalSearchParams } from "expo-router";
 import { secureGet } from "@scripts/secure_storage";
 import { useRouter } from "expo-router";
+import { useConversationData } from "@scripts/conversation_data_provider";
 
 export default function MessagesPage() {
     // Get conversation from URL
     const { conversation_id } = useLocalSearchParams({ conversation_id });
 
-    const [messages, setMessages] = useState("loading");
     const scrollViewRef = useRef();
     const { sendMessage, updateTypingStatus } = useWebSocket();
     const [messageValue, setMessageValue] = useState("");
@@ -29,7 +29,17 @@ export default function MessagesPage() {
     const [showGIFModal, setShowGIFModal] = useState(false);
     const [keepScrollPosition, setKeepScrollPosition] = useState(false);
     const { userData, update_last_sent_message } = useUserData();
-    const [conversationName, setConversationName] = useState(null);
+
+    const {
+        setConversationData, 
+        setMessages, 
+        messages,
+        isLoading, 
+        setIsLoading,
+        conversationName,
+        clearConversationData,
+        addMessages,
+    } = useConversationData();
 
     // Set online status when user data updates or when page loads
     useEffect(() => {
@@ -64,6 +74,9 @@ export default function MessagesPage() {
 
     useEffect(() => {
         async function load_messages() {
+            // Set loading state
+            setIsLoading(true);
+
             // Get auth credentials
             const credentials = await get_auth_credentials();
 
@@ -84,14 +97,17 @@ export default function MessagesPage() {
                 const conversationName = data.conversation_name;
                 const messages = data.messages;
 
-                // Set conversation name
-                setConversationName(conversationName);
+                // Set conversation data
+                setConversationData(conversationName, conversation_id);
 
                 // Determine if there are more messages to load
                 // This will load more messages when the user scrolls to the top of the conversation
                 if (messages.length >= 20) {
                     setLoadMoreMessages(true);
                 }
+
+                // Set loading state to false
+                setIsLoading(false);
 
                 // Set messages
                 setMessages(messages);
@@ -120,6 +136,11 @@ export default function MessagesPage() {
             }
         }
         load_messages();
+
+        // Clear conversation data when component unmounts
+        return () => {
+            clearConversationData();
+        }
     }, []);
 
     // Add event listener for message updates
@@ -128,7 +149,7 @@ export default function MessagesPage() {
           // Check if the update was for this conversation
           if (event.id === conversation_id) {
             // Use functional state update to ensure the latest state is used
-            setMessages((prevMessages) => [...prevMessages, event.message]);
+            addMessages([event.message], false);
 
             // Scroll to end of conversation
             // Set timeout to ensure messages load before scrolling
@@ -198,8 +219,7 @@ export default function MessagesPage() {
                 setKeepScrollPosition(true);
 
                 // Add messages to list
-                const messages_ = [...data, ...messages];
-                setMessages(messages_);
+                addMessages(data, true);
 
                 // Check if there are more messages to load
                 if (data.length < 20) {
@@ -278,7 +298,7 @@ export default function MessagesPage() {
                 {isLoadingMoreMessages ? (
                     <ActivityIndicator size="large" color="#ffffff" />
                 ): null}
-                {Array.isArray(messages) ? (
+                {Array.isArray(messages) && !isLoading ? (
                     messages.map((message, index) => (
                         <Message
                             key={index}
@@ -286,7 +306,7 @@ export default function MessagesPage() {
                             index={index}
                         />
                     ))
-                ) : messages === "loading" ? (
+                ) : isLoading ? (
                     <Text style={styles.message_loading}>Loading...</Text>
                 ) : (
                     <Text>Error Loading messages</Text>
