@@ -1,8 +1,8 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useContext } from 'react';
 import { secureSave, secureGet } from './secure_storage';
 
 // Create Auth Context
-export const AuthContext = createContext(null);
+const AuthContext = createContext(null);
 
 // Create Auth Provider
 export const AuthProvider = ({ children }) => {
@@ -80,13 +80,22 @@ export const AuthProvider = ({ children }) => {
                 throw new Error("No stored credentials");
             }
         } catch (err) {
-            throw new Error("Failed to verify credentials");
+            throw new Error(err || "An error occurred while verifying credentials");
         }
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, token, username, login, logout, verifyCredentials }}>
+        <AuthContext.Provider value={{
+            isAuthenticated,
+            token,
+            username,
+            login,
+            logout,
+            verifyCredentials
+        }}>
             {children}
         </AuthContext.Provider>
     );
 };
+
+export const useAuth = () => { return useContext(AuthContext); }

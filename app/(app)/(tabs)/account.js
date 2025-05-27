@@ -5,7 +5,8 @@ import { useWebSocket } from "@scripts/websocket_handler";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { useUserData } from "@scripts/user_data_provider";
-import { secureGet } from "@scripts/secure_storage";
+import { secureGet, secureDelete } from "@scripts/secure_storage";
+import { useRouter } from "expo-router";
 
 export default function AccountPage() {
     const [username, setUsername] = useState("");
@@ -19,6 +20,8 @@ export default function AccountPage() {
 
         return { username: username_, token: token_ };
     }
+
+    const router = useRouter();
 
     const websocket = useWebSocket();
 
@@ -93,13 +96,13 @@ export default function AccountPage() {
         })
 
         // Delete auth credentials from device
-        await SecureStore.deleteItemAsync("username");
-        await SecureStore.deleteItemAsync("token");
+        await secureDelete("username");
+        await secureDelete("token");
 
         // Clear user data from user data provider
         setUserData(null);
 
-        navigation.replace("Login");
+        router.replace("/login");
     }
 
     return (

@@ -1,8 +1,8 @@
 import { View, Text, TouchableOpacity, StatusBar, TextInput, Image, Dimensions } from "react-native";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import styles from "@styles/login/style";
 import { useRouter } from "expo-router";
-import { AuthContext } from "@scripts/auth";
+import { useAuth } from "@scripts/auth";
 
 // Get dimensions of screen
 const { width, height } = Dimensions.get('window');
@@ -18,7 +18,7 @@ export default function LoginScreen() {
     const router = useRouter();
 
     // Get auth context
-    const { login } = useContext(AuthContext);
+    const { login } = useAuth();
 
     // Handle navigation to main page
     async function handle_login() {
