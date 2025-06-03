@@ -8,6 +8,7 @@ import * as Notifications from 'expo-notifications';
 import { ActivityIndicator, Platform, View, Text } from 'react-native';
 import Constants from 'expo-constants';
 import { ConversationDataProvider } from "@scripts/conversation_data_provider";
+import { NotifierWrapper } from "react-native-notifier";
 
 export default function AppLayout() {
     // Get auth context
@@ -108,18 +109,20 @@ export default function AppLayout() {
         );
     } else if (isAuthenticated) {
         content = (
-            <UserDataProvider>
-                <ConversationDataProvider>
-                    <WebSocketProvider>
-                        <Stack>
-                            <Stack.Screen name="conversations/[conversation_id]" options={{ headerShown: false }} />
-                            <Stack.Screen name="user_profile/[username]" options={{ headerShown: false }} />
-                            <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: "none" }} />
-                            <Stack.Screen name="add_friend" options={{ presentation: "modal", headerShown: false }} />
-                        </Stack>
-                    </WebSocketProvider>
-                </ConversationDataProvider>
-            </UserDataProvider>
+            <NotifierWrapper>
+                <UserDataProvider>
+                    <ConversationDataProvider>
+                        <WebSocketProvider>
+                            <Stack>
+                                <Stack.Screen name="conversations/[conversation_id]" options={{ headerShown: false }} />
+                                <Stack.Screen name="user_profile/[username]" options={{ headerShown: false }} />
+                                <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: "none" }} />
+                                <Stack.Screen name="add_friend" options={{ presentation: "modal", headerShown: false }} />
+                            </Stack>
+                        </WebSocketProvider>
+                    </ConversationDataProvider>
+                </UserDataProvider>
+            </NotifierWrapper>
         );
     } else {
         content = <Redirect href="/login" />;

@@ -143,32 +143,16 @@ export default function MessagesPage() {
         }
     }, []);
 
-    // Add event listener for message updates
+    // Scroll to end of conversation when messages change
     useEffect(() => {
-        const handle_message_update = async (event) => {
-          // Check if the update was for this conversation
-          if (event.id === conversation_id) {
-            // Use functional state update to ensure the latest state is used
-            addMessages([event.message], false);
-
-            // Scroll to end of conversation
-            // Set timeout to ensure messages load before scrolling
-            setTimeout(() => {
-                if (scrollViewRef.current) {
-                    scrollViewRef.current.scrollToEnd({ animated: true });
-                }
-            }, 1);  
-          }
-        };
-    
-        // Add the event listener
-        eventEmitter.on('Message_Update', handle_message_update);
-    
-        // Cleanup function to remove the event listener
-        return () => {
-          eventEmitter.off('Message_Update', handle_message_update);
-        };
-    }, []);
+        // Scroll to end of conversation
+        // Set timeout to ensure messages load before scrolling
+        setTimeout(() => {
+            if (scrollViewRef.current) {
+                scrollViewRef.current.scrollToEnd({ animated: true });
+            }
+        }, 1);  
+    }, [messages]);
 
     // Add event listener for message send event
     useEffect(() => {

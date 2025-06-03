@@ -36,9 +36,14 @@ export default function AppLayout() {
                 <Stack>
                     <Stack.Screen name="(app)" options={{
                         headerShown: false,
-                        animation: "none",
+                        animation: "fade",
+                        animationDuration: 200,
                     }} />
-                    <Stack.Screen name="login" options={{ headerShown: false, animation: "none" }} />
+                    <Stack.Screen name="login" options={{ 
+                        headerShown: false,
+                        animation: "fade",
+                        animationDuration: 200,
+                    }} />
                     <Stack.Screen name="create_account" options={{
                         presentation: "modal",
                         title: "Create Account",
