@@ -1,4 +1,12 @@
-import { View, Text, TouchableOpacity, StatusBar, Image, ScrollView } from "react-native";
+import { 
+    View,
+    Text,
+    TouchableOpacity,
+    StatusBar,
+    Image,
+    ScrollView,
+    Pressable,
+} from "react-native";
 import { useEffect } from "react";
 import styles from "@styles/main/style";
 import { secureGet } from "@scripts/secure_storage";
@@ -89,14 +97,19 @@ export default function MainScreen() {
             <StatusBar style="light" />
             <View style={styles.header}>
                 <Text style={styles.title}>Messages</Text>
-                <TouchableOpacity style={styles.add_button} onPress={() => router.push("/add_friend")}>
-                    <Image style={styles.add_button_icon} source={require("@assets/main/add_button.png")} />
-                </TouchableOpacity>
             </View>
             <FriendsList 
                 setUserData={setUserData}
                 userData={userData}
             />
+            <Pressable
+                style={({ pressed }) => [styles.add_button, {
+                    transform: [{ scale: pressed ? 0.85 : 1 }]
+                }]}
+                onPress={() => router.push("/add_friend")}
+            >
+                <Image style={styles.add_button_icon} source={require("@assets/main/add_button.png")} />
+            </Pressable>
         </View>
     )
 }
