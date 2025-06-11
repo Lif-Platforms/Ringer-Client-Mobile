@@ -1,4 +1,4 @@
-import { View,  TouchableOpacity, Image } from "react-native";
+import { View, Image } from "react-native";
 import styles from "../../styles/components/bottom_nav/style";
 import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
@@ -48,10 +48,10 @@ function BottomNavBar() {
     return (
         <View style={styles.navbar}>
             <Link href="/(tabs)">
-                <Image source={require("@assets/bottom_nav/people_icon.png")} />
+                <Image source={require("@assets/bottom_nav/messages_icon.png")} />
             </Link>
             <Link href="/(tabs)/notifications">
-                <Image source={require("@assets/bottom_nav/notification_icon.png")} />
+                <Image source={require("@assets/bottom_nav/notifications_icon.png")} />
             </Link>
             <Link href="/(tabs)/account">
                 <Image style={styles.avatar} source={{uri: avatarURL}} />
