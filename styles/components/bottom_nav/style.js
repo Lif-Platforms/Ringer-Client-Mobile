@@ -6,13 +6,18 @@ const styles = StyleSheet.create({
         display: "flex",
         justifyContent: "space-evenly",
         flexDirection: "row",
-        paddingVertical: 15
+        paddingTop: 15,
+        paddingBottom: 35,
+        borderTopWidth: 1,
+        borderTopColor: "#452E20"
     },
     avatar: {
-        width: 55,
-        height: 55,
+        width: 40,
+        height: 40,
         borderRadius: 100,
-        backgroundColor: "black"
+        backgroundColor: "white",
+        borderWidth: 3,
+        borderColor: "white"
     }
 })
 
