@@ -58,7 +58,15 @@ const styles = StyleSheet.create({
         borderColor: '#160900',
     },
     add_button: {
-        marginRight: 20,
+        position: "absolute",
+        bottom: 25,
+        right: 25,
+        height: 50,
+        width: 50,
+        backgroundColor: "#1C1C1C",
+        borderWidth: 1,
+        borderColor: "#353535",
+        borderRadius: 100
     },
     add_button_icon: {
         margin: "auto",
