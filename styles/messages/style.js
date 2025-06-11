@@ -13,7 +13,15 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        padding: 10
+        padding: 10,
+        paddingTop: 65,
+    },
+    header_loading_text: {
+        color: "white",
+        fontSize: 20,
+        marginTop: "auto",
+        marginBottom: "auto",
+        marginLeft: 15,
     },
     header_avatar: {
         width: 50,

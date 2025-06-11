@@ -1,50 +1,29 @@
 import { Text, View, Image, ScrollView, TouchableOpacity, Linking } from "react-native";
 import { useEffect, useState } from "react";
-import styles from "../styles/account/style";
-import BottomNavBar from "../components/global/bottom_navbar";
-import * as SecureStore from 'expo-secure-store';
-import { useWebSocket } from "../scripts/websocket_handler";
+import styles from "@styles/account/style";
+import { useWebSocket } from "@scripts/websocket_handler";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
-import { useUserData } from "../scripts/user_data_provider";
+import { useUserData } from "@scripts/user_data_provider";
+import { secureGet, secureDelete } from "@scripts/secure_storage";
+import { useRouter } from "expo-router";
 
-// Get values from secure store
-async function getValueFor(key) {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-        return result;
-    } else {
-        return null;
-    }    
-}   
-
-export function AccountPage({ navigation }) {
+export default function AccountPage() {
     const [username, setUsername] = useState("");
     const [userPronouns, setUserPronouns] = useState();
     const [userBio, setUserBio] = useState();
     const { setUserData } = useUserData();
 
     async function get_auth_credentials() {
-        const username_ = await getValueFor("username");
-        const token_ = await getValueFor("token");
+        const username_ = await secureGet("username");
+        const token_ = await secureGet("token");
 
         return { username: username_, token: token_ };
     }
 
-    const websocket = useWebSocket();
+    const router = useRouter();
 
-    // Configure styles for header bar
-    useEffect(() => {
-        navigation.setOptions({
-            headerTitle: '',
-            headerTintColor: 'white',
-            headerStyle: {
-                backgroundColor: '#160900',
-                height: 55,
-                shadowColor: 'transparent'
-            }
-        });    
-    }, [navigation]);
+    const websocket = useWebSocket();
 
     useEffect(() => {
         async function get_username() {
@@ -117,13 +96,13 @@ export function AccountPage({ navigation }) {
         })
 
         // Delete auth credentials from device
-        await SecureStore.deleteItemAsync("username");
-        await SecureStore.deleteItemAsync("token");
+        await secureDelete("username");
+        await secureDelete("token");
 
         // Clear user data from user data provider
         setUserData(null);
 
-        navigation.replace("Login");
+        router.replace("/login");
     }
 
     return (
@@ -155,7 +134,6 @@ export function AccountPage({ navigation }) {
                 <Text style={styles.user_info}>{userBio}</Text>
             </View>
         </ScrollView>
-        <BottomNavBar navigation={navigation} />
         </View> 
     );
 }

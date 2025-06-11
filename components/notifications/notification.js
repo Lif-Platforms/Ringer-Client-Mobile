@@ -14,7 +14,7 @@ async function getValueFor(key) {
     }    
 }
 
-export default function Notification({ id, name, navigation }) {
+export default function Notification({ id, name, remove_notification }) {
     const [isLoading, setIsLoading] = useState(false);
 
     async function get_auth_credentials() {
@@ -45,8 +45,9 @@ export default function Notification({ id, name, navigation }) {
         })
         .then((response) => {
             if (response.ok) {
-                // Reloads the page
-                navigation.replace("Notifications");
+                setIsLoading(false);
+                Alert.alert("Success", `Friend request ${task === "accept" ? "accepted" : "denied"}!`);
+                remove_notification(request_id);
             } else {
                 throw new Error("Request failed! Status code: " + response.status)
             }

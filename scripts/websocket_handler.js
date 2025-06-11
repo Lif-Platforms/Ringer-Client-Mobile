@@ -4,6 +4,7 @@ import { eventEmitter } from "./emitter";
 import { AppState } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useUserData } from './user_data_provider';
+import { useConversationData } from './conversation_data_provider';
 
 const WebSocketContext = createContext(null);
 
@@ -39,6 +40,9 @@ export const WebSocketProvider = ({ children }) => {
   const [appState, setAppState] = useState(AppState.currentState);
   const { update_user_presence, update_last_sent_message } = useUserData();
 
+  // Grab conversation data context
+  const { addMessages } = useConversationData();
+
   useEffect(() => {
     // Attempt to connect when the component mounts
     connectWebSocket();
@@ -65,36 +69,30 @@ export const WebSocketProvider = ({ children }) => {
 
       webSocketRef.current.onopen = async () => {
         setIsConnected(true);
-        console.log('WebSocket connected');
 
         const credentials = await get_auth_credentials();
         webSocketRef.current.send(JSON.stringify({"Username": credentials.username, "Token": credentials.token}));
-        console.log("Auth credentials sent");
       };
 
       webSocketRef.current.onclose = () => {
         setIsConnected(false);
-        console.log('WebSocket disconnected');
         webSocketRef.current = null;
 
         // Attempt to reconnect if the connection was not closed manually
         if (shouldReconnect.current) {
-          setTimeout(connectWebSocket, 3000); // Reconnect after 5 seconds
+          setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
         }
       };
 
       webSocketRef.current.onmessage = async (event) => {
         const data = JSON.parse(event.data);
-        console.log('WebSocket message received:', data);
 
         // Get user credentials
         const credentials = await get_auth_credentials();
 
         if (data.Type === "MESSAGE_UPDATE") {
-          eventEmitter.emit("Message_Update", {
-            id: data.Id,
-            message: data.Message
-          });
+          // Add message to conversation
+          addMessages(data.Id, [data.Message], false);
 
           // Update last sent message
           update_last_sent_message(
@@ -102,13 +100,6 @@ export const WebSocketProvider = ({ children }) => {
             data.Message.Message,
             data.Id,
           );
-
-          // Send in-app notification event to trigger in-app notification
-          eventEmitter.emit("show_notification", {
-            title: data.Message.Author,
-            content: data.Message.Message,
-            conversation_id: data.Id
-          });
 
           // Send client notification if user has app suspended
           if (appState !== "active" && data.Message.Author !== credentials.username) {

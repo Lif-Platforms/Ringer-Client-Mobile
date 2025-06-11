@@ -1,13 +1,16 @@
 import { View, Image, TouchableOpacity, Text, Animated } from "react-native";
-import styles from "../../../styles/user_profile/header";
+import styles from "@styles/user_profile/header";
 import { useEffect, useRef } from "react";
+import { useRouter } from "expo-router";
 
-export function Header({ navigation, username, headerMode }) {
+export function Header({ username, headerMode }) {
     const slideAnim = useRef(new Animated.Value(-30)).current; // Initial position for sliding 
     const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity
 
+    const router = useRouter();
+
     function handle_navigation_back() {
-        navigation.goBack();
+        router.back();
     }
 
     // Play header animations based on mode

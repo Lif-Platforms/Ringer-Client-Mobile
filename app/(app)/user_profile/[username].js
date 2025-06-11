@@ -1,22 +1,19 @@
-import { useEffect, useState } from "react";
-import styles from "../styles/user_profile/style";
+import { use, useEffect, useState } from "react";
+import styles from "@styles/user_profile/style";
 import { View, Image, ScrollView, Text, TouchableOpacity, Alert, Platform } from "react-native";
-import { Header } from "../components/user info page/header/header";
-import * as SecureStore from 'expo-secure-store';
+import { Header } from "@components/user info page/header/header";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useConversationData } from "@scripts/conversation_data_provider";
+import { secureGet } from "@scripts/secure_storage";
 
-// Get values from secure store
-async function getValueFor(key) {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-        return result;
-    } else {
-        return null;
-    }    
-}
-
-export function UserProfilePage({ route, navigation }) {
+export default function UserProfilePage() {
     // Get page props
-    const { username, loaded_messages, conversation_id } = route.params;
+    const { username } = useLocalSearchParams({ username });
+
+    const router = useRouter();
+
+    // Get messages from the current conversation
+    const { messages, conversationId } = useConversationData();
 
     // Store pronouns and bio
     const [userPronouns, setUserPronouns] = useState("...");
@@ -35,8 +32,8 @@ export function UserProfilePage({ route, navigation }) {
     const [unfriendButtonText, setUnfriendButtonText] = useState("Unfriend User");
 
     async function get_auth_credentials() {
-        const username_ = await getValueFor("username");
-        const token_ = await getValueFor("token");
+        const username_ = await secureGet("username");
+        const token_ = await secureGet("token");
 
         return { username: username_, token: token_ };
     }
@@ -99,19 +96,6 @@ export function UserProfilePage({ route, navigation }) {
             setUserBio("Failed to fetch bio!");
         })
     }, []);
-
-    // Configure styles for header bar
-    useEffect(() => {
-        navigation.setOptions({
-            headerTitle: '',
-            headerTintColor: 'white',
-            headerStyle: {
-                backgroundColor: '#19120E',
-                height: 0,
-                shadowColor: 'transparent'
-            }
-        });    
-    }, [navigation]);
 
     // Adjust header mode based on scroll position
     function handle_scroll(event) {
@@ -176,7 +160,7 @@ export function UserProfilePage({ route, navigation }) {
                     },
                     {
                         text: 'OK',
-                        onPress: (text) => submit_report(text, username, loaded_messages, setIsReporting),
+                        onPress: (text) => submit_report(text, username, messages, setIsReporting),
                     },
                 ],
                 'plain-text'
@@ -187,11 +171,13 @@ export function UserProfilePage({ route, navigation }) {
     }
 
     function handle_unfriend() {
-        async function unfriend_user(setIsUnfriending, conversation_id, navigation) {
+        async function unfriend_user(setIsUnfriending, conversation_id) {
             setIsUnfriending(true);
 
             // Get auth credentials
             const credentials = await get_auth_credentials();
+
+            console.log(credentials)
 
             // Make request to server
             fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/remove_conversation/${conversation_id}`, {
@@ -209,10 +195,11 @@ export function UserProfilePage({ route, navigation }) {
                         [
                             {
                                 text: "Ok",
-                                onPress: () => navigation.reset({index: 0, routes: [{name: 'Main'}]})
+                                onPress: () => router.replace("/(tabs)"),
                             }
                         ]
                     );
+                    router.replace("(tabs)");
                 } else {
                     throw new Error("Request failed with status code: " + response.status);
                 }
@@ -233,7 +220,7 @@ export function UserProfilePage({ route, navigation }) {
                 },
                 {
                     text: "Yes, Do it",
-                    onPress: () => unfriend_user(setIsUnfriending, conversation_id, navigation)
+                    onPress: () => unfriend_user(setIsUnfriending, conversationId)
                 }
             ],
             {cancelable: true}
@@ -243,7 +230,6 @@ export function UserProfilePage({ route, navigation }) {
     return (
         <View>
             <Header
-                navigation={navigation}
                 username={username}
                 headerMode={headerMode}
             />
@@ -254,7 +240,7 @@ export function UserProfilePage({ route, navigation }) {
                         style={styles.user_banner}
                     />
                     <Image
-                        source={require('../assets/user_profile/gradient.png')}
+                        source={require('@assets/user_profile/gradient.png')}
                         style={styles.banner_gradient}
                     />
                     <View style={styles.avatar_container}>

@@ -1,28 +1,16 @@
 import { Text, Image, View, TouchableOpacity, TextInput, Keyboard } from "react-native";
 import { useEffect, useRef, useState } from "react";
-import styles from "../styles/add_friend/style";
+import styles from "@styles/add_friend/style";
 import { ScrollView } from "react-native-gesture-handler";
-import SearchResult from "../components/add friend/search_result";
+import SearchResult from "@components/add friend/search_result";
+import { useRouter } from "expo-router";
 
-export function AddFriendPage({ navigation }) {
+export default function AddFriendPage() {
     const [searchResults, setSearchResults] = useState(null);
     const [addUser, setAddUser] = useState();
     const websocketConn = useRef();
     const [isConnected, setIsConnected] = useState(false);
     const searchBoxRef = useRef();
-
-    // Configure styles for header bar
-    useEffect(() => {
-        navigation.setOptions({
-            headerTitle: '',
-            headerTintColor: 'white',
-            headerStyle: {
-                backgroundColor: '#160900',
-                height: 20,
-                shadowColor: 'transparent'
-            }
-        });    
-    }, [navigation]);
 
     // Connect to websocket
     useEffect(() => {
@@ -63,11 +51,13 @@ export function AddFriendPage({ navigation }) {
         }
     }, [isConnected]);
 
+    const router = useRouter();
+
     return (
         <View style={styles.page}>
             <View style={styles.header}>
-                <TouchableOpacity style={styles.back_button} onPress={() => navigation.goBack()}>
-                    <Image style={styles.back_button_icon} source={require("../assets/add_friend/back_icon.png")} />
+                <TouchableOpacity style={styles.back_button} onPress={() => router.back()}>
+                    <Image style={styles.back_button_icon} source={require("@assets/add_friend/back_icon.png")} />
                 </TouchableOpacity>
                 <Text style={styles.header_text}>Add Friends</Text>
             </View>

@@ -1,42 +1,18 @@
 import { View, Text, ScrollView } from "react-native";
-import BottomNavBar from "../components/global/bottom_navbar";
 import { useEffect, useState } from "react";
-import styles from "../styles/notifications/style";
-import * as SecureStore from 'expo-secure-store';
-import Notification from "../components/notifications/notification";
+import styles from "@styles/notifications/style";
+import { secureGet } from "@scripts/secure_storage";
+import Notification from "@components/notifications/notification";
 
-// Get values from secure store
-async function getValueFor(key) {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-        return result;
-    } else {
-        return null;
-    }    
-}   
-
-export function Notifications({ navigation }) {
+export default function Notifications() {
     const [friendRequests, setFriendRequests] = useState("Loading");
 
     async function get_auth_credentials() {
-        const username_ = await getValueFor("username");
-        const token_ = await getValueFor("token");
+        const username_ = await secureGet("username");
+        const token_ = await secureGet("token");
 
         return { username: username_, token: token_ };
     }
-
-    // Configure styles for header bar
-    useEffect(() => {
-        navigation.setOptions({
-            headerTitle: '',
-            headerTintColor: 'white',
-            headerStyle: {
-                backgroundColor: '#160900',
-                height: 55,
-                shadowColor: 'transparent'
-            }
-        });    
-    }, [navigation]);
 
     useEffect(() => {
         async function get_requests() {
@@ -59,6 +35,10 @@ export function Notifications({ navigation }) {
         } 
         get_requests();
     }, []);
+    
+    function remove_notification(id) {
+        setFriendRequests((prevRequests) => prevRequests.filter(request => request.Request_Id !== id));
+    }
 
     return (
         <View style={styles.page}>
@@ -72,7 +52,7 @@ export function Notifications({ navigation }) {
                             key={key}
                             id={request.Request_Id}
                             name={request.Sender}
-                            navigation={navigation}
+                            remove_notification={remove_notification}
                         />
                     ))
                 ) : Array.isArray(friendRequests) & friendRequests.length === 0 ? (
@@ -83,7 +63,6 @@ export function Notifications({ navigation }) {
                     <Text style={styles.info_text}>Error Loading Friend Requests</Text>
                 )}
             </ScrollView>
-            <BottomNavBar navigation={navigation} />
         </View>
     )
 }

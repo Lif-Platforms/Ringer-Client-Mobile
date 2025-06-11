@@ -3,7 +3,8 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     page: {
         backgroundColor: "#160900",
-        height: "100%"
+        height: "100%",
+        paddingTop: 60
     },
     icon: {
         marginHorizontal: "auto",

@@ -1,17 +1,17 @@
 import { WebView } from 'react-native-webview';
-import * as SecureStore from 'expo-secure-store';
+import { secureSave } from '@scripts/secure_storage';
+import { useRouter } from 'expo-router';
 
-export default function CreateAccountScreen({ navigation }) {
+export default function CreateAccountScreen() {
+    const router = useRouter();
+
     async function handle_message(event) {
         const data = JSON.parse(event.nativeEvent.data);
         if (data.type === 'create_account') {
             console.log(data);
-            await SecureStore.setItemAsync('username', data.username);
-            await SecureStore.setItemAsync('token', data.token);
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'Main' }],
-            });
+            await secureSave('username', data.username);
+            await secureSave('token', data.token);
+            router.replace('/(app)/(tabs)/index');
         } 
     }
 
