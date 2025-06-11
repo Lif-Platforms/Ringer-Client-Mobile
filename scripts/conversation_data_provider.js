@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useRef } from "react";
 import { showNotification } from "./notification_handler";
 
 const ConversationDataContext = createContext();
@@ -7,19 +7,19 @@ export const ConversationDataProvider = ({ children }) => {
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [conversationName, setConversationName] = useState(null);
-    const [conversationId, setConversationId] = useState(null);
+    const conversationId = useRef(null);
 
-    /*
+    /**
     * Set the current conversation data.
     * @param {string} name - The name of the conversation.
     * @param {string} id - The ID of the conversation.
     */
     function setConversationData(name, id) {
         setConversationName(name);
-        setConversationId(id);
+        conversationId.current = id;
     }
 
-    /*
+    /**
     * Add messages to the conversation.
     * @param {string} conversationId - The ID of the conversation.
     * @param {Array} messages - The messages to add.
@@ -27,14 +27,18 @@ export const ConversationDataProvider = ({ children }) => {
     */
     function addMessages(conversation_id, messages, before = false) {
         // Check if the conversationId matches the current conversation
-        if (conversation_id !== conversationId) {
+        if (conversation_id !== conversationId.current) {
             // Display a notification for each message
             messages.forEach((message) => {
-                showNotification(
-                    message.Author,
-                    conversation_id,
-                    message.Message
-                );
+                try {
+                    showNotification(
+                        message.Author,
+                        conversation_id,
+                        message.Message
+                    );
+                } catch(err) {
+                    console.error(err);
+                }
             });
             return;
         }
@@ -47,13 +51,13 @@ export const ConversationDataProvider = ({ children }) => {
         }
     }
 
-    /*
+    /**
     * Clear the conversation data.
     */
     function clearConversationData() {
         setMessages([]);
-        setConversationName("");
-        setConversationId("");
+        setConversationName(null);
+        conversationId.current = null;
     }
 
     return (

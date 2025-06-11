@@ -3,7 +3,6 @@ import { Vibration } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export function showNotification(username, conversationId, messageBody) {
-    console.log("Showing notification for:", username, conversationId, messageBody);
     const router = useRouter();
 
     Notifier.showNotification({
@@ -13,9 +12,8 @@ export function showNotification(username, conversationId, messageBody) {
         showAnimationDuration: 200,
         showEasing: Easing.linear,
         onPress: () => {
-            // TODO: Fix this \/
-            router.dismissAll();
-            router.replace("/(app)/conversations/" + conversationId);
+            router.dismissTo("(tabs)");
+            router.push(`/conversations/${conversationId}`);
         },
         hideOnPress: true,
         Component: NotifierComponents.Notification,

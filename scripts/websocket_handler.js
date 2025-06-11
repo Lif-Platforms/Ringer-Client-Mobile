@@ -69,16 +69,13 @@ export const WebSocketProvider = ({ children }) => {
 
       webSocketRef.current.onopen = async () => {
         setIsConnected(true);
-        console.log('WebSocket connected');
 
         const credentials = await get_auth_credentials();
         webSocketRef.current.send(JSON.stringify({"Username": credentials.username, "Token": credentials.token}));
-        console.log("Auth credentials sent");
       };
 
       webSocketRef.current.onclose = () => {
         setIsConnected(false);
-        console.log('WebSocket disconnected');
         webSocketRef.current = null;
 
         // Attempt to reconnect if the connection was not closed manually

@@ -9,6 +9,7 @@ import { ActivityIndicator, Platform, View, Text } from 'react-native';
 import Constants from 'expo-constants';
 import { ConversationDataProvider } from "@scripts/conversation_data_provider";
 import { NotifierWrapper } from "react-native-notifier";
+import ReconnectBar from "@components/global/reconnect_bar";
 
 export default function AppLayout() {
     // Get auth context
@@ -17,13 +18,19 @@ export default function AppLayout() {
     // Determine if the app is loading
     const [isLoading, setIsLoading] = useState(true);
 
+    // Determine if auth request failed due to connection issues
+    const [noInternet, setNoInternet] = useState(false);
+
     // Verify credentials on app load
     useEffect(() => {
         const checkCredentials = async () => {
             try {
                 await verifyCredentials();
             } catch (error) {
-                console.error("Error verifying credentials:", error);
+                // Detect if network request failed
+                if (error.message === "TypeError: Network request failed") {
+                    setNoInternet(true);
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -113,6 +120,7 @@ export default function AppLayout() {
                 <UserDataProvider>
                     <ConversationDataProvider>
                         <WebSocketProvider>
+                            <ReconnectBar />
                             <Stack>
                                 <Stack.Screen name="conversations/[conversation_id]" options={{ headerShown: false }} />
                                 <Stack.Screen name="user_profile/[username]" options={{ headerShown: false }} />
@@ -124,8 +132,10 @@ export default function AppLayout() {
                 </UserDataProvider>
             </NotifierWrapper>
         );
-    } else {
+    } else if (!isAuthenticated && !noInternet) {
         content = <Redirect href="/login" />;
+    } else {
+        content = <Redirect href="/no_internet" />;
     }
 
     return content;

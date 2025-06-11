@@ -50,6 +50,11 @@ export default function AppLayout() {
                         headerShown: true,
                         headerBackTitleVisible: true,
                     }} />
+                    <Stack.Screen name="no_internet" options={{
+                        headerShown: false,
+                        animation: "fade",
+                        animationDuration: 200
+                    }} />
                 </Stack>
             </AuthProvider>
         </GestureHandlerRootView>

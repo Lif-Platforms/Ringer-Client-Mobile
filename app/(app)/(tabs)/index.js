@@ -79,7 +79,6 @@ export default function MainScreen() {
     const { userData, setUserData } = useUserData();
 
     useEffect(() => {
-        console.log("Connecting to websocket")
         connectWebSocket(); // Connect WebSocket when HomeScreen mounts
     }, []);
 
