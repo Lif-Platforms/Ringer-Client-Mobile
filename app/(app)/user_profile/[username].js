@@ -1,10 +1,11 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "@styles/user_profile/style";
 import { View, Image, ScrollView, Text, TouchableOpacity, Alert, Platform } from "react-native";
 import { Header } from "@components/user info page/header/header";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useConversationData } from "@scripts/conversation_data_provider";
 import { secureGet } from "@scripts/secure_storage";
+import FastImage from "react-native-fast-image";
 
 export default function UserProfilePage() {
     // Get page props
@@ -235,8 +236,13 @@ export default function UserProfilePage() {
             />
             <ScrollView onScroll={handle_scroll} style={styles.page}>
                 <View style={styles.header}>
-                    <Image
-                        source={{uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_banner/${username}.png`}}
+                    <FastImage
+                        resizeMode={FastImage.resizeMode.cover}
+                        source={{
+                            uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_banner/${username}.png`,
+                            priority: FastImage.priority.normal,
+                            cache: FastImage.cacheControl.web,
+                        }}
                         style={styles.user_banner}
                     />
                     <Image
@@ -244,8 +250,12 @@ export default function UserProfilePage() {
                         style={styles.banner_gradient}
                     />
                     <View style={styles.avatar_container}>
-                        <Image
-                            source={{uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${username}.png`}}
+                        <FastImage
+                            source={{
+                                uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${username}.png`,
+                                priority: FastImage.priority.normal,
+                                cache: FastImage.cacheControl.web,
+                            }}
                             style={styles.user_avatar}
                         />
                     </View>

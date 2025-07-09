@@ -10,10 +10,11 @@ import Constants from 'expo-constants';
 import { ConversationDataProvider } from "@scripts/conversation_data_provider";
 import { NotifierWrapper } from "react-native-notifier";
 import ReconnectBar from "@components/global/reconnect_bar";
+import { CacheProvider } from "@scripts/cache_provider";
 
 export default function AppLayout() {
     // Get auth context
-    const { isAuthenticated, verifyCredentials } = useAuth();
+    const { isAuthenticated, verifyCredentials, username } = useAuth();
 
     // Determine if the app is loading
     const [isLoading, setIsLoading] = useState(true);
@@ -117,6 +118,7 @@ export default function AppLayout() {
     } else if (isAuthenticated) {
         content = (
             <NotifierWrapper>
+                <CacheProvider>
                 <UserDataProvider>
                     <ConversationDataProvider>
                         <WebSocketProvider>
@@ -130,6 +132,7 @@ export default function AppLayout() {
                         </WebSocketProvider>
                     </ConversationDataProvider>
                 </UserDataProvider>
+                </CacheProvider>
             </NotifierWrapper>
         );
     } else if (!isAuthenticated && !noInternet) {

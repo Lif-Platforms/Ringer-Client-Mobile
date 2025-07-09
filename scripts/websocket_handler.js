@@ -5,6 +5,7 @@ import { AppState } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useUserData } from './user_data_provider';
 import { useConversationData } from './conversation_data_provider';
+import { useCache } from './cache_provider';
 
 const WebSocketContext = createContext(null);
 
@@ -42,6 +43,8 @@ export const WebSocketProvider = ({ children }) => {
 
   // Grab conversation data context
   const { addMessages } = useConversationData();
+
+  const { addToMessagesCache } = useCache();
 
   useEffect(() => {
     // Attempt to connect when the component mounts
@@ -99,6 +102,12 @@ export const WebSocketProvider = ({ children }) => {
             data.Message.Author,
             data.Message.Message,
             data.Id,
+          );
+
+          // Add message to cache
+          addToMessagesCache(
+            data.Id,
+            [data.Message]
           );
 
           // Send client notification if user has app suspended

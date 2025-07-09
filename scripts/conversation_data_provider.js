@@ -21,7 +21,7 @@ export const ConversationDataProvider = ({ children }) => {
 
     /**
     * Add messages to the conversation.
-    * @param {string} conversationId - The ID of the conversation.
+    * @param {string} conversation_id - The ID of the conversation.
     * @param {Array} messages - The messages to add.
     * @param {boolean} before - If true, add messages before existing ones; otherwise, add after.
     */

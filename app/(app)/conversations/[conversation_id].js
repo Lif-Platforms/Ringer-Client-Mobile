@@ -1,4 +1,12 @@
-import { ActivityIndicator, View, Text, Image, StatusBar, TouchableOpacity, ScrollView } from "react-native";
+import {
+    ActivityIndicator,
+    View,
+    Text,
+    Image,
+    StatusBar,
+    TouchableOpacity,
+    ScrollView 
+} from "react-native";
 import styles from "@styles/messages/style";
 import { useEffect, useState, useRef } from "react";
 import { useWebSocket } from "@scripts/websocket_handler";
@@ -11,6 +19,8 @@ import { useLocalSearchParams } from "expo-router";
 import { secureGet } from "@scripts/secure_storage";
 import { useRouter } from "expo-router";
 import { useConversationData } from "@scripts/conversation_data_provider";
+import { useCache } from "@scripts/cache_provider";
+import FastImage from "react-native-fast-image";
 
 export default function MessagesPage() {
     // Get conversation from URL
@@ -40,6 +50,8 @@ export default function MessagesPage() {
         clearConversationData,
         addMessages,
     } = useConversationData();
+
+    const { addMessagesCache, getMessagesCache } = useCache();
 
     // Set online status when user data updates or when page loads
     useEffect(() => {
@@ -76,6 +88,14 @@ export default function MessagesPage() {
         async function load_messages() {
             // Set loading state
             setIsLoading(true);
+
+            // Check if there are any cached messages for this conversation
+            const cachedMessages = getMessagesCache(conversation_id);
+            if (cachedMessages) {
+                setConversationData(cachedMessages.conversationName, conversation_id);
+                setMessages(cachedMessages.messages);
+                setIsLoading(false);
+            }
 
             // Get auth credentials
             const credentials = await get_auth_credentials();
@@ -118,7 +138,10 @@ export default function MessagesPage() {
                     if (scrollViewRef.current) {
                         scrollViewRef.current.scrollToEnd({ animated: false });
                     }
-                }, 1);  
+                }, 1);
+
+                // Add messages to cache
+                addMessagesCache(conversation_id, conversationName, messages);
 
                 // Update last sent message
                 if (data.length >= 1) {
@@ -259,8 +282,13 @@ export default function MessagesPage() {
                     {conversationName ? (
                         <>
                             <View>
-                                <Image
-                                    source={{ uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${conversationName}.png` }}
+                                <FastImage
+                                    resizeMode={FastImage.resizeMode.cover}
+                                    source={{
+                                        uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${conversationName}.png`,
+                                        priority: FastImage.priority.normal,
+                                        cache: FastImage.cacheControl.web,
+                                    }}
                                     style={styles.header_avatar}
                                 />
                                 <View style={[styles.status_indicator, {backgroundColor: isOnline ? 'lightgreen' : 'gray'}]} />

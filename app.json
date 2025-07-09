@@ -11,16 +11,12 @@
     "updates": {
       "enabled": false
     },
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/global/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#160900",
       "autoHide": false
-    },
-    "doctor": {
-      "reactNativeDirectoryCheck": {
-        "enabled": true
-      }
     },
     "ios": {
       "supportsTablet": false,
@@ -49,15 +45,7 @@
     },
     "plugins": [
       [
-        "expo-build-properties",
-        {
-          "ios": {
-            "newArchEnabled": true
-          },
-          "android": {
-            "newArchEnabled": true
-          }
-        }
+        "expo-build-properties"
       ],
       "expo-secure-store",
       [
