@@ -1,10 +1,19 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import {
+    createContext,
+    useState,
+    useContext,
+    useEffect,
+} from "react";
+import { useCache } from "./cache_provider";
 
 const UserDataContext = createContext(null);
 
 export const UserDataProvider = ({ children }) => {
     const [userData, setUserData] = useState(null);
     const [dataQueue, setDataQueue] = useState([]);
+    const [isCacheData, setIsCacheData] = useState(false);
+
+    const { updateUser } = useCache();
 
     /**
     * Add an item to data queue
@@ -81,12 +90,19 @@ export const UserDataProvider = ({ children }) => {
                 conversation_id: conversation_id,
             });
         }
+
+        // Update last sent message in cache
+        updateUser(
+            message_author,
+            "Last_Message",
+            `${message_author} - ${message}`
+        );
     }
 
     // Move data from queue to user data once it loads in
     useEffect(() => {
         // Check if user data has loaded in
-        if (userData && dataQueue.length > 0) {
+        if (userData && dataQueue.length > 0 && !isCacheData) {
             dataQueue.forEach((item) => {
                 if (item.type === "user_presence") {
                     update_user_presence(item.data.username, item.data.online);
@@ -103,7 +119,7 @@ export const UserDataProvider = ({ children }) => {
             // Clear data queue
             setDataQueue([]);
         }
-    }, [userData, dataQueue]);   
+    }, [userData, dataQueue, isCacheData]);   
 
     return (
         <UserDataContext.Provider value={{
@@ -111,6 +127,7 @@ export const UserDataProvider = ({ children }) => {
             setUserData,
             update_user_presence,
             update_last_sent_message,
+            setIsCacheData,
         }}>
             {children}
         </UserDataContext.Provider>

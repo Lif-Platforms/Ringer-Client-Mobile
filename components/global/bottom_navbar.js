@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store';
 import React from "react";
 import { Link } from "expo-router";
+import FastImage from "react-native-fast-image";
 
 /**
  * Gets value from secure storage.
@@ -54,7 +55,15 @@ function BottomNavBar() {
                 <Image source={require("@assets/bottom_nav/notifications_icon.png")} />
             </Link>
             <Link href="/(tabs)/account">
-                <Image style={styles.avatar} source={{uri: avatarURL}} />
+                <FastImage 
+                    style={styles.avatar}
+                    source={{
+                        uri: avatarURL,
+                        priority: FastImage.priority.normal,
+                        cache: FastImage.cacheControl.web,
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
+                />
             </Link>
         </View>
     )

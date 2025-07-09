@@ -13,8 +13,10 @@ import { secureGet } from "@scripts/secure_storage";
 import { useWebSocket } from "@scripts/websocket_handler";
 import { useUserData } from "@scripts/user_data_provider";
 import { useRouter } from "expo-router";
+import { useCache } from "@scripts/cache_provider";
+import FastImage from "react-native-fast-image";
 
-function FriendsList({ userData, setUserData }) {
+function FriendsList({ userData, setUserData, setIsCacheData }) {
     async function get_auth_credentials() {
         const username_ = await secureGet("username");
         const token_ = await secureGet("token");
@@ -24,9 +26,22 @@ function FriendsList({ userData, setUserData }) {
 
     const router = useRouter();
 
+    const { getUserCache, setUserCache } = useCache();
+
     // Fetch friends list from server
     useEffect(() => {
         async function fetchFriends() {
+            // Check if user data is already loaded
+            if (userData) { return; }
+
+            // Get user cache
+            const userCache = getUserCache();
+
+            // If user cache exists, set user data from cache
+            if (userCache) {
+                setIsCacheData(true); // Indicate that data is being loaded from cache
+                setUserData(userCache);
+            }
             try {
                 // Get auth credentials
                 const credentials = await get_auth_credentials();
@@ -40,8 +55,20 @@ function FriendsList({ userData, setUserData }) {
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
+                    let data = await response.json();
+                    setIsCacheData(false); // Indicate that data is being loaded from server
                     setUserData(data);
+
+                    // Create new list of users to cache
+                    let cacheData = [...data];
+
+                    // Remove presence data from cache
+                    cacheData.forEach(user => {
+                        delete user.Online;
+                    });
+
+                    // Set user cache
+                    setUserCache(cacheData);
                 } else {
                     throw new Error("Request Failed! Status Code: " + response.status);
                 }
@@ -49,7 +76,6 @@ function FriendsList({ userData, setUserData }) {
                 console.error(error);
             }
         }
-
         fetchFriends();
     }, []);
 
@@ -63,8 +89,13 @@ function FriendsList({ userData, setUserData }) {
                 userData.map((friend, index) => (
                     <TouchableOpacity key={index} style={styles.friendItem} onPress={() => handle_messages_navigate(friend.Id)}>
                         <View>
-                            <Image
-                                source={{ uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${friend.Username}.png` }}
+                            <FastImage
+                                resizeMode={FastImage.resizeMode.cover}
+                                source={{
+                                    uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${friend.Username}.png`,
+                                    priority: FastImage.priority.normal,
+                                    cache: FastImage.cacheControl.web,
+                                }}
                                 style={styles.friendImage}
                             />
                             <View style={[styles.status_indicator, {backgroundColor: friend.Online ? 'lightgreen' : 'gray'}]} />
@@ -84,7 +115,7 @@ function FriendsList({ userData, setUserData }) {
 
 export default function MainScreen() {
     const { connectWebSocket } = useWebSocket();
-    const { userData, setUserData } = useUserData();
+    const { userData, setUserData, setIsCacheData } = useUserData();
 
     useEffect(() => {
         connectWebSocket(); // Connect WebSocket when HomeScreen mounts
@@ -101,6 +132,7 @@ export default function MainScreen() {
             <FriendsList 
                 setUserData={setUserData}
                 userData={userData}
+                setIsCacheData={setIsCacheData}
             />
             <Pressable
                 style={({ pressed }) => [styles.add_button, {

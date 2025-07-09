@@ -3,6 +3,7 @@ import styles from '../../styles/notifications/notification';
 import { useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from "react-native";
+import FastImage from 'react-native-fast-image';
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -62,9 +63,14 @@ export default function Notification({ id, name, remove_notification }) {
     return (
         <View style={styles.notification}>
             <View style={styles.text_container}>
-                <Image
+                <FastImage
+                    resizeMode={FastImage.resizeMode.cover}
+                    priority={FastImage.priority.normal}
                     style={styles.avatar}
-                    source={{uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${name}.png`}}
+                    source={{
+                        uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${name}.png`,
+                        cache: FastImage.cacheControl.web,
+                    }}
                 />
                 <Text style={styles.username}>{name}</Text>
                 <Text

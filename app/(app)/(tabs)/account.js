@@ -7,6 +7,7 @@ import Constants from "expo-constants";
 import { useUserData } from "@scripts/user_data_provider";
 import { secureGet, secureDelete } from "@scripts/secure_storage";
 import { useRouter } from "expo-router";
+import { useCache } from "@scripts/cache_provider";
 
 export default function AccountPage() {
     const [username, setUsername] = useState("");
@@ -24,6 +25,8 @@ export default function AccountPage() {
     const router = useRouter();
 
     const websocket = useWebSocket();
+
+    const { clearCache } = useCache();
 
     useEffect(() => {
         async function get_username() {
@@ -101,6 +104,9 @@ export default function AccountPage() {
 
         // Clear user data from user data provider
         setUserData(null);
+
+        // Clear cache
+        clearCache();
 
         router.replace("/login");
     }
