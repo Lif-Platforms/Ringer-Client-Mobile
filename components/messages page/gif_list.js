@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import styles from "../../styles/messages/gif_list";
 import { MasonryFlashList } from "@shopify/flash-list";
 import RenderGIF from "./gif";
@@ -47,7 +47,13 @@ export default function GIFList({ search_query, gifToSend, setGifToSend }) {
         }
     }, [search_query]);
 
-    // Handle GIF press
+    /**
+     * Handle GIF selection
+     * @param {string} url - The URL of the GIF
+     * @param {string} id - The ID of the GIF
+     * @param {string} title - The title of the GIF
+     * @return {void}
+     */
     function handleGifPress(url, id, title) {
         setGifToSend({url: url, id: id, title: title});
     }
