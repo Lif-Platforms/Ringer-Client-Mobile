@@ -10,8 +10,10 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: '#ff9500',
+        borderColor: "#ffce89",
+        borderWidth: 1,
         paddingVertical: 10,
-        borderRadius: 25,
+        borderRadius: 10,
         width: "90%",
         shadowColor: '#000', 
         shadowOffset: { width: 0, height: 0 }, 
