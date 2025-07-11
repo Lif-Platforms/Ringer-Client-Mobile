@@ -19,7 +19,7 @@ export default function GIFModal({ showGIFModal, onDismiss, conversation_id }) {
     const [searchQuery, setSearchQuery] = useState("");
 
     // Handle GIF selection
-    const [gifToSend, setGifToSend] = useState({url: null, id: null});
+    const [gifToSend, setGifToSend] = useState({url: null, id: null, title: null});
 
     // Play fly in animation when modal opens
     useEffect(() => {
@@ -33,10 +33,12 @@ export default function GIFModal({ showGIFModal, onDismiss, conversation_id }) {
                 tension: 20,
                 friction: 10,
                 useNativeDriver: true, 
-            }).start(() => {
-                // Focus search box when animation finished
+            }).start();
+
+            // Wait for animation to play before focusing
+            setTimeout(() => {
                 searchRef.current.focus();
-            });
+            }, 300);
         }
     }, [showGIFModal]);
 
@@ -72,7 +74,7 @@ export default function GIFModal({ showGIFModal, onDismiss, conversation_id }) {
     useEffect(() => {
         if (!showGIFModal) {
             setSearchQuery("");
-            setGifToSend({url: null, id: null});
+            setGifToSend({url: null, id: null, title: null});
         }
     }, [showGIFModal]);
 
@@ -100,6 +102,7 @@ export default function GIFModal({ showGIFModal, onDismiss, conversation_id }) {
                                 placeholder="Search GIPHY"
                                 placeholderTextColor="#828282"
                                 ref={searchRef}
+                                returnKeyType="search"
                                 onChangeText={(text) => setQueryText(text)}
                                 onSubmitEditing={() => setSearchQuery(queryText)}
                             />

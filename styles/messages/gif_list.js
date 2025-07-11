@@ -10,15 +10,6 @@ const styles = StyleSheet.create({
         height: 115,
         borderRadius: 10
     },
-    gif_list: {
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        flexGrow: 1,
-        justifyContent: "center",
-        gap: 10,
-        paddingBottom: 55,
-    },
     gif_scroll: {
         padding: 10,
 

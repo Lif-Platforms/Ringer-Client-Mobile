@@ -9,7 +9,8 @@ export default function GIFSendButton({
     onDismiss,
     flyAnimation,
 }) {
-    const translateY = useRef(new Animated.Value(100)).current;
+    const scale = useRef(new Animated.Value(0.8)).current;
+    const opacity = useRef(new Animated.Value(0)).current;
     const { sendMessage } = useWebSocket();
 
     // Get screen height for animating the modal off the screen later
@@ -17,14 +18,20 @@ export default function GIFSendButton({
 
     useEffect(() => {
         if (gifToSend.url) {
-            Animated.spring(translateY, { 
-                toValue: 0, 
-                tension: 50, // Adjust tension for bounce effect 
-                friction: 8, // Adjust friction for bounce effect 
+            const scaleAnimation = Animated.timing(scale, { 
+                toValue: 1,
+                duration: 150, 
                 useNativeDriver: true, 
-            }).start();
+            });
+            const opacityAnimation = Animated.timing(opacity, { 
+                toValue: 1,
+                duration: 150, 
+                useNativeDriver: true, 
+            });
+            Animated.parallel([scaleAnimation, opacityAnimation]).start();
         } else {
-            translateY.setValue(100);
+            scale.setValue(0.8);
+            opacity.setValue(0);
         }
     }, [gifToSend]);
 
@@ -42,9 +49,17 @@ export default function GIFSendButton({
         });
     }
 
+    // If there is no GIF to send, return null
+    if (!gifToSend.url) { return null; }
+
     return (
-        <Animated.View style={[styles.buttonContainer, { transform: [{ translateY }] }]}>
-            <TouchableOpacity style={styles.button} onPress={handle_send}>
+        <Animated.View style={[styles.buttonContainer, { opacity }]}>
+            <TouchableOpacity 
+                style={[styles.button, { 
+                    transform: [{ scale }]
+                }]} 
+                onPress={handle_send}
+            >
                 <Text style={styles.buttonText}>Send</Text>
             </TouchableOpacity>
         </Animated.View>
