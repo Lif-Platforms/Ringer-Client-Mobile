@@ -19,44 +19,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         flexDirection: "row"
     },
-    friends_container: {
-        flexGrow: 1,
-        justifyContent: 'flex-start',
-        paddingHorizontal: 10,
-    },
-    friendItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#525252",
-    },
-    friendImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 25,
-        marginRight: 10,
-    },
-    friendText: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    noFriendsText: {
-        color: 'white',
-        fontSize: 18,
-        textAlign: 'center',
-    },
-    status_indicator: {
-        position: 'absolute',
-        bottom: 0,
-        right: 8,
-        width: 15,
-        height: 15,
-        borderRadius: 100,
-        borderWidth: 2,
-        borderColor: '#160900',
-    },
     add_button: {
         position: "absolute",
         bottom: 25,
@@ -73,14 +35,6 @@ const styles = StyleSheet.create({
         width: 25,
         height: 25,
     },
-    lastMessageText: {
-        color: "#a0a0a0",
-        fontSize: 20,
-        overflow: 'hidden',
-    },
-    friendTextContainer: {
-        flex: 1
-    }
 })
 
 export default styles;

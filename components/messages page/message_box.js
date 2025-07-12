@@ -4,6 +4,7 @@ import styles from "../../styles/messages/messageBox";
 import { eventEmitter } from "../../scripts/emitter";
 import * as SecureStore from 'expo-secure-store';
 import { AddMediaOptions } from "./add_media_options";
+import { useConversationData } from "@scripts/conversation_data_provider";
 
 // Get values from secure store
 async function getValueFor(key) {
@@ -38,6 +39,18 @@ export default function MessageBox({
     const [showMediaOptions, setShowMediaOptions] = useState(false);
     const addMediaButtonRef = useRef(null);
     const [addMediaOptionsRightPosition, setAddMediaOptionsRightPosition] = useState(0);
+    const [isDisabled, setIsDisabled] = useState(false);
+
+    const { isLoading: isConversationLoading } = useConversationData();
+
+    // Enable/disable messagebox based on if sending or if loading
+    useEffect(() => {
+        if (isSending || isConversationLoading) {
+            setIsDisabled(true);
+        } else {
+            setIsDisabled(false);
+        }
+    }, [isSending, isConversationLoading]);
 
     function handle_message_send() {
         // Refocus the message box
@@ -223,10 +236,10 @@ export default function MessageBox({
                     keyboardAppearance="dark"
                 />
                 <View style={styles.controls}>
-                    <TouchableOpacity ref={addMediaButtonRef} onPress={handle_add_media} disabled={isSending}>
+                    <TouchableOpacity ref={addMediaButtonRef} onPress={handle_add_media} disabled={isDisabled}>
                         <Image style={styles.send_button} source={require("../../assets/messages/add_media_button.png")} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handle_message_send} disabled={isSending}>
+                    <TouchableOpacity onPress={handle_message_send} disabled={isDisabled}>
                         <Image style={styles.send_button} source={require("../../assets/messages/send_button.png")} />
                     </TouchableOpacity>
                 </View>
