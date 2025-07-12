@@ -20,7 +20,8 @@ import { secureGet } from "@scripts/secure_storage";
 import { useRouter } from "expo-router";
 import { useConversationData } from "@scripts/conversation_data_provider";
 import { useCache } from "@scripts/cache_provider";
-import FastImage from "react-native-fast-image";
+import ConversationHeader from "@components/messages page/conversation_header";
+import MessagesListLoading from "@components/messages page/messages_list_loading";
 
 export default function MessagesPage() {
     // Get conversation from URL
@@ -30,7 +31,6 @@ export default function MessagesPage() {
     const { sendMessage, updateTypingStatus } = useWebSocket();
     const [messageValue, setMessageValue] = useState("");
     const [isSending, setIsSending] = useState(false);
-    const [isOnline, setIsOnline] = useState(false);
     const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
     const [loadMoreMessages, setLoadMoreMessages] = useState(false);
     const currentScrollPosition = useRef(0);
@@ -38,7 +38,7 @@ export default function MessagesPage() {
     const previousScrollHight = useRef(0);
     const [showGIFModal, setShowGIFModal] = useState(false);
     const [keepScrollPosition, setKeepScrollPosition] = useState(false);
-    const { userData, update_last_sent_message } = useUserData();
+    const { update_last_sent_message } = useUserData();
 
     const {
         setConversationData, 
@@ -49,15 +49,11 @@ export default function MessagesPage() {
         conversationName,
         clearConversationData,
         addMessages,
+        showLoader,
+        setShowLoader
     } = useConversationData();
 
     const { addMessagesCache, getMessagesCache } = useCache();
-
-    // Set online status when user data updates or when page loads
-    useEffect(() => {
-        if (!conversationName) return;
-        setIsOnline(userData.find((user) => user.Username === conversationName).Online);
-    }, [userData]);
 
     const router = useRouter();
 
@@ -94,7 +90,9 @@ export default function MessagesPage() {
             if (cachedMessages) {
                 setConversationData(cachedMessages.conversationName, conversation_id);
                 setMessages(cachedMessages.messages);
-                setIsLoading(false);
+                //setIsLoading(false); // TEMP: pls uncomment
+            } else {
+                setShowLoader(true);
             }
 
             // Get auth credentials
@@ -128,6 +126,7 @@ export default function MessagesPage() {
 
                 // Set loading state to false
                 setIsLoading(false);
+                setShowLoader(false);
 
                 // Set messages
                 setMessages(messages);
@@ -190,11 +189,10 @@ export default function MessagesPage() {
         }
     });
 
-    function handle_profile_navigation() {
-        router.push(`/user_profile/${conversationName}`);
-    }
-
     async function handle_scroll(event) {
+        // Disable if conversation is loading
+        if (isLoading) return;
+
         const scrollPosition = event.nativeEvent.contentOffset.y;
         currentScrollPosition.current = scrollPosition;
         
@@ -279,26 +277,7 @@ export default function MessagesPage() {
                     <TouchableOpacity onPress={handle_navigation_back}>
                         <Image style={styles.back_button} source={require("@assets/messages/back_icon.png")} />
                     </TouchableOpacity>
-                    {conversationName ? (
-                        <>
-                            <View>
-                                <FastImage
-                                    resizeMode={FastImage.resizeMode.cover}
-                                    source={{
-                                        uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${conversationName}.png`,
-                                        priority: FastImage.priority.normal,
-                                        cache: FastImage.cacheControl.web,
-                                    }}
-                                    style={styles.header_avatar}
-                                />
-                                <View style={[styles.status_indicator, {backgroundColor: isOnline ? 'lightgreen' : 'gray'}]} />
-                            </View>
-                            <TouchableOpacity disabled={messages === "loading" ? true : false} style={styles.header_user_container} onPress={handle_profile_navigation}>
-                                <Text style={styles.conversation_user}>{conversationName}</Text>
-                                <Image style={styles.more_arrow} source={require("@assets/messages/more_arrow.png")} />
-                            </TouchableOpacity>
-                        </>
-                    ): <Text style={styles.header_loading_text}>...</Text>}
+                    <ConversationHeader />
                 </View>
             </View>
             <ScrollView 
@@ -319,7 +298,7 @@ export default function MessagesPage() {
                         />
                     ))
                 ) : isLoading ? (
-                    <Text style={styles.message_loading}>Loading...</Text>
+                    <MessagesListLoading />
                 ) : (
                     <Text>Error Loading messages</Text>
                 )}

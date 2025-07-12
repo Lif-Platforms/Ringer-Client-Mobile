@@ -6,6 +6,7 @@ const ConversationDataContext = createContext();
 export const ConversationDataProvider = ({ children }) => {
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [showLoader, setShowLoader] = useState(false); // This state is not used in the current code, but can be used to control loading indicators
     const [conversationName, setConversationName] = useState(null);
     const conversationId = useRef(null);
 
@@ -72,6 +73,8 @@ export const ConversationDataProvider = ({ children }) => {
                 conversationName,
                 clearConversationData,
                 setIsLoading,
+                showLoader,
+                setShowLoader,
             }}
         >
             {children}
