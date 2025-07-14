@@ -14,7 +14,7 @@ import { CacheProvider } from "@scripts/cache_provider";
 
 export default function AppLayout() {
     // Get auth context
-    const { isAuthenticated, verifyCredentials, username } = useAuth();
+    const { isAuthenticated, verifyCredentials } = useAuth();
 
     // Determine if the app is loading
     const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +24,11 @@ export default function AppLayout() {
 
     // Verify credentials on app load
     useEffect(() => {
+        if (isAuthenticated) { 
+            setIsLoading(false);
+            return;
+        };
+        
         const checkCredentials = async () => {
             try {
                 await verifyCredentials();
@@ -119,19 +124,19 @@ export default function AppLayout() {
         content = (
             <NotifierWrapper>
                 <CacheProvider>
-                <UserDataProvider>
-                    <ConversationDataProvider>
-                        <WebSocketProvider>
-                            <ReconnectBar />
-                            <Stack>
-                                <Stack.Screen name="conversations/[conversation_id]" options={{ headerShown: false }} />
-                                <Stack.Screen name="user_profile/[username]" options={{ headerShown: false }} />
-                                <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: "none" }} />
-                                <Stack.Screen name="add_friend" options={{ presentation: "modal", headerShown: false }} />
-                            </Stack>
-                        </WebSocketProvider>
-                    </ConversationDataProvider>
-                </UserDataProvider>
+                    <UserDataProvider>
+                        <ConversationDataProvider>
+                            <WebSocketProvider>
+                                <ReconnectBar />
+                                <Stack>
+                                    <Stack.Screen name="conversations/[conversation_id]" options={{ headerShown: false }} />
+                                    <Stack.Screen name="user_profile/[username]" options={{ headerShown: false }} />
+                                    <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: "none" }} />
+                                    <Stack.Screen name="add_friend" options={{ presentation: "modal", headerShown: false }} />
+                                </Stack>
+                            </WebSocketProvider>
+                        </ConversationDataProvider>
+                    </UserDataProvider>
                 </CacheProvider>
             </NotifierWrapper>
         );
