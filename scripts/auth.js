@@ -11,34 +11,30 @@ export const AuthProvider = ({ children }) => {
     const [username, setUsername] = useState(null);
 
     const login = async (username, password) => {
-        try {
-            const formData = new FormData();
-            formData.append("username", username);
-            formData.append("password", password);
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("password", password);
 
-            const response = await fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/auth/login`, {
-                method: "POST",
-                body: formData
-            });
+        const response = await fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/auth/login`, {
+            method: "POST",
+            body: formData
+        });
 
-            if (!response.ok) {
-                if (response.status === 401) throw new Error("Incorrect Username or Password");
-                throw new Error("Something Went Wrong!");
-            }
-
-            const data = await response.json();
-
-            // Save credentials securely
-            secureSave("username", username);
-            secureSave("token", data.token);
-
-            // Update state to reflect authenticated status
-            setIsAuthenticated(true);
-            setToken(data.token);
-            setUsername(username);
-        } catch (err) {
-            console.error(err);
+        if (!response.ok) {
+            if (response.status === 401) throw new Error("Incorrect Username or Password");
+            throw new Error("Something Went Wrong!");
         }
+
+        const data = await response.json();
+
+        // Save credentials securely
+        secureSave("username", username);
+        secureSave("token", data.token);
+
+        // Update state to reflect authenticated status
+        setIsAuthenticated(true);
+        setToken(data.token);
+        setUsername(username);
     };
 
     const logout = () => {
