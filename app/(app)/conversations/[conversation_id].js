@@ -90,7 +90,7 @@ export default function MessagesPage() {
             if (cachedMessages) {
                 setConversationData(cachedMessages.conversationName, conversation_id);
                 setMessages(cachedMessages.messages);
-                //setIsLoading(false); // TEMP: pls uncomment
+                setIsLoading(false);
             } else {
                 setShowLoader(true);
             }
