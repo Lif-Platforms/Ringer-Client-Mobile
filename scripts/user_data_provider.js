@@ -5,6 +5,7 @@ import {
     useEffect,
 } from "react";
 import { useCache } from "./cache_provider";
+import * as Notifications from "expo-notifications";
 
 const UserDataContext = createContext(null);
 
@@ -99,6 +100,29 @@ export const UserDataProvider = ({ children }) => {
         );
     }
 
+    /**
+     * Increment number of unread messages for a conversation.
+     * @param {string} conversationId - Id of the conversation.
+     * @param {*} increment - Amount to increment the unread messages by.
+     */
+    function incrementUnreadMessages(conversationId, increment) {
+        if (!Array.isArray(userData)) return;
+
+        const newUserData = userData.map(user => {
+            console.log(typeof user.Unread_Messages)
+            if (user.Id === conversationId) {
+                // Ensure Unread_Messages is a number
+                const unread = typeof user.Unread_Messages === "number" ? user.Unread_Messages : 0;
+                console.log("actual unread:", user.Unread_Messages);
+                console.log("unread:", unread)
+                return { ...user, Unread_Messages: unread + increment };
+            }
+            return user;
+        });
+
+        setUserData(newUserData);
+    }
+
     // Move data from queue to user data once it loads in
     useEffect(() => {
         // Check if user data has loaded in
@@ -119,7 +143,24 @@ export const UserDataProvider = ({ children }) => {
             // Clear data queue
             setDataQueue([]);
         }
-    }, [userData, dataQueue, isCacheData]);   
+    }, [userData, dataQueue, isCacheData]);
+
+    // Update total unread messages once user data is loaded from server
+    useEffect(() => {
+        if (!Array.isArray(userData) || isCacheData) { return; };
+
+        let totalUnreadMessages = 0;
+
+        userData.forEach((user) => {
+            if (user.Unread_Messages) {
+                totalUnreadMessages += user.Unread_Messages;
+            }
+        })
+
+        console.log("unread messages:", totalUnreadMessages)
+
+        Notifications.setBadgeCountAsync(totalUnreadMessages);
+    }, [userData, isCacheData]);
 
     return (
         <UserDataContext.Provider value={{
@@ -128,6 +169,7 @@ export const UserDataProvider = ({ children }) => {
             update_user_presence,
             update_last_sent_message,
             setIsCacheData,
+            incrementUnreadMessages,
         }}>
             {children}
         </UserDataContext.Provider>

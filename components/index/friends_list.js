@@ -3,6 +3,7 @@ import {
     View,
     ScrollView,
     StyleSheet,
+    Button,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { useCache } from "@scripts/cache_provider";
@@ -26,59 +27,60 @@ export default function FriendsList() {
     const [isLoading, setIsLoading] = useState(true);
     const [showLoader, setShowLoader] = useState(false); // Loader will not show unless there is no cache data
 
-    // Fetch friends list from server
-    useEffect(() => {
-        async function fetchFriends() {
-            // Check if user data is already loaded
-            if (userData) { return; }
+    async function fetchFriends() {
+        // Check if user data is already loaded
+        //if (userData) { return; }
+        console.log("fetching friends")
 
-            // Get user cache
-            const userCache = getUserCache();
+        // Get user cache
+        const userCache = getUserCache();
 
-            // If user cache exists, set user data from cache
-            if (userCache) {
-                setIsCacheData(true); // Indicate that data is being loaded from cache
-                setUserData(userCache);
+        // If user cache exists, set user data from cache
+        if (userCache) {
+            setUserData(userCache);
+            setIsCacheData(true); // Indicate that data is being loaded from cache
+            setIsLoading(false);
+        } else {
+            // If no cache data, show loader
+            setShowLoader(true);
+        }
+        try {
+            // Get auth credentials
+            const credentials = await get_auth_credentials();
+
+            const response = await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/get_friends`, {
+                headers: {
+                    username: credentials.username,
+                    token: credentials.token
+                },
+                method: "GET"
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setUserData(data);
+                setIsCacheData(false); // Indicate that data is being loaded from server
                 setIsLoading(false);
-            } else {
-                // If no cache data, show loader
-                setShowLoader(true);
-            }
-            try {
-                // Get auth credentials
-                const credentials = await get_auth_credentials();
 
-                const response = await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/get_friends`, {
-                    headers: {
-                        username: credentials.username,
-                        token: credentials.token
-                    },
-                    method: "GET"
+                // Create new list of users to cache,
+                // and remove certain keys from the data
+                let cacheData = data.map(user => {
+                    const { Online, Unread_Messages, ...rest } = user;
+                    return { ...rest };
                 });
 
-                if (response.ok) {
-                    let data = await response.json();
-                    setIsCacheData(false); // Indicate that data is being loaded from server
-                    setUserData(data);
-                    setIsLoading(false);
-
-                    // Create new list of users to cache
-                    let cacheData = [...data];
-
-                    // Remove presence data from cache
-                    cacheData.forEach(user => {
-                        delete user.Online;
-                    });
-
-                    // Set user cache
-                    setUserCache(cacheData);
-                } else {
-                    throw new Error("Request Failed! Status Code: " + response.status);
-                }
-            } catch (error) {
-                console.error(error);
+                // Set user cache
+                setUserCache(cacheData);
+            } else {
+                throw new Error("Request Failed! Status Code: " + response.status);
             }
+        } catch (error) {
+            console.error(error);
         }
+    }
+
+    // Fetch friends list from server
+    useEffect(() => {
         fetchFriends();
     }, []);
 
@@ -99,6 +101,7 @@ export default function FriendsList() {
 
     return (
         <ScrollView contentContainerStyle={styles.friends_container}>
+            <Button title="Reload" onPress={fetchFriends} />
             {Array.isArray(userData) && userData.length > 0 ? (
                 userData.map((friend, index) => (
                     <Friend
