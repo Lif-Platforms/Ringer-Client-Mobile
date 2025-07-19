@@ -27,6 +27,16 @@ export const ConversationDataProvider = ({ children }) => {
     * @param {boolean} before - If true, add messages before existing ones; otherwise, add after.
     */
     function addMessages(conversation_id, messages, before = false) {
+        // Ensure conversation_id and messages were supplied
+        if (!conversationId || !messages) {
+            throw new Error("conversation_id and messages parameters are required!");
+        }
+
+        // Check messages data type
+        if (!Array.isArray(messages)) {
+            throw new Error("Messages must be an array!");
+        }
+
         // Check if the conversationId matches the current conversation
         if (conversation_id !== conversationId.current) {
             // Display a notification for each message

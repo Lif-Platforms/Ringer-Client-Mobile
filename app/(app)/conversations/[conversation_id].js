@@ -49,7 +49,6 @@ export default function MessagesPage() {
         conversationName,
         clearConversationData,
         addMessages,
-        showLoader,
         setShowLoader
     } = useConversationData();
 
@@ -217,14 +216,27 @@ export default function MessagesPage() {
                 }
             })
             .then((data) => {
-                // Set loading state to false
-                setIsLoadingMoreMessages(false);
-
-                // Set keep scroll position to true
-                setKeepScrollPosition(true);
+                // Save current scroll height
+                previousScrollHight.current = currentScrollHight.current;
 
                 // Add messages to list
-                addMessages(data, true);
+                addMessages(conversation_id, data, true);
+
+                // Wait 1ms for the content to load
+                setTimeout(() => {
+                    // Calculate new scroll pos to keep it the same
+                    const newScrollPos = currentScrollHight.current - previousScrollHight.current;
+                    console.log("current scroll:",currentScrollHight);
+                    console.log("prev scroll:",previousScrollHight);
+                    scrollViewRef.current.scrollTo({
+                        x: 0,
+                        y: newScrollPos,
+                        animated: false
+                    });
+                }, 1);
+
+                // Set loading state to false
+                setIsLoadingMoreMessages(false);
 
                 // Check if there are more messages to load
                 if (data.length < 20) {
@@ -239,6 +251,8 @@ export default function MessagesPage() {
     }
 
     function handle_content_size_change(width, height) {
+        currentScrollHight.current = height;
+        return;
         // If conversation is loading more messages then don't scroll
         // If keep scroll position is false then don't scroll
         if (!isLoadingMoreMessages && keepScrollPosition) {
