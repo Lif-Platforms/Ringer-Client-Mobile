@@ -110,6 +110,8 @@ export const WebSocketProvider = ({ children }) => {
             [data.Message]
           );
 
+          eventEmitter.emit("Msg_Received");
+
           // Send client notification if user has app suspended
           if (appState !== "active" && data.Message.Author !== credentials.username) {
             Notifications.scheduleNotificationAsync({
