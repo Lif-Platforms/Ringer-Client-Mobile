@@ -38,7 +38,6 @@ export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const webSocketRef = useRef(null);
   const shouldReconnect = useRef(false); // Track if we should attempt to reconnect
-  const [appState, setAppState] = useState(AppState.currentState);
   const { update_user_presence, update_last_sent_message } = useUserData();
 
   // Grab conversation data context
@@ -54,16 +53,6 @@ export const WebSocketProvider = ({ children }) => {
     return () => {
       closeConnection();
     };
-  }, []);
-
-  useEffect(() => {
-    const appStateChangeEvent = AppState.addEventListener("change", () => {
-      setAppState(AppState.currentState);
-    });
-
-    return () => {
-      appStateChangeEvent.remove();
-    }
   }, []);
 
   const connectWebSocket = () => {
@@ -111,17 +100,6 @@ export const WebSocketProvider = ({ children }) => {
           );
 
           eventEmitter.emit("Msg_Received");
-
-          // Send client notification if user has app suspended
-          if (appState !== "active" && data.Message.Author !== credentials.username) {
-            Notifications.scheduleNotificationAsync({
-              content: {
-                title: data.Message.Author,
-                body: data.Message.Message,
-              },
-              trigger: null,
-            });
-          }
         } else if ("ResponseType" in data & data.ResponseType === "MESSAGE_SENT") {
             eventEmitter.emit("Message_Sent");
 
@@ -138,7 +116,7 @@ export const WebSocketProvider = ({ children }) => {
             user: data.User,
             typing: data.Typing
           });
-        };
+        }
       };
 
       webSocketRef.current.onerror = (error) => {
@@ -184,6 +162,17 @@ export const WebSocketProvider = ({ children }) => {
     }
   }
 
+  const viewMessage = (conversation_id, message_id) => {
+    if (!webSocketRef.current || !isConnected) { return; }
+
+    webSocketRef.current.send(JSON.stringify({
+      Conversation_Id: conversation_id,
+      Message_Id: message_id,
+      MessageType: "VIEW_MESSAGE"
+    }));
+    console.log("message view request sent");
+  }
+
   return (
     <WebSocketContext.Provider 
       value={{
@@ -193,6 +182,7 @@ export const WebSocketProvider = ({ children }) => {
         closeConnection,
         updateTypingStatus,
         shouldReconnect,
+        viewMessage,
       }}
     >
       {children}
