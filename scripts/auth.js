@@ -1,5 +1,6 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import { secureSave, secureGet } from './secure_storage';
+import { AppState } from 'react-native';
 
 // Create Auth Context
 const AuthContext = createContext(null);
@@ -9,6 +10,18 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [token, setToken] = useState(null);
     const [username, setUsername] = useState(null);
+    const [appState, setAppState] = useState(AppState.currentState);
+
+    // Track and update app state
+    useEffect(() => {
+        const subscription = AppState.addEventListener("change", (nextAppState) => {
+            setAppState(nextAppState);
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, []);
 
     const login = async (username, password) => {
         const formData = new FormData();
@@ -87,7 +100,8 @@ export const AuthProvider = ({ children }) => {
             username,
             login,
             logout,
-            verifyCredentials
+            verifyCredentials,
+            appState
         }}>
             {children}
         </AuthContext.Provider>
