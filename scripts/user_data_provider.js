@@ -103,23 +103,22 @@ export const UserDataProvider = ({ children }) => {
     /**
      * Increment number of unread messages for a conversation.
      * @param {string} conversationId - Id of the conversation.
-     * @param {*} increment - Amount to increment the unread messages by.
+     * @param {number} increment - Amount to increment the unread messages by.
      */
     function incrementUnreadMessages(conversationId, increment) {
         if (!Array.isArray(userData)) return;
 
         const newUserData = userData.map(user => {
-            console.log(typeof user.Unread_Messages)
             if (user.Id === conversationId) {
                 // Ensure Unread_Messages is a number
                 const unread = typeof user.Unread_Messages === "number" ? user.Unread_Messages : 0;
-                console.log("actual unread:", user.Unread_Messages);
-                console.log("unread:", unread)
+                console.log("current unread messages for", conversationId, ":", unread);
                 return { ...user, Unread_Messages: unread + increment };
             }
             return user;
         });
 
+        console.log("incrementing unread messages for", conversationId, "by", increment);
         setUserData(newUserData);
     }
 
@@ -157,7 +156,7 @@ export const UserDataProvider = ({ children }) => {
             }
         })
 
-        console.log("unread messages:", totalUnreadMessages)
+        console.log("total unread messages:", totalUnreadMessages)
 
         Notifications.setBadgeCountAsync(totalUnreadMessages);
     }, [userData, isCacheData]);
