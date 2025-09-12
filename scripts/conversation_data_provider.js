@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useRef } from "react";
 import { showNotification } from "./notification_handler";
+import { useUserData } from "./user_data_provider";
 
 const ConversationDataContext = createContext();
 
@@ -9,6 +10,8 @@ export const ConversationDataProvider = ({ children }) => {
     const [showLoader, setShowLoader] = useState(false); // This state is not used in the current code, but can be used to control loading indicators
     const [conversationName, setConversationName] = useState(null);
     const conversationId = useRef(null);
+
+    const { incrementUnreadMessages } = useUserData();
 
     /**
     * Set the current conversation data.
@@ -40,6 +43,7 @@ export const ConversationDataProvider = ({ children }) => {
         // Check if the conversationId matches the current conversation
         if (conversation_id !== conversationId.current) {
             // Display a notification for each message
+            // Increment unread messages for each conversation
             messages.forEach((message) => {
                 try {
                     showNotification(
@@ -47,6 +51,7 @@ export const ConversationDataProvider = ({ children }) => {
                         conversation_id,
                         message.Message
                     );
+                    incrementUnreadMessages(conversation_id, 1);
                 } catch(err) {
                     console.error(err);
                 }

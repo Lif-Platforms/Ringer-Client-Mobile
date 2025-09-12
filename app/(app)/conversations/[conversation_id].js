@@ -40,7 +40,8 @@ export default function MessagesPage() {
     const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
     const [loadMoreMessages, setLoadMoreMessages] = useState(false);
     const [keepScrollPosition, setKeepScrollPosition] = useState(false);
-
+    const { update_last_sent_message, setUnreadMessages } = useUserData();
+  
     const {
         setConversationData, 
         setMessages, 
@@ -50,7 +51,7 @@ export default function MessagesPage() {
         conversationName,
         clearConversationData,
         addMessages,
-        setShowLoader
+        setShowLoader,
     } = useConversationData();
 
     const { addMessagesCache, getMessagesCache } = useCache();
@@ -63,18 +64,6 @@ export default function MessagesPage() {
 
         return { username: username_, token: token_ };
     }
-
-    // Configure styles for header bar
-    useEffect(() => {
-        let header_color;
-
-        // Change header color if GIF modal is open
-        if (showGIFModal) {
-            header_color = '#0e0a07';   
-        } else {
-            header_color = '#19120E';
-        }
-    }, [showGIFModal]);
 
     function handle_navigation_back() {
         router.back();
@@ -130,6 +119,9 @@ export default function MessagesPage() {
 
                 // Set messages
                 setMessages(messages);
+
+                // Set number of unread messages to
+                setUnreadMessages(conversation_id, data.Unread_Messages || 0);
 
                 // Scroll to end of conversation
                 // Set timeout to ensure messages load before scrolling

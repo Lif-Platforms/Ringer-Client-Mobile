@@ -1,3 +1,6 @@
---- xcodebuild: WARNING: Using the first of multiple matching destinations:
-{ platform:iOS Simulator, arch:arm64, id:ECDC5C19-A26B-4F6C-9AE3-1B64F9218327, OS:18.5, name:iPhone 16 }
-{ platform:iOS Simulator, arch:x86_64, id:ECDC5C19-A26B-4F6C-9AE3-1B64F9218327, OS:18.5, name:iPhone 16 }
+** BUILD FAILED **
+
+
+The following build commands failed:
+	Building workspace Ringer with scheme Ringer and configuration Debug
+(1 failure)

@@ -5,6 +5,7 @@ import {
     useEffect,
 } from "react";
 import { useCache } from "./cache_provider";
+import * as Notifications from "expo-notifications";
 
 const UserDataContext = createContext(null);
 
@@ -42,16 +43,14 @@ export const UserDataProvider = ({ children }) => {
         // Check if user data has loaded in yet
         // If not, add data to queue
         if (userData) {
-            // Update the user data immutably
-            const newUserData = userData.map((user) => {
-                if (user.Username === username) {
-                    return { ...user, Online: online };
-                }
-                return user;
+            setUserData(prevUserData => {
+                return prevUserData.map(user => {
+                    if (user.Username === username) {
+                        return { ...user, Online: online };
+                    }
+                    return user;
+                });
             });
-
-            // Update the user data
-            setUserData(newUserData);
         } else {
             // Add data to queue to be added in once user data loads
             queue_data_update("user_presence", {
@@ -72,16 +71,14 @@ export const UserDataProvider = ({ children }) => {
         // Check if user data has loaded in yet
         // If not, add data to queue
         if (userData) {
-            // Update the user data immutably
-            const newUserData = userData.map((user) => {
-                if (user.Id === conversation_id) {
-                    return { ...user, Last_Message: `${message_author} - ${message}` };
-                }
-                return user;
+            setUserData(prevUserData => {
+                return prevUserData.map(user => {
+                    if (user.Id === conversation_id) {
+                        return { ...user, Last_Message: `${message_author} - ${message}` };
+                    }
+                    return user;
+                });
             });
-
-            // Update the user data
-            setUserData(newUserData);
         } else {
             // Add data to queue to be added in once user data loads
             queue_data_update("last_sent_message", {
@@ -97,6 +94,43 @@ export const UserDataProvider = ({ children }) => {
             "Last_Message",
             `${message_author} - ${message}`
         );
+    }
+
+    /**
+     * Increment number of unread messages for a conversation.
+     * @param {string} conversationId - Id of the conversation.
+     * @param {number} increment - Amount to increment the unread messages by.
+     */
+    function incrementUnreadMessages(conversationId, increment) {
+        if (!Array.isArray(userData)) return;
+
+        setUserData(prevUserData => {
+            return prevUserData.map(user => {
+                if (user.Id === conversationId) {
+                    const unread = typeof user.Unread_Messages === "number" ? user.Unread_Messages : 0;
+                    return { ...user, Unread_Messages: unread + increment };
+                }
+                return user;
+            });
+        });
+    }
+
+    /**
+     * Set the number of unread messages for a conversation.
+     * @param {string} conversationId - Id of the conversation.
+     * @param {number} count - Number to set unread messages to.
+     */
+    function setUnreadMessages(conversationId, count) {
+        if (!Array.isArray(userData)) return;
+        
+        setUserData(prevUserData => {
+            return prevUserData.map(user => {
+                if (user.Id === conversationId) {
+                    return { ...user, Unread_Messages: count };
+                }
+                return user;
+            });
+        });
     }
 
     // Move data from queue to user data once it loads in
@@ -119,7 +153,22 @@ export const UserDataProvider = ({ children }) => {
             // Clear data queue
             setDataQueue([]);
         }
-    }, [userData, dataQueue, isCacheData]);   
+    }, [userData, dataQueue, isCacheData]);
+
+    // Update total unread messages once user data is loaded from server
+    useEffect(() => {
+        if (!Array.isArray(userData) || isCacheData) { return; };
+
+        let totalUnreadMessages = 0;
+
+        userData.forEach((user) => {
+            if (user.Unread_Messages) {
+                totalUnreadMessages += user.Unread_Messages;
+            }
+        });
+
+        Notifications.setBadgeCountAsync(totalUnreadMessages);
+    }, [userData, isCacheData]);
 
     return (
         <UserDataContext.Provider value={{
@@ -128,6 +177,8 @@ export const UserDataProvider = ({ children }) => {
             update_user_presence,
             update_last_sent_message,
             setIsCacheData,
+            incrementUnreadMessages,
+            setUnreadMessages,
         }}>
             {children}
         </UserDataContext.Provider>

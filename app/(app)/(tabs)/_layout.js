@@ -15,9 +15,9 @@ export default function AppLayout() {
                     shadowColor: "transparent",
                 },
             }}>
-                <Tabs.Screen name="index" />
-                <Tabs.Screen name="notifications" />
-                <Tabs.Screen name="account" />
+                <Tabs.Screen name="index" options={{ title: "" }} />
+                <Tabs.Screen name="notifications" options={{ title: "" }} />
+                <Tabs.Screen name="account" options={{ title: "" }} />
             </Tabs>
             <BottomNavBar />
         </>
