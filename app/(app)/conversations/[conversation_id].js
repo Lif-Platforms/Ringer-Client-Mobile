@@ -32,7 +32,6 @@ export default function MessagesPage() {
     const [messageValue, setMessageValue] = useState("");
     const [isSending, setIsSending] = useState(false);
     const [showGIFModal, setShowGIFModal] = useState(false);
-    const { update_last_sent_message } = useUserData();
 
     // Logic for previous message loading
     const currentScrollHight = useRef(0);
