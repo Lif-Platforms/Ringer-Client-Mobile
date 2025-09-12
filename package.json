@@ -1,6 +1,6 @@
 {
   "name": "ringer-mobile",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start --dev-client",
@@ -24,7 +24,7 @@
     "expo-status-bar": "~2.2.3",
     "metro-react-native-babel-preset": "^0.77.0",
     "react": "19.0.0",
-    "react-native": "0.79.4",
+    "react-native": "0.79.5",
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-hyperlink": "^0.0.22",
