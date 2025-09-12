@@ -43,16 +43,14 @@ export const UserDataProvider = ({ children }) => {
         // Check if user data has loaded in yet
         // If not, add data to queue
         if (userData) {
-            // Update the user data immutably
-            const newUserData = userData.map((user) => {
-                if (user.Username === username) {
-                    return { ...user, Online: online };
-                }
-                return user;
+            setUserData(prevUserData => {
+                return prevUserData.map(user => {
+                    if (user.Username === username) {
+                        return { ...user, Online: online };
+                    }
+                    return user;
+                });
             });
-
-            // Update the user data
-            setUserData(newUserData);
         } else {
             // Add data to queue to be added in once user data loads
             queue_data_update("user_presence", {
@@ -73,16 +71,14 @@ export const UserDataProvider = ({ children }) => {
         // Check if user data has loaded in yet
         // If not, add data to queue
         if (userData) {
-            // Update the user data immutably
-            const newUserData = userData.map((user) => {
-                if (user.Id === conversation_id) {
-                    return { ...user, Last_Message: `${message_author} - ${message}` };
-                }
-                return user;
+            setUserData(prevUserData => {
+                return prevUserData.map(user => {
+                    if (user.Id === conversation_id) {
+                        return { ...user, Last_Message: `${message_author} - ${message}` };
+                    }
+                    return user;
+                });
             });
-
-            // Update the user data
-            setUserData(newUserData);
         } else {
             // Add data to queue to be added in once user data loads
             queue_data_update("last_sent_message", {
@@ -108,18 +104,33 @@ export const UserDataProvider = ({ children }) => {
     function incrementUnreadMessages(conversationId, increment) {
         if (!Array.isArray(userData)) return;
 
-        const newUserData = userData.map(user => {
-            if (user.Id === conversationId) {
-                // Ensure Unread_Messages is a number
-                const unread = typeof user.Unread_Messages === "number" ? user.Unread_Messages : 0;
-                console.log("current unread messages for", conversationId, ":", unread);
-                return { ...user, Unread_Messages: unread + increment };
-            }
-            return user;
+        setUserData(prevUserData => {
+            return prevUserData.map(user => {
+                if (user.Id === conversationId) {
+                    const unread = typeof user.Unread_Messages === "number" ? user.Unread_Messages : 0;
+                    return { ...user, Unread_Messages: unread + increment };
+                }
+                return user;
+            });
         });
+    }
 
-        console.log("incrementing unread messages for", conversationId, "by", increment);
-        setUserData(newUserData);
+    /**
+     * Set the number of unread messages for a conversation.
+     * @param {string} conversationId - Id of the conversation.
+     * @param {number} count - Number to set unread messages to.
+     */
+    function setUnreadMessages(conversationId, count) {
+        if (!Array.isArray(userData)) return;
+        
+        setUserData(prevUserData => {
+            return prevUserData.map(user => {
+                if (user.Id === conversationId) {
+                    return { ...user, Unread_Messages: count };
+                }
+                return user;
+            });
+        });
     }
 
     // Move data from queue to user data once it loads in
@@ -154,9 +165,7 @@ export const UserDataProvider = ({ children }) => {
             if (user.Unread_Messages) {
                 totalUnreadMessages += user.Unread_Messages;
             }
-        })
-
-        console.log("total unread messages:", totalUnreadMessages)
+        });
 
         Notifications.setBadgeCountAsync(totalUnreadMessages);
     }, [userData, isCacheData]);
@@ -169,6 +178,7 @@ export const UserDataProvider = ({ children }) => {
             update_last_sent_message,
             setIsCacheData,
             incrementUnreadMessages,
+            setUnreadMessages,
         }}>
             {children}
         </UserDataContext.Provider>

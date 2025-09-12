@@ -3,7 +3,6 @@ import {
     View,
     ScrollView,
     StyleSheet,
-    Button,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { useCache } from "@scripts/cache_provider";
@@ -101,7 +100,6 @@ export default function FriendsList() {
 
     return (
         <ScrollView contentContainerStyle={styles.friends_container}>
-            <Button title="Reload" onPress={fetchFriends} />
             {Array.isArray(userData) && userData.length > 0 ? (
                 userData.map((friend, index) => (
                     <Friend
