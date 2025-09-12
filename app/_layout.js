@@ -32,31 +32,31 @@ export default function AppLayout() {
 
     return (
         <GestureHandlerRootView>
-                <AuthProvider>
-                    <Stack>
-                        <Stack.Screen name="(app)" options={{
-                            headerShown: false,
-                            animation: "fade",
-                            animationDuration: 200,
-                        }} />
-                        <Stack.Screen name="login" options={{ 
-                            headerShown: false,
-                            animation: "fade",
-                            animationDuration: 200,
-                        }} />
-                        <Stack.Screen name="create_account" options={{
-                            presentation: "modal",
-                            title: "Create Account",
-                            headerShown: true,
-                            headerBackTitleVisible: true,
-                        }} />
-                        <Stack.Screen name="no_internet" options={{
-                            headerShown: false,
-                            animation: "fade",
-                            animationDuration: 200
-                        }} />
-                    </Stack>
-                </AuthProvider>
+            <AuthProvider>
+                <Stack>
+                    <Stack.Screen name="(app)" options={{
+                        headerShown: false,
+                        animation: "fade",
+                        animationDuration: 200,
+                    }} />
+                    <Stack.Screen name="login" options={{ 
+                        headerShown: false,
+                        animation: "fade",
+                        animationDuration: 200,
+                    }} />
+                    <Stack.Screen name="create_account" options={{
+                        presentation: "modal",
+                        title: "Create Account",
+                        headerShown: true,
+                        headerBackTitleVisible: true,
+                    }} />
+                    <Stack.Screen name="no_internet" options={{
+                        headerShown: false,
+                        animation: "fade",
+                        animationDuration: 200
+                    }} />
+                </Stack>
+            </AuthProvider>
         </GestureHandlerRootView>
     );
 }

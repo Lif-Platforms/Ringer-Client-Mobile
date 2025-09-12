@@ -31,15 +31,17 @@ export default function MessagesPage() {
     const { sendMessage, updateTypingStatus } = useWebSocket();
     const [messageValue, setMessageValue] = useState("");
     const [isSending, setIsSending] = useState(false);
-    const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
-    const [loadMoreMessages, setLoadMoreMessages] = useState(false);
-    const currentScrollPosition = useRef(0);
+    const [showGIFModal, setShowGIFModal] = useState(false);
+    const { update_last_sent_message } = useUserData();
+
+    // Logic for previous message loading
     const currentScrollHight = useRef(0);
     const previousScrollHight = useRef(0);
-    const [showGIFModal, setShowGIFModal] = useState(false);
+    const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
+    const [loadMoreMessages, setLoadMoreMessages] = useState(false);
     const [keepScrollPosition, setKeepScrollPosition] = useState(false);
     const { update_last_sent_message, setUnreadMessages } = useUserData();
-
+  
     const {
         setConversationData, 
         setMessages, 
@@ -155,17 +157,6 @@ export default function MessagesPage() {
         }
     }, []);
 
-    // Scroll to end of conversation when messages change
-    useEffect(() => {
-        // Scroll to end of conversation
-        // Set timeout to ensure messages load before scrolling
-        setTimeout(() => {
-            if (scrollViewRef.current) {
-                scrollViewRef.current.scrollToEnd({ animated: true });
-            }
-        }, 1);  
-    }, [messages]);
-
     // Add event listener for message send event
     useEffect(() => {
         const handle_message_sent = () => {
@@ -177,82 +168,91 @@ export default function MessagesPage() {
         return () => {
             eventEmitter.off("Message_Sent", handle_message_sent);
         }
-    });
+    }, []);
 
-    async function handle_scroll(event) {
-        // Disable if conversation is loading
-        if (isLoading) return;
+    async function handle_load_more_messages() {
+        // Disable if conversation is loading or if the conversation should not load more messages
+        if (isLoading || !loadMoreMessages) return;
 
-        const scrollPosition = event.nativeEvent.contentOffset.y;
-        currentScrollPosition.current = scrollPosition;
-        
-        if (scrollPosition <= 0  && !isLoadingMoreMessages && messages.length >= 20 && loadMoreMessages) {
-            setIsLoadingMoreMessages(true);
+        setIsLoadingMoreMessages(true);
+        setKeepScrollPosition(true);
 
-            // Fetch auth credentials
-            const credentials = await get_auth_credentials();
+        // Fetch auth credentials
+        const credentials = await get_auth_credentials();
 
-            // Fetch messages from server
-            fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/load_messages/${conversation_id}?offset=${messages.length}`, {
-                headers: {
-                    username: credentials.username,
-                    token: credentials.token
-                }
-            })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error("Something Went Wrong");
-                }
-            })
-            .then((data) => {
-                // Set loading state to false
-                setIsLoadingMoreMessages(false);
+        // Fetch messages from server
+        fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/load_messages/${conversation_id}?offset=${messages.length}`, {
+            headers: {
+                username: credentials.username,
+                token: credentials.token
+            }
+        })
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Something Went Wrong");
+            }
+        })
+        .then((data) => {
+            // Add messages to list
+            addMessages(conversation_id, data, true);
 
-                // Set keep scroll position to true
-                setKeepScrollPosition(true);
+            // Keep scroll position the same
+            // Also add timeout to ensure message have time to render before adjusting the scroll pos
+            setTimeout(() => {
+                const newScrollPos = currentScrollHight.current - previousScrollHight.current;
+                scrollViewRef.current.scrollTo({ x: 0, y: newScrollPos, animated: false });
+            }, 0);
 
-                // Add messages to list
-                addMessages(data, true);
+            // Set loading state to false
+            setIsLoadingMoreMessages(false);
+            setKeepScrollPosition(false);
 
-                // Check if there are more messages to load
-                if (data.length < 20) {
-                    setLoadMoreMessages(false);
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                setIsLoadingMoreMessages(false);
-            })
-        }
+            // Check if there are more messages to load
+            if (data.length < 20) {
+                setLoadMoreMessages(false);
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            setIsLoadingMoreMessages(false);
+        })
     }
 
     function handle_content_size_change(width, height) {
-        // If conversation is loading more messages then don't scroll
-        // If keep scroll position is false then don't scroll
-        if (!isLoadingMoreMessages && keepScrollPosition) {
-            // Save previous scroll height
-            previousScrollHight.current = currentScrollHight.current;
+        previousScrollHight.current = currentScrollHight.current;
+        currentScrollHight.current = height;
 
-            // Save current scroll height
-            currentScrollHight.current = height;
+        console.log('Current scroll height:', currentScrollHight.current);
+        console.log('Previous scroll height:', previousScrollHight.current);
+    }
 
-            // Scroll to end of conversation
-            // Set timeout to ensure messages load before scrolling
-            setTimeout(() => {
-                if (scrollViewRef.current) {
-                    // Calculate scroll position
-                    const new_scroll_position = currentScrollHight.current - previousScrollHight.current + currentScrollPosition.current - 50; // Subtract 50 to move it up a bit so the user can see the new messages
+    function handle_messages_scroll(event) {
+        // Disable if conversation is loading
+        if (isLoading) return;
 
-                    scrollViewRef.current.scrollTo({ x: 0, y: new_scroll_position, animated: false });
-                }
-            }, 1);
+        const currentScrollPos = event.nativeEvent.contentOffset.y;
 
-            // Set keep scroll position to false
-            setKeepScrollPosition(false);
+        // Check if the user has scrolled near the top
+        // Also ensure that new messages arn't already being loaded
+        if (currentScrollPos <= 20 && !isLoadingMoreMessages) {
+            handle_load_more_messages();
         }
     }
+
+    useEffect(() => {
+        function handle_msg_scroll() {
+            setTimeout(() => {
+                scrollViewRef.current.scrollToEnd({ animated: true });
+            }, 2);
+        }
+        eventEmitter.on("Msg_Received", handle_msg_scroll);
+
+        return () => {
+            eventEmitter.off("Msg_Received", handle_msg_scroll);
+        }
+    }, []);
 
     // Handle dismissing the GIF modal
     function onDismiss() {
@@ -273,7 +273,7 @@ export default function MessagesPage() {
             <ScrollView 
                 contentContainerStyle={styles.messages_viewer}
                 ref={scrollViewRef}
-                onScroll={handle_scroll}
+                onScroll={handle_messages_scroll}
                 onContentSizeChange={handle_content_size_change}
             >
                 {isLoadingMoreMessages ? (

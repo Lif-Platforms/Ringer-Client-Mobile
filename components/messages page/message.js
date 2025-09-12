@@ -2,6 +2,10 @@ import styles from "../../styles/messages/message";
 import { View, Image, Text, Linking } from "react-native";
 import Hyperlink from "react-native-hyperlink";
 import FastImage from "react-native-fast-image";
+import { useEffect, useState } from "react";
+import { useWebSocket } from "@scripts/websocket_handler";
+import { useAuth } from "@scripts/auth";
+import { useConversationData } from "@scripts/conversation_data_provider";
 
 const MessageText = ({ message }) => {
     return ( 
@@ -14,6 +18,21 @@ const MessageText = ({ message }) => {
 };
 
 export default function Message({ message, index }) {
+    const [messageViewed, setMessageViewed] = useState(message.Viewed || false);
+
+    const { viewMessage } = useWebSocket();
+    const { appState } = useAuth();
+    const { conversationId } = useConversationData();
+
+    // Mark message as viewed when app state is active
+    useEffect(() => {
+        if (appState === "active" && !messageViewed) {
+            // Mark message as viewed
+            setMessageViewed(true);
+            viewMessage(conversationId.current, message.Message_Id);
+        }
+    }, [appState]);
+
     return (
         <View key={index} style={styles.message}>
             <FastImage
