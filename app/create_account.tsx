@@ -1,11 +1,11 @@
-import { WebView } from 'react-native-webview';
+import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { secureSave } from '@scripts/secure_storage';
 import { useRouter } from 'expo-router';
 
 export default function CreateAccountScreen() {
     const router = useRouter();
 
-    async function handle_message(event) {
+    async function handle_message(event: WebViewMessageEvent) {
         const data = JSON.parse(event.nativeEvent.data);
         if (data.type === 'create_account') {
             console.log(data);

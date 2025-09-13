@@ -1,16 +1,25 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import { secureSave, secureGet } from './secure_storage';
+import React from 'react';
+import { secureSave, secureGet } from '../scripts/secure_storage';
 import { AppState } from 'react-native';
 
 // Create Auth Context
-const AuthContext = createContext(null);
+const AuthContext = createContext({
+    isAuthenticated: false,
+    token: null as string | null,
+    username: null as string | null,
+    login: async (username: string, password: string) => {},
+    logout: () => {},
+    verifyCredentials: async () => {},
+    appState: AppState.currentState as string
+});
 
 // Create Auth Provider
-export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [token, setToken] = useState(null);
-    const [username, setUsername] = useState(null);
-    const [appState, setAppState] = useState(AppState.currentState);
+export const AuthProvider = ({ children }: React.PropsWithChildren<{}>) => {
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [token, setToken] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
+    const [appState, setAppState] = useState<string>(AppState.currentState);
 
     // Track and update app state
     useEffect(() => {
@@ -23,7 +32,7 @@ export const AuthProvider = ({ children }) => {
         };
     }, []);
 
-    const login = async (username, password) => {
+    const login = async (username: string, password: string) => {
         const formData = new FormData();
         formData.append("username", username);
         formData.append("password", password);
@@ -89,7 +98,11 @@ export const AuthProvider = ({ children }) => {
                 throw new Error("No stored credentials");
             }
         } catch (err) {
-            throw new Error(err || "An error occurred while verifying credentials");
+            throw new Error(
+                (err instanceof Error && err.message) ||
+                (typeof err === "string" && err) ||
+                "An error occurred while verifying credentials"
+            );
         }
     }
 

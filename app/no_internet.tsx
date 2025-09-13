@@ -1,6 +1,5 @@
 import { View, Image, Text, TouchableOpacity } from "react-native";
 import styles from "../styles/no_internet/style";
-import React from "react";
 import { reloadAppAsync } from "expo";
 
 export default function NoInternet() {
