@@ -88,6 +88,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren<{}>) => {
                 if (response.ok) {
                     setIsAuthenticated(true);
                     setToken(storedToken);
+                    setUsername(storedUsername);
                     return;
                 } else if (response.status === 401) {
                     throw new Error("Unauthorized");
