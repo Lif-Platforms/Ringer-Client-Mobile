@@ -72,7 +72,7 @@ export default function MessagesPage() {
         async function load_messages() {
             // Set loading state
             setIsLoading(true);
-
+            
             // Check if there are any cached messages for this conversation
             const cachedMessages = getMessagesCache(conversation_id);
             if (cachedMessages) {
