@@ -7,13 +7,26 @@ import { useWebSocket } from "@scripts/websocket_handler";
 import { useAuth } from "@scripts/auth";
 import { useConversationData } from "@scripts/conversation_data_provider";
 
-const MessageText = ({ message }) => {
-    return ( 
-        <View style={styles.messages_content}> 
-            <Hyperlink linkStyle={styles.message_link} onPress={(url) => Linking.openURL(url)} > 
-                <Text style={styles.message_text} selectable={true}>{message}</Text> 
-            </Hyperlink> 
-        </View> 
+const MessageText = ({ message, didSendMessage }) => {
+    const stylesToUse = didSendMessage ? styles.messages_content_send : 
+                        styles.messages_content_receive;
+
+    const textStyles = didSendMessage ? {
+        color: "black",
+        textAlign: "right",
+        flexShrink: 1,
+    } : {
+        color: "white",
+        textAlign: "left",
+        flexShrink: 1,
+    }
+
+    return (
+        <View style={stylesToUse}>
+            <Hyperlink linkStyle={styles.message_link} onPress={(url) => Linking.openURL(url)}>
+                <Text style={textStyles} selectable={true}>{message}</Text>
+            </Hyperlink>
+        </View>
     );
 };
 
@@ -21,7 +34,7 @@ export default function Message({ message, index }) {
     const [messageViewed, setMessageViewed] = useState(message.Viewed || false);
 
     const { viewMessage } = useWebSocket();
-    const { appState } = useAuth();
+    const { appState, username } = useAuth();
     const { conversationId } = useConversationData();
 
     // Mark message as viewed when app state is active
@@ -33,8 +46,12 @@ export default function Message({ message, index }) {
         }
     }, [appState]);
 
+    const didSendMessage = message.Author === username;
+
     return (
-        <View key={index} style={styles.message}>
+        <View key={index} style={[styles.message,
+            didSendMessage ? { flexDirection: "row-reverse" } : { flexDirection: "row" }
+        ]}>
             <FastImage
                 resizeMode={FastImage.resizeMode.cover}
                 source={{
@@ -45,7 +62,6 @@ export default function Message({ message, index }) {
                 style={styles.message_avatar}
             />
             <View style={styles.message_text_container}>
-                <Text style={styles.messages_author}>{message.Author}</Text>
                 {message.Message_Type === "GIF" ? (
                     <>
                         <FastImage
@@ -54,15 +70,15 @@ export default function Message({ message, index }) {
                                 priority: FastImage.priority.normal,
                                 cache: FastImage.cacheControl.immutable,
                             }}
-                            style={styles.message_gif}
+                            style={didSendMessage ? styles.message_gif_send : styles.message_gif_receive}
                         />
                         <Image
                             source={require("../../assets/messages/giphy_attrabution.png")}
-                            style={styles.giphy_logo}
+                            style={didSendMessage ? styles.giphy_logo_send : styles.giphy_logo_receive}
                         />
                     </>
                 ) : (
-                    <MessageText message={message.Message} />
+                    <MessageText message={message.Message} didSendMessage={didSendMessage} />
                 )}
             </View>
         </View>

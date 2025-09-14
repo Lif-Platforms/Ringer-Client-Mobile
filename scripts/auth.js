@@ -79,6 +79,7 @@ export const AuthProvider = ({ children }) => {
                 if (response.ok) {
                     setIsAuthenticated(true);
                     setToken(storedToken);
+                    setUsername(storedUsername);
                     return;
                 } else if (response.status === 401) {
                     throw new Error("Unauthorized");
