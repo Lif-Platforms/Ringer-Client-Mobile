@@ -13,7 +13,7 @@ const MessageText = ({ message, didSendMessage }) => {
 
     const textStyles = didSendMessage ? {
         color: "black",
-        textAlign: "right",
+        textAlign: "left",
         flexShrink: 1,
     } : {
         color: "white",
