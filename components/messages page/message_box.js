@@ -40,6 +40,7 @@ export default function MessageBox({
     const addMediaButtonRef = useRef(null);
     const [addMediaOptionsRightPosition, setAddMediaOptionsRightPosition] = useState(0);
     const [isDisabled, setIsDisabled] = useState(false);
+    const [inputHeight, setInputHeight] = useState(40);
 
     const { isLoading: isConversationLoading } = useConversationData();
 
@@ -91,10 +92,10 @@ export default function MessageBox({
     useEffect(() => {
         const showSubscription = Keyboard.addListener('keyboardWillShow', (event) => {
             Animated.spring(keyboardHeight, {
-            toValue: event.endCoordinates.height,
-            tension: 60,
-            friction: 10,
-            useNativeDriver: false,
+                toValue: event.endCoordinates.height,
+                tension: 60,
+                friction: 10,
+                useNativeDriver: false,
             }).start();
 
             // Adjust padding based on keyboard state
@@ -103,10 +104,10 @@ export default function MessageBox({
 
         const hideSubscription = Keyboard.addListener('keyboardWillHide', (event) => {
             Animated.spring(keyboardHeight, {
-            toValue: 0,
-            tension: 30, 
-            friction: 8,
-            useNativeDriver: false,
+                toValue: 0,
+                tension: 30, 
+                friction: 8,
+                useNativeDriver: false,
             }).start();
 
             // Adjust padding based on keyboard state
@@ -228,11 +229,12 @@ export default function MessageBox({
                 />
                 <TextInput
                     ref={messageBoxRef}
-                    style={styles.message_input}
+                    style={[styles.message_input, { height: inputHeight }]}
                     placeholder={`Message ${username}`}
                     placeholderTextColor="#767676"
                     onFocus={() => setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 300)}
                     onChangeText={text => handle_user_typing(text)}
+                    onContentSizeChange={e => setInputHeight(e.nativeEvent.contentSize.height)}
                     keyboardAppearance="dark"
                 />
                 <View style={styles.controls}>

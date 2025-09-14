@@ -29,7 +29,8 @@ const styles = StyleSheet.create({
         flex: 1,
         color: "white",
         paddingLeft: 15,
-        paddingRight: 10
+        paddingRight: 10,
+        textAlignVertical: 'center',
     },
     controls: {
         display: "flex",
