@@ -23,6 +23,7 @@ import { useCache } from "@scripts/cache_provider";
 import ConversationHeader from "@components/messages page/conversation_header";
 import MessagesListLoading from "@components/messages page/messages_list_loading";
 import MessagesLoadError from "@components/messages page/messages_load_error";
+import JumpToRecentButton from "@components/messages page/jump_to_recent_button";
 
 export default function MessagesPage() {
     // Get conversation from URL
@@ -33,6 +34,7 @@ export default function MessagesPage() {
     const [messageValue, setMessageValue] = useState("");
     const [isSending, setIsSending] = useState(false);
     const [showGIFModal, setShowGIFModal] = useState(false);
+    const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
     // Logic for previous message loading
     const currentScrollHight = useRef(0);
@@ -223,9 +225,6 @@ export default function MessagesPage() {
     function handle_content_size_change(width, height) {
         previousScrollHight.current = currentScrollHight.current;
         currentScrollHight.current = height;
-
-        console.log('Current scroll height:', currentScrollHight.current);
-        console.log('Previous scroll height:', previousScrollHight.current);
     }
 
     function handle_messages_scroll(event) {
@@ -233,6 +232,14 @@ export default function MessagesPage() {
         if (isLoading) return;
 
         const currentScrollPos = event.nativeEvent.contentOffset.y;
+        const maxScrollPos = event.nativeEvent.contentSize.height - event.nativeEvent.layoutMeasurement.height;
+
+        // Show scroll to recent button if user has scrolled more than 9900
+        if (maxScrollPos >= 9900 && currentScrollPos <= maxScrollPos - 9900) {
+            setShowScrollToBottom(true);
+        } else {
+            setShowScrollToBottom(false);
+        }
 
         // Check if the user has scrolled near the top
         // Also ensure that new messages arn't already being loaded
@@ -304,6 +311,12 @@ export default function MessagesPage() {
                 scrollViewRef={scrollViewRef}
                 updateTypingStatus={updateTypingStatus}
                 setShowGIFModal={setShowGIFModal}
+            />
+            <JumpToRecentButton
+                showButton={showScrollToBottom}
+                onPress={() => {
+                    scrollViewRef.current.scrollToEnd({ animated: true });
+                }}
             />
             <GIFModal
                 showGIFModal={showGIFModal}
