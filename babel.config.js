@@ -14,6 +14,7 @@ module.exports = function(api) {
             '@assets': './assets',
             '@styles': './styles',
             '@scripts': './scripts',
+            '@providers': './providers',
           }
         }
       ]

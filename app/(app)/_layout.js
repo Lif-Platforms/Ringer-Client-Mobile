@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@scripts/auth";
+import { useAuth } from "@providers/auth";
 import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { WebSocketProvider } from "@scripts/websocket_handler";

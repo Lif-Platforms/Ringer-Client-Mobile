@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import { MMKV } from 'react-native-mmkv'
-import { useAuth } from "./auth";
+import { useAuth } from "../providers/auth";
 
 const CacheContext = createContext();
 

@@ -1,18 +1,26 @@
-import { View, Text, TouchableOpacity, StatusBar, TextInput, Image, Dimensions } from "react-native";
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StatusBar,
+    TextInput,
+    Image,
+    Dimensions
+} from "react-native";
 import { useEffect, useState } from "react";
 import styles from "@styles/login/style";
 import { useRouter } from "expo-router";
-import { useAuth } from "@scripts/auth";
+import { useAuth } from "@providers/auth";
 
 // Get dimensions of screen
 const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [loginStatus, setLoginStatus] = useState('');
-    const [editable, setEditable] = useState();
-    const [headerImageDimensions, setHeaderImageDimensions] = useState({ width: 386, height: 286 });
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [loginStatus, setLoginStatus] = useState<string>('');
+    const [editable, setEditable] = useState<boolean>(true);
+    const [headerImageDimensions, setHeaderImageDimensions] = useState<{ width: number; height: number }>({ width: 386, height: 286 });
 
     // Get navigation object
     const router = useRouter();
@@ -32,7 +40,11 @@ export default function LoginScreen() {
             // Navigate to main page
             router.replace('/(tabs)');
         } catch (error) {
-            setLoginStatus(error.message);
+            if (error instanceof Error) {
+                setLoginStatus(error.message);
+            } else {
+                setLoginStatus('An unknown error occurred.');
+            }
             setEditable(true);
         }
     }
@@ -46,7 +58,7 @@ export default function LoginScreen() {
 
     return(
         <View style={styles.page}>
-            <StatusBar style="light" />
+            <StatusBar barStyle="light-content" />
             <Image
                 resizeMode="contain"
                 source={require('../assets/login/header_image.png')}

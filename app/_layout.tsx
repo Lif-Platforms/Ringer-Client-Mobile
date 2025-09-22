@@ -1,4 +1,4 @@
-import { AuthProvider } from "@scripts/auth";
+import { AuthProvider } from "@providers/auth";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from '@sentry/react-native';
@@ -10,11 +10,6 @@ Sentry.init({
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
-
-  // Configure Session Replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration()],
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,
@@ -48,7 +43,6 @@ export default function AppLayout() {
                         presentation: "modal",
                         title: "Create Account",
                         headerShown: true,
-                        headerBackTitleVisible: true,
                     }} />
                     <Stack.Screen name="no_internet" options={{
                         headerShown: false,

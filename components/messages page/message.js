@@ -4,7 +4,7 @@ import Hyperlink from "react-native-hyperlink";
 import FastImage from "react-native-fast-image";
 import { useEffect, useState } from "react";
 import { useWebSocket } from "@scripts/websocket_handler";
-import { useAuth } from "@scripts/auth";
+import { useAuth } from "@providers/auth";
 import { useConversationData } from "@scripts/conversation_data_provider";
 
 const MessageText = ({ message }) => {
