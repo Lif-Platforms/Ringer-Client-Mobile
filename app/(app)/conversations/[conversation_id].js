@@ -69,6 +69,16 @@ export default function MessagesPage() {
     }
 
     useEffect(() => {
+        function scroll_to_bottom() {
+            if (!keepScrollPosition) {
+                setTimeout(() => {
+                    if (scrollViewRef.current) {
+                        scrollViewRef.current.scrollToEnd({ animated: false });
+                    }
+                }, 100);
+            }
+        }
+
         async function load_messages() {
             // Set loading state
             setIsLoading(true);
@@ -79,6 +89,7 @@ export default function MessagesPage() {
                 setConversationData(cachedMessages.conversationName, conversation_id);
                 setMessages(cachedMessages.messages);
                 setIsLoading(false);
+                scroll_to_bottom();
             } else {
                 setShowLoader(true);
             }
@@ -123,12 +134,7 @@ export default function MessagesPage() {
                 setUnreadMessages(conversation_id, data.Unread_Messages || 0);
 
                 // Scroll to end of conversation
-                // Set timeout to ensure messages load before scrolling
-                setTimeout(() => {
-                    if (scrollViewRef.current) {
-                        scrollViewRef.current.scrollToEnd({ animated: false });
-                    }
-                }, 1);
+                scroll_to_bottom();
 
                 // Add messages to cache
                 addMessagesCache(conversation_id, conversationName, messages);
