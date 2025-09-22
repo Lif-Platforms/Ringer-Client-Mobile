@@ -28,7 +28,7 @@ export default function FriendsList() {
 
     async function fetchFriends() {
         // Check if user data is already loaded
-        //if (userData) { return; }
+        if (userData) { return; }
         console.log("fetching friends")
 
         // Get user cache

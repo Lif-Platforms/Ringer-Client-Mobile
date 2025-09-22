@@ -26,6 +26,9 @@
         "light": "./assets/global/icon_light.png",
         "dark": "./assets/global/icon_dark.png",
         "tinted": "./assets/global/icon_tinted.png"
+      },
+      "entitlements": {
+        "aps-environment": "production"
       }
     },
     "android": {
@@ -55,7 +58,9 @@
           "project": "ringer-mobile",
           "organization": "lif-platforms"
         }
-      ]
+      ],
+      "expo-notifications",
+      "expo-router"
     ]
   }
 }
