@@ -53,10 +53,11 @@ export default function AppLayout() {
 
     // Register for push notifications
     useEffect(() => {
-        if (isLoading || !isAuthenticated) return; // Don't run if app is still loading or not authenticated
-        if (__DEV__) return; // Don't register for push notifications in development mode
-
         const registerForPushNotificationsAsync = async () => {
+            if (isLoading || !isAuthenticated) return; // Don't run if app is still loading or not authenticated
+            //if (__DEV__) return; // Don't register for push notifications in development mode
+
+            console.log("Registering for push notifications");
             try {
                 // Ensure username and token are available
                 if (!username || !userToken) {
