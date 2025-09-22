@@ -52,8 +52,8 @@
           "organization": "lif-platforms"
         }
       ],
-      "expo-router",
-      "expo-font"
+      "expo-notifications",
+      "expo-router"
     ]
   }
 }
