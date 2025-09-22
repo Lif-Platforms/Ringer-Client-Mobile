@@ -22,6 +22,7 @@ import { useConversationData } from "@scripts/conversation_data_provider";
 import { useCache } from "@scripts/cache_provider";
 import ConversationHeader from "@components/messages page/conversation_header";
 import MessagesListLoading from "@components/messages page/messages_list_loading";
+import MessagesLoadError from "@components/messages page/messages_load_error";
 
 export default function MessagesPage() {
     // Get conversation from URL
@@ -289,7 +290,7 @@ export default function MessagesPage() {
                 ) : isLoading ? (
                     <MessagesListLoading />
                 ) : (
-                    <Text>Error Loading messages</Text>
+                    <MessagesLoadError />
                 )}
             </ScrollView>
             <MessageBox
