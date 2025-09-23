@@ -1,0 +1,37 @@
+{
+  "fill" : {
+    "automatic-gradient" : "extended-gray:1.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "image-name" : "3 – Layer 4.svg",
+          "name" : "3 – Layer 4"
+        },
+        {
+          "image-name" : "2 – Layer 4.svg",
+          "name" : "2 – Layer 4"
+        },
+        {
+          "image-name" : "1 – Layer 4.svg",
+          "name" : "1 – Layer 4"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

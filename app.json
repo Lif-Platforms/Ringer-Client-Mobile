@@ -22,11 +22,7 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.lifplatforms.ringer",
       "jsEngine": "hermes",
-      "icon": {
-        "light": "./assets/global/icon_light.png",
-        "dark": "./assets/global/icon_dark.png",
-        "tinted": "./assets/global/icon_tinted.png"
-      }
+      "icon": "./assets/global/ringer_icon_ios.icon"
     },
     "android": {
       "adaptiveIcon": {
