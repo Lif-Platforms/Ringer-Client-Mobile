@@ -14,6 +14,7 @@
 		6F3839A3D87CFB4C0E55F54F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C48026BDED51519C694DA260 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		4831F872EF9B47F1A8D85F16 /* ringer_icon_ios.icon in Resources */ = {isa = PBXBuildFile; fileRef = CBF84F24C7724A6EB10C5629 /* ringer_icon_ios.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Ringer/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Ringer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Ringer-Bridging-Header.h"; path = "Ringer/Ringer-Bridging-Header.h"; sourceTree = "<group>"; };
+		CBF84F24C7724A6EB10C5629 /* ringer_icon_ios.icon */ = {isa = PBXFileReference; name = "ringer_icon_ios.icon"; path = "Ringer/ringer_icon_ios.icon"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				D6835210267FAE5A77937FE8 /* PrivacyInfo.xcprivacy */,
+				CBF84F24C7724A6EB10C5629 /* ringer_icon_ios.icon */,
 			);
 			name = Ringer;
 			sourceTree = "<group>";
@@ -198,6 +201,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				5A0793C09F9EBCF8FC2D81D2 /* PrivacyInfo.xcprivacy in Resources */,
+				4831F872EF9B47F1A8D85F16 /* ringer_icon_ios.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,7 +364,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 246A4B95ECF1E5AB6A4BB4DE /* Pods-Ringer.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = ringer_icon_ios;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Ringer/Ringer.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
@@ -383,11 +387,11 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lifplatforms.ringer;
-				PRODUCT_NAME = Ringer;
+				PRODUCT_NAME = "Ringer";
 				SWIFT_OBJC_BRIDGING_HEADER = "Ringer/Ringer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -396,7 +400,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6E35168BCD4A50C8385FA997 /* Pods-Ringer.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = ringer_icon_ios;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Ringer/Ringer.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
@@ -414,10 +418,10 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lifplatforms.ringer;
-				PRODUCT_NAME = Ringer;
+				PRODUCT_NAME = "Ringer";
 				SWIFT_OBJC_BRIDGING_HEADER = "Ringer/Ringer-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -482,6 +486,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				USE_HERMES = true;
+				ASSETCATALOG_COMPILER_APPICON_NAME = ringer_icon_ios;
 			};
 			name = Debug;
 		};
@@ -537,6 +542,7 @@
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = ringer_icon_ios;
 			};
 			name = Release;
 		};
