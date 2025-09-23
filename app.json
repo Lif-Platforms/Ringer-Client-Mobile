@@ -55,7 +55,9 @@
           "project": "ringer-mobile",
           "organization": "lif-platforms"
         }
-      ]
+      ],
+      "expo-router",
+      "expo-font"
     ]
   }
 }
