@@ -1,17 +1,31 @@
 import { useEffect, useState } from "react";
-import styles from "@styles/user_profile/style";
-import { View, Image, ScrollView, Text, TouchableOpacity, Alert, Platform } from "react-native";
+import {
+    View,
+    Image,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    Alert,
+    Platform,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
+    StyleSheet
+} from "react-native";
 import { Header } from "@components/user info page/header/header";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useConversationData } from "@scripts/conversation_data_provider";
-import { secureGet } from "@scripts/secure_storage";
 import FastImage from "react-native-fast-image";
+import { useAuth } from "@providers/auth";
 
 export default function UserProfilePage() {
     // Get page props
-    const { username } = useLocalSearchParams({ username });
+    const { username } = useLocalSearchParams();
+    const profileUsername: string = Array.isArray(username) ? username[0] : (username ?? "");
 
     const router = useRouter();
+
+    // Get auth credentials
+    const { username: currentUser, token: userToken } = useAuth();
 
     // Get messages from the current conversation
     const { messages, conversationId } = useConversationData();
@@ -31,13 +45,6 @@ export default function UserProfilePage() {
     // Store unfriending state and unfriend button text
     const [isUnfriending, setIsUnfriending] = useState(false);
     const [unfriendButtonText, setUnfriendButtonText] = useState("Unfriend User");
-
-    async function get_auth_credentials() {
-        const username_ = await secureGet("username");
-        const token_ = await secureGet("token");
-
-        return { username: username_, token: token_ };
-    }
 
     // Update report button text based on if reporting is in progress
     useEffect(() => {
@@ -59,8 +66,8 @@ export default function UserProfilePage() {
 
     // Fetch user profile information
     useEffect(() => {
-        // Fetch Pronouns
-        fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_pronouns/${username}`)
+    // Fetch Pronouns
+    fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_pronouns/${profileUsername}`)
         .then((response) => {
             if (response.ok) {
                 return response.text();
@@ -79,7 +86,7 @@ export default function UserProfilePage() {
         })
 
         // Fetch bio
-        fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_bio/${username}`)
+    fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_bio/${profileUsername}`)
         .then((response) => {
             if (response.ok) {
                 return response.text();
@@ -97,9 +104,8 @@ export default function UserProfilePage() {
             setUserBio("Failed to fetch bio!");
         })
     }, []);
-
     // Adjust header mode based on scroll position
-    function handle_scroll(event) {
+    function handle_scroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
         const scrollPosition = event.nativeEvent.contentOffset.y;
 
         if (scrollPosition >= 80) {
@@ -111,7 +117,15 @@ export default function UserProfilePage() {
 
     // Handle the user report process
     function handle_user_report() {
-        function submit_report(reason, username, content, setIsReporting) {
+        function submit_report(
+            reason: string | undefined,
+            username: string,
+            content: any[],
+            setIsReporting: React.Dispatch<React.SetStateAction<boolean>>
+        ) {
+            if (!reason || reason.trim() === "") return;
+
+            // Start reporting process
             setIsReporting(true);
 
             // Create form data for request
@@ -161,7 +175,7 @@ export default function UserProfilePage() {
                     },
                     {
                         text: 'OK',
-                        onPress: (text) => submit_report(text, username, messages, setIsReporting),
+                        onPress: (text: any) => submit_report(text, profileUsername, messages, setIsReporting),
                     },
                 ],
                 'plain-text'
@@ -172,20 +186,25 @@ export default function UserProfilePage() {
     }
 
     function handle_unfriend() {
-        async function unfriend_user(setIsUnfriending, conversation_id) {
+        async function unfriend_user(
+            setIsUnfriending: React.Dispatch<React.SetStateAction<boolean>>,
+            conversation_id: string | undefined
+        ) {
             setIsUnfriending(true);
 
-            // Get auth credentials
-            const credentials = await get_auth_credentials();
-
-            console.log(credentials)
+            // Check if auth credentials are available
+            if (!currentUser || !userToken) {
+                Alert.alert("Failed", "Something went wrong while attempting this action.")
+                setIsUnfriending(false);
+                return;
+            }
 
             // Make request to server
             fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/remove_conversation/${conversation_id}`, {
                 method: "DELETE",
                 headers: {
-                    username: credentials.username,
-                    token: credentials.token
+                    username: currentUser,
+                    token: userToken
                 }
             })
             .then((response) => {
@@ -235,7 +254,7 @@ export default function UserProfilePage() {
                 headerMode={headerMode}
             />
             <ScrollView onScroll={handle_scroll} style={styles.page}>
-                <View style={styles.header}>
+                <View>
                     <FastImage
                         resizeMode={FastImage.resizeMode.cover}
                         source={{
@@ -279,3 +298,79 @@ export default function UserProfilePage() {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    page: {
+        backgroundColor: "#160900",
+        height: "100%"
+    },
+    user_banner: {
+        height: 300
+    },
+    banner_gradient: {
+        position: "absolute",
+        top: 0,
+        height: 300,
+        width: "100%"
+    },
+    avatar_container: {
+        width: "100%",
+        position: "absolute",
+        top: 200,
+        flex: 1,
+        alignItems: "center"
+    },
+    user_avatar: {
+        width: 200,
+        height: 200,
+        borderRadius: 100,
+    },
+    user_info: {
+        marginTop: 180,
+        padding: 15
+    },
+    title: {
+        color: "white",
+        fontSize: 30
+    },
+    info: {
+        color: "white",
+        backgroundColor: "#181818",
+        padding: 10,
+        fontSize: 20,
+        borderRadius: 10,
+        marginTop: 15,
+        marginBottom: 15
+    },
+    username: {
+        color: "white",
+        position: "absolute",
+        top: 410,
+        textAlign: "center",
+        width: "100%",
+        fontSize: 30,
+        fontWeight: "bold"
+    },
+    back_button: {
+        position: "absolute",
+        top: 20,
+        left: 10,
+        zIndex: 999
+    },
+    buttons: {
+        padding: 15,
+        marginBottom: 35
+    },
+    button: {
+        backgroundColor: "#FF9900",
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 15
+    },
+    button_text: {
+        color: "white",
+        textAlign: "center",
+        fontSize: 20,
+        fontWeight: "bold"
+    }
+});
