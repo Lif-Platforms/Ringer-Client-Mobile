@@ -14,7 +14,7 @@ import { CacheProvider } from "@scripts/cache_provider";
 
 export default function AppLayout() {
     // Get auth context
-    const { isAuthenticated, verifyCredentials } = useAuth();
+    const { isAuthenticated, verifyCredentials, username, token: userToken } = useAuth();
 
     // Determine if the app is loading
     const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +34,7 @@ export default function AppLayout() {
                 await verifyCredentials();
             } catch (error) {
                 // Detect if network request failed
-                if (error.message === "TypeError: Network request failed") {
+                if (error instanceof Error && error.message === "TypeError: Network request failed") {
                     setNoInternet(true);
                 }
             } finally {
@@ -58,6 +58,11 @@ export default function AppLayout() {
 
         const registerForPushNotificationsAsync = async () => {
             try {
+                // Ensure username and token are available
+                if (!username || !userToken) {
+                    return;
+                }
+
                 let token;
                 if (Platform.OS === 'android') {
                     await Notifications.setNotificationChannelAsync('default', {
@@ -81,19 +86,16 @@ export default function AppLayout() {
                 }
 
                 token = (await Notifications.getExpoPushTokenAsync({
-                    projectId: Constants.expoConfig.extra.eas.projectId,
+                    projectId: Constants.expoConfig?.extra?.eas?.projectId,
                 })).data;
-
-                // Get auth credentials
-                const credentials = await get_auth_credentials();
 
                 // Register for push notifications with Ringer Server
                 const body = { "push-token": token };
                 const response = await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/register_push_notifications/mobile`, {
                     method: "POST",
                     headers: {
-                        username: credentials.username,
-                        token: credentials.token,
+                        username: username,
+                        token: userToken,
                     },
                     body: JSON.stringify(body),
                 });

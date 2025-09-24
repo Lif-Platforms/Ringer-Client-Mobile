@@ -6,11 +6,11 @@ import SearchResult from "@components/add friend/search_result";
 import { useRouter } from "expo-router";
 
 export default function AddFriendPage() {
-    const [searchResults, setSearchResults] = useState(null);
-    const [addUser, setAddUser] = useState();
-    const websocketConn = useRef();
-    const [isConnected, setIsConnected] = useState(false);
-    const searchBoxRef = useRef();
+    const [searchResults, setSearchResults] = useState<null | string[]>(null);
+    const [addUser, setAddUser] = useState<string | null>(null);
+    const websocketConn = useRef<WebSocket | null>(null);
+    const [isConnected, setIsConnected] = useState<boolean>(false);
+    const searchBoxRef = useRef<TextInput | null>(null);
 
     // Connect to websocket
     useEffect(() => {
@@ -33,20 +33,22 @@ export default function AddFriendPage() {
         }
 
         return () => {
-            websocketConn.current.close();
+            if (websocketConn.current) {
+                websocketConn.current.close();
+            }
         }
     }, []);
     
     // Send search query to server
     useEffect(() => {
-        if (addUser) {
+        if (addUser && websocketConn.current && isConnected) {
             websocketConn.current.send(JSON.stringify({user: addUser}));
         }
     }, [addUser]);
 
     // Focus the search bar when websocket connects
     useEffect(() => {
-        if (isConnected) {
+        if (isConnected && searchBoxRef.current) {
             searchBoxRef.current.focus();
         }
     }, [isConnected]);
