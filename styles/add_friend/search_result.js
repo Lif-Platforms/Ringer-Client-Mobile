@@ -23,11 +23,16 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#353535",
         paddingBottom: 10,
+        alignItems: "center"
     },
     add_button: {
         backgroundColor: "#00430F",
-        paddingHorizontal: 25,
+        width: 30,
+        height: 30,
         borderRadius: 5,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
     },
     add_button_icon: {
         margin: "auto"

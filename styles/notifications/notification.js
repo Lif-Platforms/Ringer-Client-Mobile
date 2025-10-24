@@ -9,8 +9,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 10,
         display: "flex",
+        flexDirection: "column",
+        gap: 10
+    },
+    top_container: {
+        display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        gap: 10
     },
     controls: {
         display: "flex",
@@ -57,6 +63,11 @@ const styles = StyleSheet.create({
     },
     loader: {
         height: 30
+    },
+    notification_bottom_text: {
+        color: "#828282",
+        fontSize: 14,
+        marginTop: 5
     }
 })
 

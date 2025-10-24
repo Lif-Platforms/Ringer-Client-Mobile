@@ -52,6 +52,7 @@ export default function Notifications() {
                             key={key}
                             id={request.Request_Id}
                             name={request.Sender}
+                            message={request.Message}
                             remove_notification={remove_notification}
                         />
                     ))
