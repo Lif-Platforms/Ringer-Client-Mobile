@@ -1,8 +1,13 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import styles from "../../styles/add_friend/search_result";
-import nextArrow from '../../assets/add_friend/next_arrow.png';
+import styles from "@styles/add_friend/search_result";
+import nextArrow from '@assets/add_friend/next_arrow.png';
+import { useCallback } from "react";
 
 export default function SearchResult({ username, handleNext }) {
+    const nextFunction = useCallback(() => {
+        handleNext(username);
+    }, [username, handleNext]);
+
     return (
         <View style={styles.result}>
             <View style={styles.user}>
@@ -11,7 +16,7 @@ export default function SearchResult({ username, handleNext }) {
             </View>
             <TouchableOpacity 
                 style={styles.add_button}
-                onPress={() => handleNext(username)}
+                onPress={nextFunction}
             >
                 <Image style={styles.add_button_icon} source={nextArrow} />
             </TouchableOpacity>
