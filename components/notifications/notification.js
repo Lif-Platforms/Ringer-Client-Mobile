@@ -15,7 +15,7 @@ async function getValueFor(key) {
     }    
 }
 
-export default function Notification({ id, name, remove_notification }) {
+export default function Notification({ id, name, remove_notification, message }) {
     const [isLoading, setIsLoading] = useState(false);
 
     async function get_auth_credentials() {
@@ -62,41 +62,44 @@ export default function Notification({ id, name, remove_notification }) {
 
     return (
         <View style={styles.notification}>
-            <View style={styles.text_container}>
-                <FastImage
-                    resizeMode={FastImage.resizeMode.cover}
-                    priority={FastImage.priority.normal}
-                    style={styles.avatar}
-                    source={{
-                        uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${name}.png`,
-                        cache: FastImage.cacheControl.web,
-                    }}
-                />
-                <Text style={styles.username}>{name}</Text>
-                <Text
-                    lineBreakMode="tail"
-                    style={styles.notification_text}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                >
-                    sent you a friend request.
-                </Text>
-            </View>
-            {isLoading ? (
-                <ActivityIndicator style={styles.loader} size={"small"} />
-            ) : (
-                <View style={styles.controls}>
-                    <TouchableOpacity 
-                        style={[styles.controls_button, {backgroundColor: "#006F00"}]}
-                        onPress={() => handle_notification(id, "accept")}
+            <View style={styles.top_container}>
+                <View style={styles.text_container}>
+                    <FastImage
+                        resizeMode={FastImage.resizeMode.cover}
+                        priority={FastImage.priority.normal}
+                        style={styles.avatar}
+                        source={{
+                            uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${name}.png`,
+                            cache: FastImage.cacheControl.web,
+                        }}
+                    />
+                    <Text style={styles.username}>{name}</Text>
+                    <Text
+                        lineBreakMode="tail"
+                        style={styles.notification_text}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
                     >
-                        <Image style={styles.controls_icon} source={require("../../assets/notifications/accept_icon.png")} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.controls_button, {backgroundColor: "#C20000"}]} onPress={() => handle_notification(id, "deny")}>
-                        <Image style={styles.controls_icon} source={require("../../assets/notifications/decline_icon.png")} />
-                    </TouchableOpacity>
+                        sent you a friend request.
+                    </Text>
                 </View>
-            )}
+                {isLoading ? (
+                    <ActivityIndicator style={styles.loader} size={"small"} />
+                ) : (
+                    <View style={styles.controls}>
+                        <TouchableOpacity 
+                            style={[styles.controls_button, {backgroundColor: "#006F00"}]}
+                            onPress={() => handle_notification(id, "accept")}
+                        >
+                            <Image style={styles.controls_icon} source={require("../../assets/notifications/accept_icon.png")} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.controls_button, {backgroundColor: "#C20000"}]} onPress={() => handle_notification(id, "deny")}>
+                            <Image style={styles.controls_icon} source={require("../../assets/notifications/decline_icon.png")} />
+                        </TouchableOpacity>
+                    </View>
+                )}
+            </View>
+            {message && <Text style={styles.notification_bottom_text}>{message}</Text>}
         </View>
     )
 }

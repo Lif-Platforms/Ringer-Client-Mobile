@@ -26,8 +26,12 @@ const styles = StyleSheet.create({
     },
     add_button: {
         backgroundColor: "#00430F",
-        paddingHorizontal: 25,
-        borderRadius: 5,
+        width: 40,
+        height: 40,
+        borderRadius: 10,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
     },
     add_button_icon: {
         margin: "auto"

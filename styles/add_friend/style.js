@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
     page: {
         backgroundColor: "#160900",
         height: "100%",
+        overflow: "hidden",
     },
     header: {
         display: "flex",
@@ -36,12 +37,17 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     container: {
-        padding: 15,
+        display: "flex",
+        flexDirection: "row",
+        overflow: "hidden",
+        flexShrink: 1
+    },
+    screen: {
+        padding: 20,
+        flexShrink: 1,
         display: "flex",
         flexDirection: "column",
         gap: 20,
-        flexShrink: 1,
-        paddingBottom: 40
     },
     add_button: {
         backgroundColor: "orange",
@@ -72,6 +78,63 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 20
     },
+    preview_avatar: {
+        width: 25,
+        height: 25,
+        borderRadius: 100,
+        backgroundColor: "gray"
+    },
+    preview_header: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 20,
+        alignItems: "center",
+    },
+    preview_username: {
+        color: "white",
+        fontSize: 25,
+        fontWeight: "bold",
+    },
+    preview_title: {
+        color: "#a9a9a9",
+        fontSize: 15,
+    },
+    preview_message_input: {
+        backgroundColor: "#1C1C1C",
+        borderWidth: 1,
+        borderColor: "#353535",
+        borderRadius: 8,
+        padding: 10,
+        color: "white",
+        fontSize: 16,
+        minHeight: 60,
+        textAlignVertical: "top",
+    },
+    preview_buttons: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 10,
+        justifyContent: "flex-end",
+    },
+    preview_button_cancel: {
+        backgroundColor: "#1C1C1C",
+        padding: 10,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: "#353535",
+    },
+    preview_button_text_cancel: {
+        color: "white",
+        fontSize: 16,
+    },
+    preview_button_send: {
+        backgroundColor: "orange",
+        padding: 10,
+        borderRadius: 5,
+    },
+    preview_button_text_send: {
+        fontSize: 16,
+    }
 });
 
 export default styles;
