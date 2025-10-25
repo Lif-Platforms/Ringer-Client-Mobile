@@ -1,34 +1,29 @@
 import { View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import styles from '../../styles/notifications/notification';
 import { useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
 import { Alert } from "react-native";
 import FastImage from 'react-native-fast-image';
+import { useAuth } from '@providers/auth';
 
-// Get values from secure store
-async function getValueFor(key) {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-        return result;
-    } else {
-        return null;
-    }    
+type NotificationPropsType = {
+    id: string;
+    name: string;
+    remove_notification: (id: string) => void;
+    message: string;
 }
 
-export default function Notification({ id, name, remove_notification, message }) {
+export default function Notification({
+    id,
+    name,
+    remove_notification,
+    message
+}: NotificationPropsType) {
     const [isLoading, setIsLoading] = useState(false);
+    const { username, token } = useAuth();
 
-    async function get_auth_credentials() {
-        const username_ = await getValueFor("username");
-        const token_ = await getValueFor("token");
-
-        return { username: username_, token: token_ };
-    }
-
-    async function handle_notification(request_id, task) {
+    async function handle_notification(request_id: string, task: "accept" | "deny") {
+        if (!username || !token) return;
         setIsLoading(true);
-
-        const credentials = await get_auth_credentials();
 
         const formData = new FormData();
         formData.append("request_id", request_id);
@@ -38,8 +33,8 @@ export default function Notification({ id, name, remove_notification, message })
 
         fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/${path}`, {
             headers: {
-                username: credentials.username,
-                token: credentials.token
+                username: username,
+                token: token
             },
             method: "POST",
             body: formData
@@ -53,8 +48,7 @@ export default function Notification({ id, name, remove_notification, message })
                 throw new Error("Request failed! Status code: " + response.status)
             }
         })
-        .catch((error) => {
-            console.error(error);
+        .catch(() => {
             setIsLoading(false);
             Alert.alert("Error", "Something Went Wrong!");
         })
@@ -66,11 +60,11 @@ export default function Notification({ id, name, remove_notification, message })
                 <View style={styles.text_container}>
                     <FastImage
                         resizeMode={FastImage.resizeMode.cover}
-                        priority={FastImage.priority.normal}
                         style={styles.avatar}
                         source={{
                             uri: `${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${name}.png`,
                             cache: FastImage.cacheControl.web,
+                            priority: FastImage.priority.normal,
                         }}
                     />
                     <Text style={styles.username}>{name}</Text>

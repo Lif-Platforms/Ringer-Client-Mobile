@@ -1,7 +1,13 @@
 import { Animated } from 'react-native';
 import { useRef, useEffect } from 'react';
 
-export default function SkeletonLoader({ width, height, borderRadius, }) {
+type SkeletonLoaderPropsType = {
+    width: number;
+    height: number;
+    borderRadius: number;
+}
+
+export default function SkeletonLoader({ width, height, borderRadius } : SkeletonLoaderPropsType) {
 
     const pulseAnim = useRef(new Animated.Value(1)).current;
 

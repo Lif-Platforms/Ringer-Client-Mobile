@@ -1,15 +1,16 @@
 import { 
     View,
     Text,
-    StatusBar,
     Image,
     Pressable,
 } from "react-native";
 import { useEffect } from "react";
 import styles from "@styles/main/style";
-import { useWebSocket } from "@scripts/websocket_handler";
+import { useWebSocket } from "@providers/websocket_handler";
 import { useRouter } from "expo-router";
 import FriendsList from "@components/index/friends_list";
+// @ts-ignore: allow importing image asset without a declaration file
+import AddIcon from "@assets/main/add_button.png";
 
 export default function MainScreen() {
     const { connectWebSocket } = useWebSocket();
@@ -22,7 +23,6 @@ export default function MainScreen() {
 
     return(
         <View style={styles.page}>
-            <StatusBar style="light" />
             <View style={styles.header}>
                 <Text style={styles.title}>Messages</Text>
             </View>
@@ -33,7 +33,7 @@ export default function MainScreen() {
                 }]}
                 onPress={() => router.push("/add_friend")}
             >
-                <Image style={styles.add_button_icon} source={require("@assets/main/add_button.png")} />
+                <Image style={styles.add_button_icon} source={AddIcon} />
             </Pressable>
         </View>
     )

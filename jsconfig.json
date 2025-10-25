@@ -7,7 +7,8 @@
         "@pages/*": ["pages/*"],
         "@assets/*": ["assets/*"],
         "@styles/*": ["styles/*"],
-        "@scripts/*": ["scripts/*"]
+        "@scripts/*": ["scripts/*"],
+        "@/*": ["*"]
       }
     },
     "include": ["**/*"] // Include all files in the project

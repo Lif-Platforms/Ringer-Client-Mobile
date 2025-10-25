@@ -9,12 +9,12 @@ import {
 } from "react-native";
 import styles from "@styles/messages/style";
 import { useEffect, useState, useRef } from "react";
-import { useWebSocket } from "@scripts/websocket_handler";
+import { useWebSocket } from "@providers/websocket_handler";
 import { eventEmitter } from "@scripts/emitter";
 import MessageBox from "@components/messages page/message_box";
 import GIFModal from '@components/messages page/gif_modal';
 import Message from "@components/messages page/message";
-import { useUserData } from "@scripts/user_data_provider";
+import { useUserData } from "@providers/user_data_provider";
 import { useLocalSearchParams } from "expo-router";
 import { secureGet } from "@scripts/secure_storage";
 import { useRouter } from "expo-router";

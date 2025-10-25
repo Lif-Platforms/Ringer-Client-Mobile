@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, TouchableOpacity, Text, Dimensions } from 'react-native';
 import styles from '../../styles/messages/gif_send_button';
-import { useWebSocket } from '../../scripts/websocket_handler';
+import { useWebSocket } from '@providers/websocket_handler';
 
 export default function GIFSendButton({
     gifToSend,

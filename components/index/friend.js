@@ -7,7 +7,7 @@ import {
 import React, { useEffect, useState } from "react";
 import FastImage from "react-native-fast-image";
 import { useRouter } from "expo-router";
-import { useUserData } from "@scripts/user_data_provider";
+import { useUserData } from "@providers/user_data_provider";
 
 export default function Friend({ 
     username, 

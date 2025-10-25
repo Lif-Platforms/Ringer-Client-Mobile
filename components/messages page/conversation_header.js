@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useConversationData } from "@scripts/conversation_data_provider";
-import { useUserData } from "@scripts/user_data_provider";
+import { useUserData } from "@providers/user_data_provider";
 import { useRouter } from "expo-router";
 import SkeletonLoader from "@components/global/skeleton_loader";
 

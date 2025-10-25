@@ -16,10 +16,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10
     },
-    info_text: {
-        color: "white",
-        textAlign: "center"
-    }
 })
 
 export default styles;

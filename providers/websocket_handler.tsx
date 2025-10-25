@@ -1,49 +1,52 @@
-import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
-import * as SecureStore from "expo-secure-store";
-import { eventEmitter } from "./emitter";
-import { AppState } from "react-native";
-import * as Notifications from "expo-notifications";
-import { useUserData } from './user_data_provider';
-import { useConversationData } from './conversation_data_provider';
-import { useCache } from './cache_provider';
+import React, { createContext, useContext, useRef, useState, useEffect, RefObject } from 'react';
+import { eventEmitter } from "@scripts/emitter";
+import { useUserData } from '@providers/user_data_provider';
+import { useConversationData } from '@scripts/conversation_data_provider';
+import { useCache } from '@scripts/cache_provider';
+import { useAuth } from './auth';
 
-const WebSocketContext = createContext(null);
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
-
-// Get values from secure store
-async function getValueFor(key) {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-        return result;
-    } else {
-        return null;
-    }    
-}   
-
-async function get_auth_credentials() {
-    const username_ = await getValueFor("username");
-    const token_ = await getValueFor("token");
-
-    return { username: username_, token: token_ };
+type WebSocketProviderType = {
+  isConnected: boolean;
+  connectWebSocket: () => void;
+  sendMessage: (
+    message: string,
+    conversation_id: string,
+    GIF_url: string | undefined
+  ) => void;
+  updateTypingStatus: (
+    status: string,
+    conversation_id: string
+  ) => void;
+  viewMessage: (
+    conversation_id: string,
+    message_id: string
+  ) => void;
+  closeConnection: () => void;
+  shouldReconnect: boolean;
 }
 
-export const WebSocketProvider = ({ children }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const webSocketRef = useRef(null);
-  const shouldReconnect = useRef(false); // Track if we should attempt to reconnect
+const WebSocketContext = createContext<WebSocketProviderType>({
+  isConnected: false,
+  connectWebSocket: () => {},
+  sendMessage: () => {},
+  updateTypingStatus: () => {},
+  viewMessage: () => {},
+  closeConnection: () => {},
+  shouldReconnect: false
+});
+
+export const WebSocketProvider = ({ children }: React.PropsWithChildren<{}>) => {
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const webSocketRef = useRef<WebSocket | null>(null);
+  const [shouldReconnect, setShouldReconnect] = useState<boolean>(false); // Track if we should attempt to reconnect
   const { update_user_presence, update_last_sent_message } = useUserData();
 
   // Grab conversation data context
   const { addMessages } = useConversationData();
 
   const { addToMessagesCache } = useCache();
+
+  const { username, token } = useAuth();
 
   useEffect(() => {
     // Attempt to connect when the component mounts
@@ -61,9 +64,9 @@ export const WebSocketProvider = ({ children }) => {
 
       webSocketRef.current.onopen = async () => {
         setIsConnected(true);
-
-        const credentials = await get_auth_credentials();
-        webSocketRef.current.send(JSON.stringify({"Username": credentials.username, "Token": credentials.token}));
+        if (webSocketRef.current) {
+          webSocketRef.current.send(JSON.stringify({"Username": username, "Token": token}));
+        }
       };
 
       webSocketRef.current.onclose = () => {
@@ -71,16 +74,13 @@ export const WebSocketProvider = ({ children }) => {
         webSocketRef.current = null;
 
         // Attempt to reconnect if the connection was not closed manually
-        if (shouldReconnect.current) {
+        if (shouldReconnect) {
           setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
         }
       };
 
       webSocketRef.current.onmessage = async (event) => {
         const data = JSON.parse(event.data);
-
-        // Get user credentials
-        const credentials = await get_auth_credentials();
 
         if (data.Type === "MESSAGE_UPDATE") {
           // Add message to conversation
@@ -100,11 +100,11 @@ export const WebSocketProvider = ({ children }) => {
           );
 
           eventEmitter.emit("Msg_Received");
-        } else if ("ResponseType" in data & data.ResponseType === "MESSAGE_SENT") {
+        } else if ("ResponseType" in data && data.ResponseType === "MESSAGE_SENT") {
             eventEmitter.emit("Message_Sent");
 
         } else if ("Status" in data && data.Status == "Ok") {
-          shouldReconnect.current = true;
+            setShouldReconnect(true);
 
         } else if (data.Type === "USER_STATUS_UPDATE") {
           // Update user presence
@@ -127,16 +127,24 @@ export const WebSocketProvider = ({ children }) => {
 
   const closeConnection = () => {
     if (webSocketRef.current) {
-      shouldReconnect.current = false; // Prevent reconnection
+      setShouldReconnect(false); // Prevent reconnection
       webSocketRef.current.close();
       webSocketRef.current = null;
       setIsConnected(false);
     }
   };
 
-  const sendMessage = (message, conversation_id, GIF_url = null) => {
+  const sendMessage = (
+    message: string,
+    conversation_id: string,
+    GIF_url: string | undefined = undefined
+  ) => {
     if (webSocketRef.current && isConnected) {
-      let message_data = {
+      type MessageDataType = {
+        [key: string]: any;
+      };
+
+      let message_data: MessageDataType = {
         MessageType: "SEND_MESSAGE",
         ConversationId: conversation_id,
         Message: message
@@ -152,7 +160,7 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
-  const updateTypingStatus = (status, conversation_id) => {
+  const updateTypingStatus = (status: string, conversation_id: string) => {
     if (webSocketRef.current && isConnected) {
       webSocketRef.current.send(JSON.stringify({
         ConversationId: conversation_id,
@@ -162,7 +170,7 @@ export const WebSocketProvider = ({ children }) => {
     }
   }
 
-  const viewMessage = (conversation_id, message_id) => {
+  const viewMessage = (conversation_id: string, message_id: string) => {
     if (!webSocketRef.current || !isConnected) { return; }
 
     webSocketRef.current.send(JSON.stringify({
