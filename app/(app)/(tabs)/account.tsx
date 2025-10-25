@@ -1,41 +1,23 @@
 import { Text, View, Image, ScrollView, TouchableOpacity, Linking } from "react-native";
 import { useEffect, useState } from "react";
 import styles from "@styles/account/style";
-import { useWebSocket } from "@scripts/websocket_handler";
+import { useWebSocket } from "@providers/websocket_handler";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
-import { useUserData } from "@scripts/user_data_provider";
-import { secureGet, secureDelete } from "@scripts/secure_storage";
+import { useUserData } from "@providers/user_data_provider";
+import { secureDelete } from "@scripts/secure_storage";
 import { useRouter } from "expo-router";
 import { useCache } from "@scripts/cache_provider";
+import { useAuth } from "@providers/auth";
 
 export default function AccountPage() {
-    const [username, setUsername] = useState("");
-    const [userPronouns, setUserPronouns] = useState();
-    const [userBio, setUserBio] = useState();
+    const [userPronouns, setUserPronouns] = useState<string | null>();
+    const [userBio, setUserBio] = useState<string | null>();
     const { setUserData } = useUserData();
-
-    async function get_auth_credentials() {
-        const username_ = await secureGet("username");
-        const token_ = await secureGet("token");
-
-        return { username: username_, token: token_ };
-    }
-
+    const { username, token } = useAuth();
     const router = useRouter();
-
     const websocket = useWebSocket();
-
     const { clearCache } = useCache();
-
-    useEffect(() => {
-        async function get_username() {
-            const credentials = await get_auth_credentials();
-
-            setUsername(credentials.username);
-        }
-        get_username();
-    }, []);
 
     useEffect(() => {
         async function get_pronouns() {
@@ -43,7 +25,6 @@ export default function AccountPage() {
 
             if (response.ok) {
                 const pronouns = (await response.text()).slice(1, -1);
-
                 setUserPronouns(pronouns);
             }
         }
@@ -56,7 +37,6 @@ export default function AccountPage() {
 
             if (response.ok) {
                 const bio = (await response.text()).slice(1, -1).replace(/\\n/g, '\n').replace(/\\r/g, '\r');
-
                 setUserBio(bio);
             }
         }
@@ -64,16 +44,15 @@ export default function AccountPage() {
     });
 
     async function handle_logout() {
+        if (!username || !token) return;
+
         // Close Websocket connection
         websocket.closeConnection();
-
-        // Get auth credentials
-        const credentials = await get_auth_credentials();
 
         async function get_expo_push_token() {
             try {
                 const push_token = (await Notifications.getExpoPushTokenAsync({
-                    projectId: Constants.expoConfig.extra.eas.projectId,
+                    projectId: Constants?.expoConfig?.extra?.eas.projectId,
                 })).data;
 
                 return push_token;
@@ -90,8 +69,8 @@ export default function AccountPage() {
         await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/unregister_push_notifications/mobile`, {
             method: "POST",
             headers: {
-                username: credentials.username,
-                token: credentials.token
+                username: username,
+                token: token
             },
             body: JSON.stringify({
                 "push-token": push_token

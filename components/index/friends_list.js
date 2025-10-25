@@ -6,19 +6,12 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import { useCache } from "@scripts/cache_provider";
-import { secureGet } from "@scripts/secure_storage";
 import Friend from "./friend";
-import { useUserData } from "@scripts/user_data_provider";
+import { useUserData } from "@providers/user_data_provider";
 import FriendLoading from "./friend_loading";
+import { useAuth } from "@providers/auth";
 
 export default function FriendsList() {
-    async function get_auth_credentials() {
-        const username_ = await secureGet("username");
-        const token_ = await secureGet("token");
-
-        return { username: username_, token: token_ };
-    }
-
     const { getUserCache, setUserCache } = useCache();
     const { userData, setUserData, setIsCacheData } = useUserData();
 
@@ -26,10 +19,12 @@ export default function FriendsList() {
     const [isLoading, setIsLoading] = useState(true);
     const [showLoader, setShowLoader] = useState(false); // Loader will not show unless there is no cache data
 
+    const { username, token } = useAuth();
+
     async function fetchFriends() {
         // Check if user data is already loaded
-        //if (userData) { return; }
-        console.log("fetching friends")
+        if (userData) { return; }
+        if (!username || !token) return;
 
         // Get user cache
         const userCache = getUserCache();
@@ -44,13 +39,10 @@ export default function FriendsList() {
             setShowLoader(true);
         }
         try {
-            // Get auth credentials
-            const credentials = await get_auth_credentials();
-
             const response = await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/get_friends`, {
                 headers: {
-                    username: credentials.username,
-                    token: credentials.token
+                    username: username,
+                    token: token
                 },
                 method: "GET"
             });

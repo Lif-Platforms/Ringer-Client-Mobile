@@ -1,48 +1,20 @@
 import { View, Image } from "react-native";
 import styles from "../../styles/components/bottom_nav/style";
 import { useEffect, useState } from "react";
-import * as SecureStore from 'expo-secure-store';
-import React from "react";
 import { Link } from "expo-router";
 import FastImage from "react-native-fast-image";
-
-/**
- * Gets value from secure storage.
- * 
- * @param {string} key - The key being accessed from secure storage.
- */
-async function getValueFor(key) {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-        return result;
-    } else {
-        return null;
-    }    
-}   
+import { useAuth } from "@providers/auth";
 
 function BottomNavBar() {
-    const [avatarURL, setAvatarURL] = useState(null);
+    const [avatarURL, setAvatarURL] = useState<string | null>(null);
 
-    /**
-     * Get auth credentials from secure storage.
-     */
-    async function get_auth_credentials() {
-        const username_ = await getValueFor("username");
-        const token_ = await getValueFor("token");
+    const { username, token } = useAuth();
 
-        return { username: username_, token: token_ };
-    }
-
-    // Set avatar URL
     useEffect(() => {
-        /**
-        * Get the avatar URL using the secure storage credentials.
-        */
         async function fetchAvatarURL() {
-            const credentials = await get_auth_credentials();
-            setAvatarURL(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${credentials.username}.png`);
+            if (!username || !token) return;
+            setAvatarURL(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/profile/get_avatar/${username}.png`);
         }
-
         fetchAvatarURL();
     }, []);
 
@@ -58,7 +30,7 @@ function BottomNavBar() {
                 <FastImage 
                     style={styles.avatar}
                     source={{
-                        uri: avatarURL,
+                        uri: avatarURL ? avatarURL : undefined,
                         priority: FastImage.priority.normal,
                         cache: FastImage.cacheControl.web,
                     }}

@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, useRef } from "react";
 import { showNotification } from "./notification_handler";
-import { useUserData } from "./user_data_provider";
+import { useUserData } from "@providers/user_data_provider";
 
 const ConversationDataContext = createContext();
 

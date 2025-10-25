@@ -1,26 +1,30 @@
 import { useEffect, useRef, useState } from "react";
-import { useWebSocket } from "../../scripts/websocket_handler";
-import styles from "../../styles/components/reconnect_bar/style";
+import { useWebSocket } from "@providers/websocket_handler";
+import styles from "@styles/components/reconnect_bar/style";
 import { Text, Animated } from "react-native";
 
 export default function ReconnectBar() {
     const { isConnected, shouldReconnect } = useWebSocket();
-    const reconnectTimeout = useRef(null);
+    const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [visible, setVisible] = useState(false);
     const topValue = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        if (!isConnected && shouldReconnect.current) {
+        if (!isConnected && shouldReconnect) {
             reconnectTimeout.current = setTimeout(() => {
                 setVisible(true);
             }, 4000);
         } else {
-            clearTimeout(reconnectTimeout.current);
+            if (reconnectTimeout.current) {
+                clearTimeout(reconnectTimeout.current);
+            }
             setVisible(false);
         }
 
         return () => {
-            clearTimeout(reconnectTimeout.current);
+            if (reconnectTimeout.current) {
+                clearTimeout(reconnectTimeout.current);
+            }
             setVisible(false);
         };
     }, [isConnected]);
