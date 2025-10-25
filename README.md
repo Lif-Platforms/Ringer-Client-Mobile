@@ -21,6 +21,7 @@ Ringer has features such as:
 # 🧱 Built With...
 Ringer is built with these languages: 
  - Javascript
+ - TypeScript
 
 And these frameworks: 
  - React Native
