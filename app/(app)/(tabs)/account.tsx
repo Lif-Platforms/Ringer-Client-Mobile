@@ -14,7 +14,7 @@ export default function AccountPage() {
     const [userPronouns, setUserPronouns] = useState<string | null>();
     const [userBio, setUserBio] = useState<string | null>();
     const { setUserData } = useUserData();
-    const { username, token } = useAuth();
+    const { username, token, logout } = useAuth();
     const router = useRouter();
     const websocket = useWebSocket();
     const { clearCache } = useCache();
@@ -48,7 +48,7 @@ export default function AccountPage() {
 
         // Close Websocket connection
         websocket.closeConnection();
-
+        /*
         async function get_expo_push_token() {
             try {
                 const push_token = (await Notifications.getExpoPushTokenAsync({
@@ -76,17 +76,11 @@ export default function AccountPage() {
                 "push-token": push_token
             })
         })
+            */
 
-        // Delete auth credentials from device
-        await secureDelete("username");
-        await secureDelete("token");
-
-        // Clear user data from user data provider
         setUserData(null);
-
-        // Clear cache
         clearCache();
-
+        logout();
         router.replace("/login");
     }
 
