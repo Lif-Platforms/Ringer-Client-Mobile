@@ -1,18 +1,26 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import React from 'react';
-import { secureSave, secureGet } from '../scripts/secure_storage';
+import { secureSave, secureGet, secureDelete } from '../scripts/secure_storage';
 import { AppState } from 'react-native';
+import { useRouter } from 'expo-router';
+
+type AuthContextType = {
+    isAuthenticated: boolean;
+    username: string | null;
+    token: string | null;
+    login: (
+        username: string,
+        password: string,
+        two_fa_code: string | null
+    ) => void;
+    logout: () => void;
+    verifyCredentials: () => void;
+    appState: string;
+    prompt2FACode: boolean;
+}
 
 // Create Auth Context
-const AuthContext = createContext({
-    isAuthenticated: false,
-    token: null as string | null,
-    username: null as string | null,
-    login: async (username: string, password: string) => {},
-    logout: () => {},
-    verifyCredentials: async () => {},
-    appState: AppState.currentState as string
-});
+const AuthContext = createContext<AuthContextType | null>(null);
 
 // Create Auth Provider
 export const AuthProvider = ({ children }: React.PropsWithChildren<{}>) => {
@@ -20,6 +28,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren<{}>) => {
     const [token, setToken] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [appState, setAppState] = useState<string>(AppState.currentState);
+    const [prompt2FACode, setPrompt2FACode] = useState<boolean>(false);
 
     // Track and update app state
     useEffect(() => {
@@ -32,22 +41,44 @@ export const AuthProvider = ({ children }: React.PropsWithChildren<{}>) => {
         };
     }, []);
 
-    const login = async (username: string, password: string) => {
+    const router = useRouter();
+
+    const login = async (
+        username: string,
+        password: string,
+        two_fa_code: string | null
+    ) => {
         const formData = new FormData();
         formData.append("username", username);
         formData.append("password", password);
 
-        const response = await fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/auth/login`, {
+        if (two_fa_code) {
+            formData.append("two_fa_code", two_fa_code);
+        }
+
+        const response = await fetch(`${process.env.EXPO_PUBLIC_AUTH_SERVER_URL}/auth/v2/login`, {
             method: "POST",
             body: formData
         });
 
-        if (!response.ok) {
-            if (response.status === 401) throw new Error("Incorrect Username or Password");
-            throw new Error("Something Went Wrong!");
+        const data = await response.json();
+
+        if (data.errorCode === "2FA_REQUIRED") {
+            setPrompt2FACode(true);
+            return;
         }
 
-        const data = await response.json();
+        if (data.errorCode === "INVALID_2FA_CODE") {
+            throw new Error("Invalid 2FA Code");
+        }
+
+        if (response.status === 401) {
+            throw new Error("Incorrect Username or Password");
+        }
+
+        if (!response.ok) {
+            throw new Error("Something Went Wrong!");
+        }
 
         // Save credentials securely
         secureSave("username", username);
@@ -57,6 +88,8 @@ export const AuthProvider = ({ children }: React.PropsWithChildren<{}>) => {
         setIsAuthenticated(true);
         setToken(data.token);
         setUsername(username);
+
+        router.replace('/(tabs)');
     };
 
     const logout = () => {
@@ -64,6 +97,9 @@ export const AuthProvider = ({ children }: React.PropsWithChildren<{}>) => {
         setIsAuthenticated(false);
         setToken(null);
         setUsername(null);
+        setPrompt2FACode(false);
+        secureDelete("username");
+        secureDelete("token");
     };
 
     const verifyCredentials = async () => {
@@ -115,11 +151,18 @@ export const AuthProvider = ({ children }: React.PropsWithChildren<{}>) => {
             login,
             logout,
             verifyCredentials,
-            appState
+            appState,
+            prompt2FACode
         }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-export const useAuth = () => { return useContext(AuthContext); }
+export const useAuth = (): AuthContextType => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+}

@@ -6,18 +6,25 @@
     {
       "layers" : [
         {
-          "image-name" : "3 – Layer 4.svg",
-          "name" : "3 – Layer 4"
+          "image-name" : "3 – Layer.svg",
+          "name" : "3 – Layer"
         },
         {
-          "image-name" : "2 – Layer 4.svg",
-          "name" : "2 – Layer 4"
+          "image-name" : "2 – Layer.svg",
+          "name" : "2 – Layer"
         },
         {
-          "image-name" : "1 – Layer 4.svg",
-          "name" : "1 – Layer 4"
+          "image-name" : "1 – Layer.svg",
+          "name" : "1 – Layer"
         }
       ],
+      "position" : {
+        "scale" : 1,
+        "translation-in-points" : [
+          14.5234375,
+          -24.6484375
+        ]
+      },
       "shadow" : {
         "kind" : "neutral",
         "opacity" : 0.5
