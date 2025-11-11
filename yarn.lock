@@ -1038,6 +1038,7 @@
     "@expo/json-file" "^10.0.7"
     deepmerge "^4.3.1"
     getenv "^2.0.0"
+    getenv "^2.0.0"
     glob "^10.4.2"
     require-from-string "^2.0.2"
     resolve-from "^5.0.0"
@@ -1072,6 +1073,7 @@
     dotenv "~16.4.5"
     dotenv-expand "~11.0.6"
     getenv "^2.0.0"
+    getenv "^2.0.0"
 
 "@expo/fingerprint@0.15.1":
   version "0.15.1"
@@ -1097,6 +1099,7 @@
   dependencies:
     "@expo/spawn-async" "^1.7.2"
     chalk "^4.0.0"
+    getenv "^2.0.0"
     getenv "^2.0.0"
     jimp-compact "0.16.1"
     parse-png "^2.1.0"
@@ -1191,6 +1194,7 @@
   resolved "https://registry.yarnpkg.com/@expo/package-manager/-/package-manager-1.9.8.tgz#8f6b46a2f5f4bf4f2c78507b1a7a368e0c2e2126"
   integrity sha512-4/I6OWquKXYnzo38pkISHCOCOXxfeEmu4uDoERq1Ei/9Ur/s9y3kLbAamEkitUkDC7gHk1INxRWEfFNzGbmOrA==
   dependencies:
+    "@expo/json-file" "^10.0.7"
     "@expo/json-file" "^10.0.7"
     "@expo/spawn-async" "^1.7.2"
     chalk "^4.0.0"
