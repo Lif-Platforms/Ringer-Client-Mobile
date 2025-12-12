@@ -34,7 +34,7 @@ const MessageText = ({ message, didSendMessage, isEmojiOnly }) => {
     );
 };
 
-export default function Message({ message, index }) {
+export default function Message({ message }) {
     const [messageViewed, setMessageViewed] = useState(message.Viewed || false);
 
     const { viewMessage } = useWebSocket();
@@ -69,7 +69,7 @@ export default function Message({ message, index }) {
     }
 
     return (
-        <View key={index} style={[styles.message,
+        <View style={[styles.message,
             didSendMessage ? { flexDirection: "row-reverse" } : { flexDirection: "row" },
         ]}>
             <FastImage

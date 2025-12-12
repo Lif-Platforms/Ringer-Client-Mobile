@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
     },
     messages_viewer: {
         flexGrow: 1,
-        justifyContent: 'flex-start',
         padding: 16,
         width: "100%"
     },

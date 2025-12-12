@@ -1,11 +1,11 @@
 import {
     ActivityIndicator,
     View,
-    Text,
     Image,
     StatusBar,
     TouchableOpacity,
-    ScrollView 
+    ScrollView,
+    FlatList,
 } from "react-native";
 import styles from "@styles/messages/style";
 import { useEffect, useState, useRef } from "react";
@@ -43,6 +43,7 @@ export default function MessagesPage() {
     const [loadMoreMessages, setLoadMoreMessages] = useState(false);
     const [keepScrollPosition, setKeepScrollPosition] = useState(false);
     const { update_last_sent_message, setUnreadMessages } = useUserData();
+    const [messagesLoadError, setMessagesLoadError] = useState(false);
   
     const {
         setConversationData, 
@@ -154,7 +155,7 @@ export default function MessagesPage() {
                     );
                 }
             } else {
-                setMessages("Messages_Error");
+                setMessagesLoadError(true);
             }
         }
         load_messages();
@@ -210,8 +211,8 @@ export default function MessagesPage() {
             // Also add timeout to ensure message have time to render before adjusting the scroll pos
             setTimeout(() => {
                 const newScrollPos = currentScrollHight.current - previousScrollHight.current;
-                scrollViewRef.current.scrollTo({ x: 0, y: newScrollPos, animated: false });
-            }, 0);
+                scrollViewRef.current.scrollToOffset({ offset: newScrollPos, animated: false });
+            }, 1);
 
             // Set loading state to false
             setIsLoadingMoreMessages(false);
@@ -283,29 +284,28 @@ export default function MessagesPage() {
                     <ConversationHeader />
                 </View>
             </View>
-            <ScrollView 
-                contentContainerStyle={styles.messages_viewer}
-                ref={scrollViewRef}
-                onScroll={handle_messages_scroll}
-                onContentSizeChange={handle_content_size_change}
-            >
-                {isLoadingMoreMessages ? (
-                    <ActivityIndicator size="large" color="#ffffff" />
-                ): null}
-                {Array.isArray(messages) && !isLoading ? (
-                    messages.map((message, index) => (
-                        <Message
-                            key={index}
-                            message={message}
-                            index={index}
-                        />
-                    ))
-                ) : isLoading ? (
-                    <MessagesListLoading />
-                ) : (
-                    <MessagesLoadError />
-                )}
-            </ScrollView>
+            {isLoading && !messagesLoadError ? (
+                <MessagesListLoading />
+            ) : !isLoading && !messagesLoadError ? (
+                <FlatList
+                    data={messages}
+                    ListHeaderComponent={isLoadingMoreMessages ? (
+                        <ActivityIndicator color={"white"} style={{
+                            margin: 20
+                        }} />
+                    ) : null}
+                    style={styles.messages_viewer}
+                    ref={scrollViewRef}
+                    onScroll={handle_messages_scroll}
+                    onContentSizeChange={handle_content_size_change}
+                    keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+                    renderItem={({item}) => (
+                        <Message message={item} />
+                    )}
+                />
+            ) : (
+                <MessagesLoadError />
+            )}
             <MessageBox
                 isSending={isSending}
                 username={conversationName}
