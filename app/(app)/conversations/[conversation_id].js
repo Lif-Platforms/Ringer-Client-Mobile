@@ -24,6 +24,7 @@ import ConversationHeader from "@components/messages page/conversation_header";
 import MessagesListLoading from "@components/messages page/messages_list_loading";
 import MessagesLoadError from "@components/messages page/messages_load_error";
 import JumpToRecentButton from "@components/messages page/jump_to_recent_button";
+import MessagesHeader from "@components/messages page/messages_header";
 
 export default function MessagesPage() {
     // Get conversation from URL
@@ -44,6 +45,7 @@ export default function MessagesPage() {
     const [keepScrollPosition, setKeepScrollPosition] = useState(false);
     const { update_last_sent_message, setUnreadMessages } = useUserData();
     const [messagesLoadError, setMessagesLoadError] = useState(false);
+    const [showStartConversationHeader, setShowStartConversationHeader] = useState(false);
   
     const {
         setConversationData, 
@@ -125,6 +127,8 @@ export default function MessagesPage() {
                 // This will load more messages when the user scrolls to the top of the conversation
                 if (messages.length >= 20) {
                     setLoadMoreMessages(true);
+                } else {
+                    setShowStartConversationHeader(true);
                 }
 
                 // Set loading state to false
@@ -221,6 +225,7 @@ export default function MessagesPage() {
             // Check if there are more messages to load
             if (data.length < 20) {
                 setLoadMoreMessages(false);
+                setShowStartConversationHeader(true);
             }
         })
         .catch((err) => {
@@ -289,11 +294,12 @@ export default function MessagesPage() {
             ) : !isLoading && !messagesLoadError ? (
                 <FlatList
                     data={messages}
-                    ListHeaderComponent={isLoadingMoreMessages ? (
-                        <ActivityIndicator color={"white"} style={{
-                            margin: 20
-                        }} />
-                    ) : null}
+                    ListHeaderComponent={
+                        <MessagesHeader
+                            isLoadingMoreMessages={isLoadingMoreMessages}
+                            showStartConversationHeader={showStartConversationHeader}
+                        />
+                    }
                     style={styles.messages_viewer}
                     ref={scrollViewRef}
                     onScroll={handle_messages_scroll}
