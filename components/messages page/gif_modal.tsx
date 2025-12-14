@@ -1,14 +1,29 @@
-import { View, TextInput, Animated, Dimensions, Text } from "react-native";
+import {
+    View,
+    TextInput,
+    Animated,
+    Dimensions
+} from "react-native";
 import styles from "../../styles/messages/gif_modal";
 import { useEffect, useRef, useState } from "react";
-import { PanGestureHandler, ScrollView } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import GIFList from "./gif_list";
 import GIFSendButton from "./gif_send_button";
+import { GIFToSend } from "../../types";
+import { useConversationData } from "@scripts/conversation_data_provider";
 
-export default function GIFModal({ showGIFModal, onDismiss, conversation_id }) {
-    const modalRef = useRef();
+type GifModalProps = {
+    showGIFModal: boolean;
+    onDismiss: () => void;
+}
+
+export default function GIFModal({
+    showGIFModal,
+    onDismiss
+}: GifModalProps) {
+    const modalRef = useRef(null);
     const flyAnimation = useRef(new Animated.Value(0)).current; // will be updated later
-    const searchRef = useRef();
+    const searchRef = useRef<TextInput>(null);
 
     // Get the screen height
     const screenHeight = Dimensions.get('window').height; 
@@ -19,7 +34,9 @@ export default function GIFModal({ showGIFModal, onDismiss, conversation_id }) {
     const [searchQuery, setSearchQuery] = useState("");
 
     // Handle GIF selection
-    const [gifToSend, setGifToSend] = useState({url: null, id: null, title: null});
+    const [gifToSend, setGifToSend] = useState<GIFToSend | null>(null);
+
+    const { conversation_id } = useConversationData();
 
     // Play fly in animation when modal opens
     useEffect(() => {
@@ -37,54 +54,52 @@ export default function GIFModal({ showGIFModal, onDismiss, conversation_id }) {
 
             // Wait for animation to play before focusing
             setTimeout(() => {
-                searchRef.current.focus();
+                if (searchRef.current) {
+                    searchRef.current.focus();
+                }
             }, 300);
         }
     }, [showGIFModal]);
 
-    const handleGesture = Animated.event( 
-        [{ nativeEvent: { translationY: flyAnimation } }], 
-        { useNativeDriver: true } 
-    );
-
-    const handleGestureEnd = (event) => {
-        if (event.nativeEvent.translationY > modalHeight / 2) { 
-            // If dragged more than half of the modal height, dismiss the modal 
-            Animated.timing(flyAnimation, { 
-                toValue: modalHeight, 
-                duration: 200, 
-                useNativeDriver: true, 
-            }).start(() => { 
-                if (onDismiss) { 
-                    onDismiss(); 
-                } 
-            }); 
-        } else { 
-            // Otherwise, reset the position 
-            Animated.spring(flyAnimation, { 
-                toValue: 0, 
-                tension: 20, 
-                friction: 10, 
-                useNativeDriver: true, 
-            }).start(); 
-        } 
-    };
+    const panGesture = Gesture.Pan()
+        .onUpdate((event) => {
+            flyAnimation.setValue(event.translationY);
+        })
+        .onEnd((event) => {
+            if (event.translationY > modalHeight / 2) { 
+                // If dragged more than half of the modal height, dismiss the modal 
+                Animated.timing(flyAnimation, { 
+                    toValue: modalHeight, 
+                    duration: 200, 
+                    useNativeDriver: true, 
+                }).start(() => { 
+                    if (onDismiss) { 
+                        onDismiss(); 
+                    } 
+                }); 
+            } else { 
+                // Otherwise, reset the position 
+                Animated.spring(flyAnimation, { 
+                    toValue: 0, 
+                    tension: 20, 
+                    friction: 10, 
+                    useNativeDriver: true, 
+                }).start(); 
+            } 
+        });
 
     // Reset search query and selected GIF when modal is closed
     useEffect(() => {
         if (!showGIFModal) {
             setSearchQuery("");
-            setGifToSend({url: null, id: null, title: null});
+            setGifToSend(null);
         }
     }, [showGIFModal]);
 
     if (showGIFModal) {
         return (
             <View style={styles.modal_container}>
-                <PanGestureHandler 
-                    onGestureEvent={handleGesture}
-                    onHandlerStateChange={handleGestureEnd}
-                >
+                <GestureDetector gesture={panGesture}>
                     <Animated.View 
                         style={[styles.modal, {
                             height: modalHeight, 
@@ -119,7 +134,7 @@ export default function GIFModal({ showGIFModal, onDismiss, conversation_id }) {
                             flyAnimation={flyAnimation}
                         />
                     </Animated.View>
-                </PanGestureHandler>
+                </GestureDetector>
             </View>
         )
     }

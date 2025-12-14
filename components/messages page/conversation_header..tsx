@@ -22,7 +22,7 @@ export default function ConversationHeader() {
 
     // Update online status based on user data
     useEffect(() => {
-        if (!conversationName) return;
+        if (!conversationName || !userData) return;
         const user = userData.find((user) => user.Username === conversationName);
         if (user) {
             setIsOnline(user.Online);

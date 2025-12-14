@@ -13,3 +13,18 @@ export type NotificationType = {
     Create_Time: Date;
     Message: string;
 }
+
+export type GIFToSend = {
+    url: string;
+    id: string;
+    title: string;
+}
+
+export type UserMessage = {
+    Message: string;
+    Message_Type: string;
+    GIF_URL?: string;
+    Viewed: boolean;
+    Message_Id: string;
+    Author: string;
+}

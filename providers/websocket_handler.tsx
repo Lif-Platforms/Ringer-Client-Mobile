@@ -14,7 +14,7 @@ type WebSocketProviderType = {
     GIF_url: string | undefined
   ) => void;
   updateTypingStatus: (
-    status: string,
+    status: boolean,
     conversation_id: string
   ) => void;
   viewMessage: (
@@ -160,7 +160,7 @@ export const WebSocketProvider = ({ children }: React.PropsWithChildren<{}>) => 
     }
   };
 
-  const updateTypingStatus = (status: string, conversation_id: string) => {
+  const updateTypingStatus = (status: boolean, conversation_id: string) => {
     if (webSocketRef.current && isConnected) {
       webSocketRef.current.send(JSON.stringify({
         ConversationId: conversation_id,

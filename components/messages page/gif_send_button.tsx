@@ -2,13 +2,21 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, TouchableOpacity, Text, Dimensions } from 'react-native';
 import styles from '../../styles/messages/gif_send_button';
 import { useWebSocket } from '@providers/websocket_handler';
+import { GIFToSend } from '../../types';
+
+type GifSendButtonProps = {
+    gifToSend: GIFToSend | null;
+    conversation_id: string | null;
+    onDismiss: () => void;
+    flyAnimation: Animated.Value;
+}
 
 export default function GIFSendButton({
     gifToSend,
     conversation_id,
     onDismiss,
     flyAnimation,
-}) {
+}: GifSendButtonProps) {
     const scale = useRef(new Animated.Value(0.8)).current;
     const opacity = useRef(new Animated.Value(0)).current;
     const { sendMessage } = useWebSocket();
@@ -17,7 +25,7 @@ export default function GIFSendButton({
     const screenHeight = Dimensions.get('window').height;
 
     useEffect(() => {
-        if (gifToSend.url) {
+        if (gifToSend) {
             const scaleAnimation = Animated.timing(scale, { 
                 toValue: 1,
                 duration: 150, 
@@ -36,6 +44,7 @@ export default function GIFSendButton({
     }, [gifToSend]);
 
     function handle_send() {
+        if (!conversation_id || !gifToSend) { return };
         sendMessage("GIF Message", conversation_id, gifToSend.url);
 
         // Animate the dismissal of the GIF modal
@@ -50,7 +59,7 @@ export default function GIFSendButton({
     }
 
     // If there is no GIF to send, return null
-    if (!gifToSend.url) { return null; }
+    if (!gifToSend || !conversation_id) { return null; }
 
     return (
         <Animated.View style={[styles.buttonContainer, { opacity }]}>

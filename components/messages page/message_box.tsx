@@ -1,49 +1,62 @@
-import { View, TextInput, TouchableOpacity, Image, Animated, Keyboard, Text, Dimensions } from "react-native";
-import { useRef, useState, useEffect } from "react";
+import {
+    View,
+    TextInput,
+    TouchableOpacity,
+    Image,
+    Animated,
+    Keyboard,
+    Text,
+    Dimensions,
+    FlatList,
+    TouchableOpacityProps
+} from "react-native";
+import { useRef, useState, useEffect, SetStateAction, RefObject } from "react";
 import styles from "../../styles/messages/messageBox";
 import { eventEmitter } from "../../scripts/emitter";
-import * as SecureStore from 'expo-secure-store';
 import { AddMediaOptions } from "./add_media_options";
 import { useConversationData } from "@scripts/conversation_data_provider";
+import { useWebSocket } from "@providers/websocket_handler";
+import { useAuth } from "@providers/auth";
 
-// Get values from secure store
-async function getValueFor(key) {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-        return result;
-    } else {
-        return null;
-    }    
-}   
+type MessageBoxProps = {
+    isSending: boolean;
+    setIsSending: React.Dispatch<SetStateAction<boolean>>;
+    setMessageValue: React.Dispatch<SetStateAction<string>>;
+    scrollViewRef: RefObject<FlatList | null>;
+    setShowGIFModal: React.Dispatch<SetStateAction<boolean>>;
+    messageValue: string;
+}
 
 export default function MessageBox({
     isSending,
-    username,
     setMessageValue,
     setIsSending,
-    conversation_id,
-    sendMessage,
     messageValue,
     scrollViewRef,
-    updateTypingStatus,
     setShowGIFModal
-}) {
-    const messageBoxRef = useRef();
+}: MessageBoxProps) {
+    const messageBoxRef = useRef<TextInput>(null);
     const [keyboardHeight] = useState(new Animated.Value(0));
     const [bottomPadding, setBottomPadding] = useState(40);
     const [isTyping, setIsTyping] = useState(false);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.9)).current;
-    const typingTimeout = useRef(null);
+    const typingTimeout = useRef<NodeJS.Timeout>(null);
     const isUserTyping = useRef(false);
     const [showMediaOptions, setShowMediaOptions] = useState(false);
-    const addMediaButtonRef = useRef(null);
+    const addMediaButtonRef = useRef<View>(null);
     const [addMediaOptionsRightPosition, setAddMediaOptionsRightPosition] = useState(0);
     const [isDisabled, setIsDisabled] = useState(false);
 
-    const { isLoading: isConversationLoading } = useConversationData();
+    const {
+        isLoading: isConversationLoading,
+        conversation_id,
+        conversationName: username
+    } = useConversationData();
+    const { updateTypingStatus, sendMessage } = useWebSocket();
+    const { username: currentUser } = useAuth();
 
-    // Enable/disable messagebox based on if sending or if loading
+    // Enable/disable message box based on if sending or if loading
     useEffect(() => {
         if (isSending || isConversationLoading) {
             setIsDisabled(true);
@@ -53,30 +66,36 @@ export default function MessageBox({
     }, [isSending, isConversationLoading]);
 
     function handle_message_send() {
+        if (!messageBoxRef.current) { return };
+
         // Refocus the message box
         messageBoxRef.current.focus();
 
         // Check to ensure message is not blank
         if (messageValue.trim() !== "") {
             setIsSending(true);
-            sendMessage(messageValue, conversation_id);
+            sendMessage(messageValue, conversation_id, undefined);
 
             // Clear message box and message value
             messageBoxRef.current.clear();
             setMessageValue("");
 
             // Update typing status after message is sent and clear typing timeout
-            clearTimeout(typingTimeout.current);
+            if (typingTimeout.current) {
+                clearTimeout(typingTimeout.current);
+            }
             updateTypingStatus(false, conversation_id);
         }
     }
 
     // Listen for typing updates
     useEffect(() => {
-        const handle_user_typing = async (data) => {
-            const current_user = await getValueFor('username');
-
-            if (data.user !== current_user && data.conversation_id === conversation_id) {
+        const handle_user_typing = async (data: {
+            user: string;
+            conversation_id: string;
+            typing: boolean
+        }) => {
+            if (data.user !== currentUser && data.conversation_id === conversation_id) {
                 setIsTyping(data.typing);
             }
         }
@@ -149,7 +168,7 @@ export default function MessageBox({
         } 
     }, [isTyping, fadeAnim]);
 
-    function handle_user_typing(text) {
+    function handle_user_typing(text: string) {
         // Update message value with new text
         setMessageValue(text);
 
@@ -194,7 +213,6 @@ export default function MessageBox({
     // Get the position of the add media button from the right side of the screen
     // This is used to position the add media options menu
     useEffect(() => {
-        // Make sure button exists before doing measurements on it
         if (addMediaButtonRef.current) {
             // Get the right position of the add media button
             addMediaButtonRef.current.measure((x, y, width, height, pageX, pageY) => { 
@@ -205,6 +223,11 @@ export default function MessageBox({
             });
         }
     }, [showMediaOptions]);
+    
+    function handleScrollToEnd() {
+        if (!scrollViewRef.current) { return };
+        scrollViewRef.current.scrollToEnd({ animated: true });
+    }
 
     return (
         <Animated.View 
@@ -216,7 +239,12 @@ export default function MessageBox({
                 }
             ]}
         >
-            <Animated.View style={[styles.typing_indicator_container, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
+            <Animated.View style={[
+                styles.typing_indicator_container, {
+                    opacity: fadeAnim,
+                    transform: [{ scale: scaleAnim }]
+                }]}
+            >
                 <Text style={styles.typing_indicator}>{username} is typing...</Text>
             </Animated.View>
             <View style={styles.message_box}>
@@ -231,7 +259,7 @@ export default function MessageBox({
                     style={styles.message_input}
                     placeholder={`Message ${username}`}
                     placeholderTextColor="#767676"
-                    onFocus={() => setTimeout(() => scrollViewRef.current.scrollToEnd({ animated: true }), 300)}
+                    onFocus={() => setTimeout(() => handleScrollToEnd(), 300)}
                     onChangeText={text => handle_user_typing(text)}
                     keyboardAppearance="dark"
                 />

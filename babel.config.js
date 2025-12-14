@@ -15,6 +15,7 @@ module.exports = function(api) {
             '@styles': './styles',
             '@scripts': './scripts',
             '@providers': './providers',
+            '@types': './types'
           }
         }
       ]
