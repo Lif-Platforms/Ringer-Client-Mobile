@@ -5,20 +5,33 @@ import { useEffect, useState } from "react";
 import { useWebSocket } from "@providers/websocket_handler";
 import { useAuth } from "@providers/auth";
 import { useConversationData } from "@scripts/conversation_data_provider";
+import { UserMessage } from "../../types";
 
-const MessageText = ({ message, didSendMessage, isEmojiOnly }) => {
+type MessageTextProps = {
+    message: string;
+    didSendMessage: boolean;
+    isEmojiOnly: boolean;
+}
+
+const MessageText = ({
+    message,
+    didSendMessage,
+    isEmojiOnly
+}: MessageTextProps) => {
     const stylesToUse = didSendMessage ? styles.messages_content_send : 
                         styles.messages_content_receive;
 
-    const textStyles = {
-        color: didSendMessage ? "black" : "white",
-        textAlign: "left",
-        flexShrink: 1,
-        fontSize: isEmojiOnly ? 50 : 16,
-        lineHeight: isEmojiOnly ? 60 : 20,
-        includeFontPadding: false,
-        textAlignVertical: "center",
-    }
+    const textStyles = StyleSheet.create({
+        styles: {
+            color: didSendMessage ? "black" : "white",
+            textAlign: "left",
+            flexShrink: 1,
+            fontSize: isEmojiOnly ? 50 : 16,
+            lineHeight: isEmojiOnly ? 60 : 20,
+            includeFontPadding: false,
+            textAlignVertical: "center",
+        }
+    })
 
     const overrideStyles = isEmojiOnly ? {
         backgroundColor: "transparent",
@@ -28,13 +41,17 @@ const MessageText = ({ message, didSendMessage, isEmojiOnly }) => {
     return (
         <View style={[stylesToUse, overrideStyles]}>
             <Hyperlink linkStyle={styles.message_link} onPress={(url) => Linking.openURL(url)}>
-                <Text style={textStyles} selectable={true}>{message}</Text>
+                <Text style={textStyles.styles} selectable={true}>{message}</Text>
             </Hyperlink>
         </View>
     );
 };
 
-export default function Message({ message }) {
+type MessageProps = {
+    message: UserMessage
+}
+
+export default function Message({ message }: MessageProps) {
     const [messageViewed, setMessageViewed] = useState(message.Viewed || false);
 
     const { viewMessage } = useWebSocket();

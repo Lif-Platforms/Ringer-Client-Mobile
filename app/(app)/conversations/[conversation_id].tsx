@@ -1,11 +1,11 @@
 import {
-    ActivityIndicator,
     View,
     Image,
     StatusBar,
     TouchableOpacity,
-    ScrollView,
     FlatList,
+    NativeSyntheticEvent,
+    NativeScrollEvent,
 } from "react-native";
 import styles from "@styles/messages/style";
 import { useEffect, useState, useRef } from "react";
@@ -20,7 +20,7 @@ import { secureGet } from "@scripts/secure_storage";
 import { useRouter } from "expo-router";
 import { useConversationData } from "@scripts/conversation_data_provider";
 import { useCache } from "@scripts/cache_provider";
-import ConversationHeader from "@components/messages page/conversation_header";
+import ConversationHeader from "@components/messages page/conversation_header.";
 import MessagesListLoading from "@components/messages page/messages_list_loading";
 import MessagesLoadError from "@components/messages page/messages_load_error";
 import JumpToRecentButton from "@components/messages page/jump_to_recent_button";
@@ -28,24 +28,24 @@ import MessagesHeader from "@components/messages page/messages_header";
 
 export default function MessagesPage() {
     // Get conversation from URL
-    const { conversation_id } = useLocalSearchParams({ conversation_id });
+    const { conversation_id } = useLocalSearchParams();
 
-    const scrollViewRef = useRef();
+    const scrollViewRef = useRef<FlatList>(null);
     const { sendMessage, updateTypingStatus } = useWebSocket();
-    const [messageValue, setMessageValue] = useState("");
-    const [isSending, setIsSending] = useState(false);
-    const [showGIFModal, setShowGIFModal] = useState(false);
-    const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+    const [messageValue, setMessageValue] = useState<string>("");
+    const [isSending, setIsSending] = useState<boolean>(false);
+    const [showGIFModal, setShowGIFModal] = useState<boolean>(false);
+    const [showScrollToBottom, setShowScrollToBottom] = useState<boolean>(false);
 
     // Logic for previous message loading
-    const currentScrollHight = useRef(0);
-    const previousScrollHight = useRef(0);
-    const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
-    const [loadMoreMessages, setLoadMoreMessages] = useState(false);
-    const [keepScrollPosition, setKeepScrollPosition] = useState(false);
+    const currentScrollHight = useRef<number>(0);
+    const previousScrollHight = useRef<number>(0);
+    const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState<boolean>(false);
+    const [loadMoreMessages, setLoadMoreMessages] = useState<boolean>(false);
+    const [keepScrollPosition, setKeepScrollPosition] = useState<boolean>(false);
     const { update_last_sent_message, setUnreadMessages } = useUserData();
-    const [messagesLoadError, setMessagesLoadError] = useState(false);
-    const [showStartConversationHeader, setShowStartConversationHeader] = useState(false);
+    const [messagesLoadError, setMessagesLoadError] = useState<boolean>(false);
+    const [showStartConversationHeader, setShowStartConversationHeader] = useState<boolean>(false);
   
     const {
         setConversationData, 
@@ -76,13 +76,13 @@ export default function MessagesPage() {
 
     useEffect(() => {
         function scroll_to_bottom() {
-            if (!keepScrollPosition) {
-                setTimeout(() => {
-                    if (scrollViewRef.current) {
-                        scrollViewRef.current.scrollToEnd({ animated: false });
-                    }
-                }, 100);
-            }
+            if (keepScrollPosition) { return };
+
+            setTimeout(() => {
+                if (scrollViewRef.current) {
+                    scrollViewRef.current.scrollToEnd({ animated: false });
+                }
+            }, 100);
         }
 
         async function load_messages() {
@@ -102,6 +102,8 @@ export default function MessagesPage() {
 
             // Get auth credentials
             const credentials = await get_auth_credentials();
+
+            if (!credentials.username || !credentials.token) { return };
 
             // Fetch friends from server
             const response = await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/load_messages/${conversation_id}`, {
@@ -193,6 +195,8 @@ export default function MessagesPage() {
         // Fetch auth credentials
         const credentials = await get_auth_credentials();
 
+        if (!credentials.username || !credentials.token) { return };
+
         // Fetch messages from server
         fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/load_messages/${conversation_id}?offset=${messages.length}`, {
             headers: {
@@ -215,7 +219,9 @@ export default function MessagesPage() {
             // Also add timeout to ensure message have time to render before adjusting the scroll pos
             setTimeout(() => {
                 const newScrollPos = currentScrollHight.current - previousScrollHight.current;
-                scrollViewRef.current.scrollToOffset({ offset: newScrollPos, animated: false });
+                if (scrollViewRef.current) {
+                    scrollViewRef.current.scrollToOffset({ offset: newScrollPos, animated: false });
+                }
             }, 1);
 
             // Set loading state to false
@@ -234,12 +240,12 @@ export default function MessagesPage() {
         })
     }
 
-    function handle_content_size_change(width, height) {
+    function handle_content_size_change(width: number, height: number) {
         previousScrollHight.current = currentScrollHight.current;
         currentScrollHight.current = height;
     }
 
-    function handle_messages_scroll(event) {
+    function handle_messages_scroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
         // Disable if conversation is loading
         if (isLoading) return;
 
@@ -263,7 +269,9 @@ export default function MessagesPage() {
     useEffect(() => {
         function handle_msg_scroll() {
             setTimeout(() => {
-                scrollViewRef.current.scrollToEnd({ animated: true });
+                if (scrollViewRef.current) {
+                    scrollViewRef.current.scrollToEnd({ animated: true });
+                }
             }, 2);
         }
         eventEmitter.on("Msg_Received", handle_msg_scroll);
@@ -280,7 +288,7 @@ export default function MessagesPage() {
 
     return (
         <View style={styles.page}>
-            <StatusBar style="light" />
+            <StatusBar barStyle={"light-content"} />
             <View style={styles.header}>
                 <View style={styles.header_left_container}>
                     <TouchableOpacity onPress={handle_navigation_back}>
@@ -314,20 +322,18 @@ export default function MessagesPage() {
             )}
             <MessageBox
                 isSending={isSending}
-                username={conversationName}
                 setMessageValue={setMessageValue}
-                sendMessage={sendMessage}
-                conversation_id={conversation_id}
                 messageValue={messageValue}
                 setIsSending={setIsSending}
                 scrollViewRef={scrollViewRef}
-                updateTypingStatus={updateTypingStatus}
                 setShowGIFModal={setShowGIFModal}
             />
             <JumpToRecentButton
                 showButton={showScrollToBottom}
                 onPress={() => {
-                    scrollViewRef.current.scrollToEnd({ animated: true });
+                    if (scrollViewRef.current) {
+                        scrollViewRef.current.scrollToEnd({ animated: true });
+                    }
                 }}
             />
             <GIFModal

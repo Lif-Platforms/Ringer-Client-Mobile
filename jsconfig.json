@@ -8,6 +8,7 @@
         "@assets/*": ["assets/*"],
         "@styles/*": ["styles/*"],
         "@scripts/*": ["scripts/*"],
+        "@types/*": ["types/*"],
         "@/*": ["*"]
       }
     },

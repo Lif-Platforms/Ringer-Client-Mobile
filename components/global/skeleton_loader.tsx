@@ -2,9 +2,9 @@ import { Animated } from 'react-native';
 import { useRef, useEffect } from 'react';
 
 type SkeletonLoaderPropsType = {
-    width: number;
-    height: number;
-    borderRadius: number;
+    width?: number | `${number}%`;
+    height?: number | `${number}%`;
+    borderRadius?: number;
 }
 
 export default function SkeletonLoader({ width, height, borderRadius } : SkeletonLoaderPropsType) {
@@ -32,10 +32,10 @@ export default function SkeletonLoader({ width, height, borderRadius } : Skeleto
 
     return (
         <Animated.View style={{
-            width: width || '100%',
-            height: height || '100%',
+            width: width !== undefined ? width : '100%',
+            height: height !== undefined ? height : '100%',
             backgroundColor: '#272727',
-            borderRadius: borderRadius || 8,
+            borderRadius: borderRadius !== undefined ? borderRadius : 8,
             opacity: pulseAnim,
         }} />
     );

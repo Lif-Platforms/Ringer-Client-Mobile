@@ -3,6 +3,7 @@ Skeleton loader for messages
 */
 import SkeletonLoader from "@components/global/skeleton_loader";
 import { View, StyleSheet } from "react-native";
+import type { ViewStyle } from "react-native";
 
 export default function MessageLoading() {
     // Pick random dimensions for message text
@@ -15,7 +16,8 @@ export default function MessageLoading() {
     const sentOrReceived = Math.round(Math.random());
 
     // Set alignment based on sent or received
-    const textStyles = sentOrReceived === 1 ? { alignItems: "flex-end" } : { alignItems: "flex-start" };
+    const textStyles: ViewStyle = { alignItems: sentOrReceived === 1 ? "flex-end" : "flex-start" };
+    const widthValue = `${randomWidth}%` as `${number}%`;
 
     return (
         <View style={[styles.message, {
@@ -30,7 +32,7 @@ export default function MessageLoading() {
             <View style={[styles.messageTextContainer, textStyles]}>
                 <SkeletonLoader
                     height={randomHeight}
-                    width={`${randomWidth}%`}
+                    width={widthValue}
                     borderRadius={10}
                 />
             </View>

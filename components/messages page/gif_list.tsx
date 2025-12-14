@@ -1,17 +1,50 @@
 import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import styles from "../../styles/messages/gif_list";
-import { MasonryFlashList } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 import RenderGIF from "./gif";
+import { GIFToSend } from "../../types";
 
-export default function GIFList({ search_query, gifToSend, setGifToSend }) {
-    const [results, setResults] = useState([]);
-    const [loading, setLoading] = useState(false);
+type GIFListProps = {
+    search_query: string;
+    gifToSend: GIFToSend | null;
+    setGifToSend: React.Dispatch<React.SetStateAction<GIFToSend | null>>;
+}
+
+type SearchResultsType = {
+    id: string;
+    url: string;
+    title: string;
+    dimensions: {
+        width: number;
+        height: number;
+    };
+}
+
+type RequestDataType = {
+    id: string;
+    title: string;
+    images: {
+        original: {
+            url: string;
+            width: number;
+            height: number;
+        }
+    }
+}
+
+export default function GIFList({
+    search_query,
+    gifToSend,
+    setGifToSend
+}: GIFListProps) {
+    const [results, setResults] = useState<SearchResultsType[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (search_query.trim() !== "") {
             setLoading(true);
-            setGifToSend({url: null, id: null});
+            setGifToSend(null);
 
             fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/search_gifs?search=${search_query}`)
             .then((response) => {
@@ -22,10 +55,10 @@ export default function GIFList({ search_query, gifToSend, setGifToSend }) {
                 }
             })
             .then((data) => {
-                let results_ = [];
+                let searchResults: SearchResultsType[] = [];
 
-                data.data.forEach(result => {
-                    results_.push({
+                data.data.forEach((result: RequestDataType) => {
+                    searchResults.push({
                         id: result.id,
                         url: result.images.original.url,
                         title: result.title,
@@ -36,7 +69,7 @@ export default function GIFList({ search_query, gifToSend, setGifToSend }) {
                     })
                 });
 
-                setResults(results_);
+                setResults(searchResults);
                 setLoading(false);
             })
             .catch((error) => {
@@ -47,14 +80,7 @@ export default function GIFList({ search_query, gifToSend, setGifToSend }) {
         }
     }, [search_query]);
 
-    /**
-     * Handle GIF selection
-     * @param {string} url - The URL of the GIF
-     * @param {string} id - The ID of the GIF
-     * @param {string} title - The title of the GIF
-     * @return {void}
-     */
-    function handleGifPress(url, id, title) {
+    function handleGifPress(url: string, id: string, title: string) {
         setGifToSend({url: url, id: id, title: title});
     }
 
@@ -78,10 +104,9 @@ export default function GIFList({ search_query, gifToSend, setGifToSend }) {
             )
         } else {
             return (
-                <MasonryFlashList
+                <FlashList
                     data={results}
                     numColumns={2}
-                    estimatedItemSize={100}
                     extraData={gifToSend}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
@@ -91,7 +116,7 @@ export default function GIFList({ search_query, gifToSend, setGifToSend }) {
                             gifDimensions={item.dimensions}
                             gifTitle={item.title}
                             handleGifPress={handleGifPress}
-                            selected={gifToSend.id === item.id}
+                            selected={gifToSend ? item.id : null}
                         />
                     )}
                     contentContainerStyle={{

@@ -1,5 +1,26 @@
 import React from "react";
-import { Image, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import {
+    Image,
+    TouchableOpacity,
+    StyleSheet,
+    Dimensions
+} from "react-native";
+
+type RenderGIFProps = {
+    gifURL: string;
+    gifID: string;
+    gifDimensions: {
+        width: number;
+        height: number;
+    };
+    gifTitle: string;
+    handleGifPress: (
+        gifURL: string,
+        gifID: string,
+        gifTitle: string
+    ) => void;
+    selected: string | null;
+}
 
 const RenderGIF = React.memo(({
     gifURL,
@@ -8,7 +29,7 @@ const RenderGIF = React.memo(({
     gifTitle,
     handleGifPress,
     selected,
-}) => {
+}: RenderGIFProps) => {
     // Calculate the width of th column
     const columnWidth = Dimensions.get('window').width / 2 - 12;
 
