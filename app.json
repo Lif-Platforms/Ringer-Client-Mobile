@@ -22,7 +22,10 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.lifplatforms.ringer",
       "jsEngine": "hermes",
-      "icon": "./assets/global/ringer_icon_ios.icon"
+      "icon": "./assets/global/ringer_icon_ios.icon",
+      "entitlements": {
+        "aps-environment": "production"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -52,6 +55,7 @@
           "organization": "lif-platforms"
         }
       ],
+      "expo-notifications",
       "expo-router",
       "expo-font"
     ]
