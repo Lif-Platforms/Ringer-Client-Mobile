@@ -9,14 +9,12 @@ import {
 } from "react-native";
 import styles from "@styles/messages/style";
 import { useEffect, useState, useRef } from "react";
-import { useWebSocket } from "@providers/websocket_handler";
 import { eventEmitter } from "@scripts/emitter";
 import MessageBox from "@components/messages page/message_box";
 import GIFModal from '@components/messages page/gif_modal';
 import Message from "@components/messages page/message";
 import { useUserData } from "@providers/user_data_provider";
 import { useLocalSearchParams } from "expo-router";
-import { secureGet } from "@scripts/secure_storage";
 import { useRouter } from "expo-router";
 import { useConversationData } from "@scripts/conversation_data_provider";
 import { useCache } from "@scripts/cache_provider";
@@ -25,13 +23,13 @@ import MessagesListLoading from "@components/messages page/messages_list_loading
 import MessagesLoadError from "@components/messages page/messages_load_error";
 import JumpToRecentButton from "@components/messages page/jump_to_recent_button";
 import MessagesHeader from "@components/messages page/messages_header";
+import { useAuth } from "@providers/auth";
 
 export default function MessagesPage() {
     // Get conversation from URL
-    const { conversation_id } = useLocalSearchParams();
+    const { conversation_id }: { conversation_id: string } = useLocalSearchParams();
 
     const scrollViewRef = useRef<FlatList>(null);
-    const { sendMessage, updateTypingStatus } = useWebSocket();
     const [messageValue, setMessageValue] = useState<string>("");
     const [isSending, setIsSending] = useState<boolean>(false);
     const [showGIFModal, setShowGIFModal] = useState<boolean>(false);
@@ -46,6 +44,8 @@ export default function MessagesPage() {
     const { update_last_sent_message, setUnreadMessages } = useUserData();
     const [messagesLoadError, setMessagesLoadError] = useState<boolean>(false);
     const [showStartConversationHeader, setShowStartConversationHeader] = useState<boolean>(false);
+
+    const { username, token } = useAuth();
   
     const {
         setConversationData, 
@@ -53,22 +53,15 @@ export default function MessagesPage() {
         messages,
         isLoading, 
         setIsLoading,
-        conversationName,
         clearConversationData,
         addMessages,
         setShowLoader,
+        showLoader,
     } = useConversationData();
 
     const { addMessagesCache, getMessagesCache } = useCache();
 
     const router = useRouter();
-
-    async function get_auth_credentials() {
-        const username_ = await secureGet("username");
-        const token_ = await secureGet("token");
-
-        return { username: username_, token: token_ };
-    }
 
     function handle_navigation_back() {
         router.back();
@@ -82,7 +75,7 @@ export default function MessagesPage() {
                 if (scrollViewRef.current) {
                     scrollViewRef.current.scrollToEnd({ animated: false });
                 }
-            }, 100);
+            }, 1);
         }
 
         async function load_messages() {
@@ -100,16 +93,13 @@ export default function MessagesPage() {
                 setShowLoader(true);
             }
 
-            // Get auth credentials
-            const credentials = await get_auth_credentials();
-
-            if (!credentials.username || !credentials.token) { return };
+            if (!username || !token) { return };
 
             // Fetch friends from server
             const response = await fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/load_messages/${conversation_id}`, {
                 headers: {
-                    username: credentials.username,
-                    token: credentials.token,
+                    username: username,
+                    token: token,
                     version: "2.0"
                 }
             });
@@ -192,16 +182,13 @@ export default function MessagesPage() {
         setIsLoadingMoreMessages(true);
         setKeepScrollPosition(true);
 
-        // Fetch auth credentials
-        const credentials = await get_auth_credentials();
-
-        if (!credentials.username || !credentials.token) { return };
+        if (!username || !token) { return };
 
         // Fetch messages from server
         fetch(`${process.env.EXPO_PUBLIC_RINGER_SERVER_URL}/load_messages/${conversation_id}?offset=${messages.length}`, {
             headers: {
-                username: credentials.username,
-                token: credentials.token
+                username: username,
+                token: token
             }
         })
         .then((response) => {
@@ -297,7 +284,7 @@ export default function MessagesPage() {
                     <ConversationHeader />
                 </View>
             </View>
-            {isLoading && !messagesLoadError ? (
+            {isLoading && !messagesLoadError && showLoader ? (
                 <MessagesListLoading />
             ) : !isLoading && !messagesLoadError ? (
                 <FlatList
@@ -339,7 +326,6 @@ export default function MessagesPage() {
             <GIFModal
                 showGIFModal={showGIFModal}
                 onDismiss={onDismiss}
-                conversation_id={conversation_id}
             />
         </View>
     )

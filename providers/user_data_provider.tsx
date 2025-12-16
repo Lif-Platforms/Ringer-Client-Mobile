@@ -15,7 +15,7 @@ type UserPresenceQueue = {
 
 type LastSentMessageQueue = {
     type: "last_sent_message";
-    data: { author: string; message: string; conversation_id: number };
+    data: { author: string; message: string; conversation_id: string };
 };
 
 type QueueDataType = UserPresenceQueue | LastSentMessageQueue;
@@ -30,7 +30,7 @@ type UserDataProviderType = {
     update_last_sent_message: (
         message_author: string,
         message: string,
-        conversation_id: number
+        conversation_id: string
     ) => void;
     setIsCacheData: React.Dispatch<React.SetStateAction<boolean>>;
     incrementUnreadMessages: (
@@ -52,23 +52,11 @@ export const UserDataProvider = ({ children }: React.PropsWithChildren<{}>) => {
 
     const { updateUser } = useCache();
 
-    /**
-    * Add an item to data queue
-    *
-    * @param {string} type - The type of data being added to the queue.
-    * @param {object} data - The data being added to the queue.
-    */
     function queue_data_update(item: QueueDataType) {
         // Append item to data queue
         setDataQueue(prev => [...prev, item]);
     }
 
-    /**
-    * Updates the online status of users
-    *
-    * @param {string} username -The user who's status is being updated.
-    * @param {boolean} online - The value the users status is being set to.
-    */
     function update_user_presence(username: string, online: boolean) {
         // Check if user data has loaded in yet
         // If not, add data to queue
@@ -87,17 +75,10 @@ export const UserDataProvider = ({ children }: React.PropsWithChildren<{}>) => {
         }
     }
 
-    /**
-    * Updates the last sent message for a specific conversation
-    *
-    * @param {string} message_author - The author of the message.
-    * @param {string} message - The content of the message.
-    * @param {number} conversation_id - The ID of the conversation to update.
-    */
     function update_last_sent_message(
         message_author: string,
         message: string,
-        conversation_id: number
+        conversation_id: string
     ) {
         // Check if user data has loaded in yet
         // If not, add data to queue
@@ -123,11 +104,6 @@ export const UserDataProvider = ({ children }: React.PropsWithChildren<{}>) => {
         );
     }
 
-    /**
-     * Increment number of unread messages for a conversation.
-     * @param {string} conversationId - Id of the conversation.
-     * @param {number} increment - Amount to increment the unread messages by.
-     */
     function incrementUnreadMessages(conversationId: string, increment: number) {
         if (!Array.isArray(userData)) return;
 
@@ -142,11 +118,6 @@ export const UserDataProvider = ({ children }: React.PropsWithChildren<{}>) => {
         });
     }
 
-    /**
-     * Set the number of unread messages for a conversation.
-     * @param {string} conversationId - Id of the conversation.
-     * @param {number} count - Number to set unread messages to.
-     */
     function setUnreadMessages(conversationId: string, count: number) {
         if (!Array.isArray(userData)) return;
         
